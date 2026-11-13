@@ -11,6 +11,9 @@
     <Project Path="tests/Olve.WebGPU.Tests/Olve.WebGPU.Tests.csproj" />
     <Project Path="tests/Olve.WebGPU.Tests.Browser/Olve.WebGPU.Tests.Browser.csproj" />
   </Folder>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/Olve.WebGPU.Benchmarks/Olve.WebGPU.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/Triangle/Triangle.csproj" />
     <Project Path="samples/Triangle.Desktop/Triangle.Desktop.csproj" />

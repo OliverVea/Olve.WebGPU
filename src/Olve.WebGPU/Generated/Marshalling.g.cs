@@ -18,6 +18,11 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static RequestAdapterWebXROptions FromNative(in WGPURequestAdapterWebXROptions n) => new()
+    {
+        XrCompatible = n.XrCompatible != 0,
+    };
+
     public static WGPURequestAdapterOptions ToNative(in RequestAdapterOptions v, Arena arena)
     {
         WGPUChainedStruct* chain = null;
@@ -251,6 +256,11 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static ExternalTextureBindingEntry FromNative(in WGPUExternalTextureBindingEntry n) => new()
+    {
+        ExternalTexture = new ExternalTexture(n.ExternalTexture),
+    };
+
     public static WGPUExternalTextureBindingLayout ToNative(in ExternalTextureBindingLayout v, Arena arena)
     {
         return new WGPUExternalTextureBindingLayout
@@ -258,6 +268,10 @@ internal static unsafe partial class Marshalling
             Chain = new WGPUChainedStruct { SType = SType.ExternalTextureBindingLayout },
         };
     }
+
+    public static ExternalTextureBindingLayout FromNative(in WGPUExternalTextureBindingLayout n) => new()
+    {
+    };
 
     public static WGPUStorageTextureBindingLayout ToNative(in StorageTextureBindingLayout v, Arena arena)
     {
@@ -318,6 +332,13 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static BlendComponent FromNative(in WGPUBlendComponent n) => new()
+    {
+        Operation = n.Operation,
+        SrcFactor = n.SrcFactor,
+        DstFactor = n.DstFactor,
+    };
+
     public static WGPUBufferDescriptor ToNative(in BufferDescriptor v, Arena arena)
     {
         return new WGPUBufferDescriptor
@@ -339,6 +360,14 @@ internal static unsafe partial class Marshalling
             A = v.A,
         };
     }
+
+    public static Color FromNative(in WGPUColor n) => new()
+    {
+        R = n.R,
+        G = n.G,
+        B = n.B,
+        A = n.A,
+    };
 
     public static WGPUConstantEntry ToNative(in ConstantEntry v, Arena arena)
     {
@@ -390,6 +419,13 @@ internal static unsafe partial class Marshalling
             Length = v.Length,
         };
     }
+
+    public static DawnCompilationMessageUtf16 FromNative(in WGPUDawnCompilationMessageUtf16 n) => new()
+    {
+        LinePos = n.LinePos,
+        Offset = n.Offset,
+        Length = n.Length,
+    };
 
     public static WGPUComputePassDescriptor ToNative(in ComputePassDescriptor v, Arena arena)
     {
@@ -462,6 +498,13 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static Extent3D FromNative(in WGPUExtent3D n) => new()
+    {
+        Width = n.Width,
+        Height = n.Height,
+        DepthOrArrayLayers = n.DepthOrArrayLayers,
+    };
+
     public static WGPUTexelCopyBufferLayout ToNative(in TexelCopyBufferLayout v, Arena arena)
     {
         return new WGPUTexelCopyBufferLayout
@@ -472,6 +515,13 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static TexelCopyBufferLayout FromNative(in WGPUTexelCopyBufferLayout n) => new()
+    {
+        Offset = n.Offset,
+        BytesPerRow = n.BytesPerRow,
+        RowsPerImage = n.RowsPerImage,
+    };
+
     public static WGPUTexelCopyBufferInfo ToNative(in TexelCopyBufferInfo v, Arena arena)
     {
         return new WGPUTexelCopyBufferInfo
@@ -480,6 +530,12 @@ internal static unsafe partial class Marshalling
             Buffer = v.Buffer.Handle,
         };
     }
+
+    public static TexelCopyBufferInfo FromNative(in WGPUTexelCopyBufferInfo n) => new()
+    {
+        Layout = FromNative(n.Layout),
+        Buffer = new Buffer(n.Buffer),
+    };
 
     public static WGPUOrigin3D ToNative(in Origin3D v, Arena arena)
     {
@@ -491,6 +547,13 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static Origin3D FromNative(in WGPUOrigin3D n) => new()
+    {
+        X = n.X,
+        Y = n.Y,
+        Z = n.Z,
+    };
+
     public static WGPUTexelCopyTextureInfo ToNative(in TexelCopyTextureInfo v, Arena arena)
     {
         return new WGPUTexelCopyTextureInfo
@@ -501,6 +564,42 @@ internal static unsafe partial class Marshalling
             Aspect = v.Aspect,
         };
     }
+
+    public static TexelCopyTextureInfo FromNative(in WGPUTexelCopyTextureInfo n) => new()
+    {
+        Texture = new Texture(n.Texture),
+        MipLevel = n.MipLevel,
+        Origin = FromNative(n.Origin),
+        Aspect = n.Aspect,
+    };
+
+    public static WGPUFuture ToNative(in Future v, Arena arena)
+    {
+        return new WGPUFuture
+        {
+            Id = v.Id,
+        };
+    }
+
+    public static Future FromNative(in WGPUFuture n) => new()
+    {
+        Id = n.Id,
+    };
+
+    public static WGPUFutureWaitInfo ToNative(in FutureWaitInfo v, Arena arena)
+    {
+        return new WGPUFutureWaitInfo
+        {
+            Future = ToNative(v.Future, arena),
+            Completed = v.Completed ? 1u : 0u,
+        };
+    }
+
+    public static FutureWaitInfo FromNative(in WGPUFutureWaitInfo n) => new()
+    {
+        Future = FromNative(n.Future),
+        Completed = n.Completed != 0,
+    };
 
     public static InstanceLimits FromNative(in WGPUInstanceLimits n) => new()
     {
@@ -661,6 +760,11 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static RenderPassMaxDrawCount FromNative(in WGPURenderPassMaxDrawCount n) => new()
+    {
+        MaxDrawCount = n.MaxDrawCount,
+    };
+
     public static WGPUVertexState ToNative(in VertexState v, Arena arena)
     {
         var constants = arena.Alloc<WGPUConstantEntry>(v.Constants.Length);
@@ -708,6 +812,14 @@ internal static unsafe partial class Marshalling
             PassOp = v.PassOp,
         };
     }
+
+    public static StencilFaceState FromNative(in WGPUStencilFaceState n) => new()
+    {
+        Compare = n.Compare,
+        FailOp = n.FailOp,
+        DepthFailOp = n.DepthFailOp,
+        PassOp = n.PassOp,
+    };
 
     public static WGPUDepthStencilState ToNative(in DepthStencilState v, Arena arena)
     {
@@ -779,6 +891,12 @@ internal static unsafe partial class Marshalling
             Alpha = ToNative(v.Alpha, arena),
         };
     }
+
+    public static BlendState FromNative(in WGPUBlendState n) => new()
+    {
+        Color = FromNative(n.Color),
+        Alpha = FromNative(n.Alpha),
+    };
 
     public static WGPURenderPipelineDescriptor ToNative(in RenderPipelineDescriptor v, Arena arena)
     {
@@ -998,6 +1116,12 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static SurfaceColorManagement FromNative(in WGPUSurfaceColorManagement n) => new()
+    {
+        ColorSpace = n.ColorSpace,
+        ToneMappingMode = n.ToneMappingMode,
+    };
+
     public static SurfaceTexture FromNative(in WGPUSurfaceTexture n) => new()
     {
         Texture = new Texture(n.Texture),
@@ -1047,6 +1171,11 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static TextureBindingViewDimension FromNative(in WGPUTextureBindingViewDimension n) => new()
+    {
+        TextureBindingViewDimensionValue = n.TextureBindingViewDimension,
+    };
+
     public static WGPUTextureViewDescriptor ToNative(in TextureViewDescriptor v, Arena arena)
     {
         WGPUChainedStruct* chain = null;
@@ -1083,6 +1212,14 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static TextureComponentSwizzle FromNative(in WGPUTextureComponentSwizzle n) => new()
+    {
+        R = n.R,
+        G = n.G,
+        B = n.B,
+        A = n.A,
+    };
+
     public static WGPUTextureComponentSwizzleDescriptor ToNative(in TextureComponentSwizzleDescriptor v, Arena arena)
     {
         return new WGPUTextureComponentSwizzleDescriptor
@@ -1091,6 +1228,11 @@ internal static unsafe partial class Marshalling
             Swizzle = ToNative(v.Swizzle, arena),
         };
     }
+
+    public static TextureComponentSwizzleDescriptor FromNative(in WGPUTextureComponentSwizzleDescriptor n) => new()
+    {
+        Swizzle = FromNative(n.Swizzle),
+    };
 
     public static WGPUSubgroupMatrixConfig ToNative(in SubgroupMatrixConfig v, Arena arena)
     {
@@ -1105,6 +1247,17 @@ internal static unsafe partial class Marshalling
             MaxSubgroupSize = v.MaxSubgroupSize,
         };
     }
+
+    public static SubgroupMatrixConfig FromNative(in WGPUSubgroupMatrixConfig n) => new()
+    {
+        ComponentType = n.ComponentType,
+        ResultComponentType = n.ResultComponentType,
+        M = n.M,
+        N = n.N,
+        K = n.K,
+        MinSubgroupSize = n.MinSubgroupSize,
+        MaxSubgroupSize = n.MaxSubgroupSize,
+    };
 
     public static WGPUDeviceLostCallbackInfo ToNative(in DeviceLostCallbackInfo v, void* other) => v.Callback is null && other == null ? default : new WGPUDeviceLostCallbackInfo
     {

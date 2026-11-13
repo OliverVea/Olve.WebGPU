@@ -22,7 +22,7 @@ public enum Rep
 /// </summary>
 public sealed class Api
 {
-    private static readonly HashSet<string> NotFriendly = ["string view", "future", "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER"];
+    private static readonly HashSet<string> NotFriendly = ["string view", "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER"];
 
     // A device's last callback: Dawn clears the device's other callbacks before calling it, so it unregisters them
     private static readonly HashSet<string> LastCallbacks = ["device lost callback"];
@@ -476,7 +476,28 @@ public sealed class Api
         else
         {
             EmitToNative(s, members, chains, rep, marshal);
+            if (rep == Generator.Rep.Plain && chains.Count == 0 && RoundTrips(name))
+            {
+                EmitFromNative(s, members, marshal);
+            }
         }
+    }
+
+    /// <summary>
+    /// A struct made only of values, handles and such structs, with no chain: it can be read back from native memory as well as written,
+    /// so it can be returned (Future) or sit in an array the implementation writes to (FutureWaitInfo).
+    /// </summary>
+    private bool RoundTrips(string name)
+    {
+        var s = E(name);
+        if (s.Extensible is not null || !_reps.TryGetValue(name, out var rep) || rep != Generator.Rep.Plain)
+        {
+            return false;
+        }
+
+        var members = Members(s, rep, out _);
+        return members is not null && members.All(m => m.Kind is Kind.Value or Kind.Bool or Kind.Handle
+            || (m.Kind == Kind.Struct && RoundTrips(_m.Resolve(m.Field.Type))));
     }
 
     /// <summary>Optional structs are nullable, or a Has flag next to the member when they are ref structs.</summary>
@@ -934,6 +955,7 @@ public sealed class Api
                 (_, "const*", true) when Scalar(type) is { } scalar => new Arg(a, "value", $"ReadOnlySpan<{scalar}>", $"p_{Names.LowerCamel(a.Name)}",
                     $"{scalar}* p_{Names.LowerCamel(a.Name)} = {name}", a.Default == "nullptr" ? "default" : null),
                 ("structure", "const*", true) when Friendly(type) => new Arg(a, "structs", $"ReadOnlySpan<{Pascal(type)}>", $"p_{Names.LowerCamel(a.Name)}"),
+                ("structure", "*", true) when Friendly(type) && RoundTrips(type) => new Arg(a, "inout", $"Span<{Pascal(type)}>", $"p_{Names.LowerCamel(a.Name)}"),
                 ("structure", "const*", false) when Friendly(type) && _reps[type] != Generator.Rep.Out =>
                     new Arg(a, a.Optional ? "optional" : "value", $"in {Pascal(type)}", $"arena.Alloc(Marshalling.ToNative({name}, arena))"),
                 ("structure", "*", false) when Friendly(type) && _reps[type] == Generator.Rep.Out => new Arg(a, "out", Pascal(type), $"&n_{Names.LowerCamel(a.Name)}"),
@@ -1007,6 +1029,11 @@ public sealed class Api
             csReturn = scalar;
             wrap = call => $"var result = {call};";
         }
+        else if (Category(returnType) == "structure" && Friendly(returnType) && RoundTrips(returnType))
+        {
+            csReturn = Pascal(returnType);
+            wrap = call => $"var result = Marshalling.FromNative({call});";
+        }
         else
         {
             _m.Warnings.Add($"skipped method {owner?.Name}.{methodName}: return {returns} not mapped");
@@ -1027,6 +1054,14 @@ public sealed class Api
         var optional = args.Where(a => a.Kind == "optional").ToList();
         var function = Names.Function(owner?.Name, methodName);
         EmitOverload(owner, function, methodCs, args, visible, defaults, [], callbackInfo, csReturn, wrap, generic, isVoidWithOut, returns, sb, scope);
+        if (callbackInfo is not null && returnType == "future")
+        {
+            // The same request, also handing back webgpu.h's future for Instance.WaitAny. Its parameters are all required,
+            // since the out parameter comes last.
+            EmitOverload(owner, function, methodCs, args, visible, [], [], callbackInfo, csReturn, call => $"future = Marshalling.FromNative({call});",
+                generic, isVoidWithOut, returns, sb, scope, withFuture: true);
+        }
+
         if (optional.Count > 0)
         {
             EmitOverload(owner, function, methodCs, args, visible.Except(optional).ToList(), defaults, optional.ToHashSet(), callbackInfo, csReturn, wrap, generic, isVoidWithOut, returns, sb, scope);
@@ -1036,10 +1071,12 @@ public sealed class Api
     }
 
     private void EmitOverload(Entry? owner, string function, string methodCs, List<Arg> args, List<Arg> visible, HashSet<Arg> defaults, HashSet<Arg> omitted,
-        string? callbackInfo, string csReturn, Func<string, string> wrap, bool generic, bool isVoidWithOut, string? returns, StringBuilder sb, string scope)
+        string? callbackInfo, string csReturn, Func<string, string> wrap, bool generic, bool isVoidWithOut, string? returns, StringBuilder sb, string scope,
+        bool withFuture = false)
     {
         var parameters = string.Join(", ", visible.Select(a =>
-            (a.Kind == "out" ? "out " : "") + $"{a.Type} {Param(a.Field.Name)}" + (defaults.Contains(a) ? $" = {a.Default}" : "")));
+            (a.Kind == "out" ? "out " : "") + $"{a.Type} {Param(a.Field.Name)}" + (defaults.Contains(a) ? $" = {a.Default}" : ""))
+            .Concat(withFuture ? ["out Future future"] : []));
         var typeParams = generic ? "<T>" : "";
         var constraint = generic ? " where T : unmanaged" : "";
         var isStatic = owner is null ? "static " : "";
@@ -1049,13 +1086,13 @@ public sealed class Api
         sb.Append($"    public {hides}{isStatic}{csReturn} {methodCs}{typeParams}({parameters}){constraint}\n    {{\n");
         _manifest.Add((owner is null ? scope : scope, $"method {(owner is null ? "Wgpu" : Pascal(owner.Name))}.{methodCs}{typeParams}({parameters}) : {csReturn}"));
 
-        var needsArena = args.Any(a => !omitted.Contains(a) && (a.Native.Contains("arena") || a.Kind == "structs"));
+        var needsArena = args.Any(a => !omitted.Contains(a) && (a.Native.Contains("arena") || a.Kind is "structs" or "inout"));
         if (needsArena)
         {
             sb.Append("        using var arena = Arena.Rent();\n");
         }
 
-        foreach (var a in args.Where(a => a.Kind == "structs"))
+        foreach (var a in args.Where(a => a.Kind is "structs" or "inout"))
         {
             var element = _m.Resolve(a.Field.Type);
             var local = $"p_{Names.LowerCamel(a.Field.Name)}";
@@ -1103,6 +1140,13 @@ public sealed class Api
 
         var nativeArgs = (owner is null ? [] : new[] { "Handle" }).Concat(args.Select(a => omitted.Contains(a) ? "null" : a.Native));
         sb.Append($"{indent}{wrap($"{function}({string.Join(", ", nativeArgs)})")}\n");
+
+        // The implementation writes to these arrays: copy its values back into the caller's span
+        foreach (var a in args.Where(a => a.Kind == "inout"))
+        {
+            var name = Param(a.Field.Name);
+            sb.Append($"{indent}for (var i = 0; i < {name}.Length; i++)\n{indent}{{\n{indent}    {name}[i] = Marshalling.FromNative(p_{Names.LowerCamel(a.Field.Name)}[i]);\n{indent}}}\n\n");
+        }
 
         foreach (var a in args.Where(a => a.Kind == "out"))
         {

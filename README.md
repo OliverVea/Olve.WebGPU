@@ -5,7 +5,8 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 - **Faithful:** the objects, methods, descriptors and enums of `webgpu.h`, with C# names. Descriptors are structs with webgpu.h's defaults, arrays and strings are spans, and requests (`RequestAdapter`, `MapAsync`, ...) return a task of their callback's arguments: `RequestAdapterResult` has the `Status`, the `Adapter` and the `Message`, with `IsSuccess` and `TryGetValue(out adapter)`.
 - **No `unsafe` for callers:** the marshalling is generated, callers pass spans and structs.
 - **Nothing on top:** there's no safety layer and no ownership tracking. Handles are `IDisposable` record structs whose `Dispose` is webgpu.h's `Release`.
-- **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions, futures (`WaitAny`) and out-chains aren't mapped yet; see the issues.
+- **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions and out-chains aren't mapped yet; see the issues.
+- **Futures:** each request has an overload that also gives webgpu.h's future (`RequestAdapterAsync(options, out var future)`), for `Instance.WaitAny`. `WaitAny` with a timeout needs the instance feature `InstanceFeatureName.TimedWaitAny`; without it, only a zero timeout works. In the browser, use a zero timeout.
 
 Descriptors get webgpu.h's defaults from `new()` and object initialisers, like webgpu.h's `*_INIT` macros. `default(T)` and `new T[n]` skip them, like `= {0}` in C: the elements of `new ColorTargetState[n]` have `WriteMask = None` and draw nothing. Build arrays from `new()` values, for example with collection expressions.
 

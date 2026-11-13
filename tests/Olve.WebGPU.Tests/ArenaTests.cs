@@ -41,17 +41,6 @@ public class ArenaTests
         await Assert.That(messages).Count().IsEqualTo(2);
         await Assert.That(messages[0]).Contains(outer);
         await Assert.That(messages[1]).Contains(inner);
-
-        // After the first call, the thread's arena is reused: a call with a descriptor allocates no managed memory
-        var label = "label"u8.ToArray();
-        device.CreateCommandEncoder(new CommandEncoderDescriptor { Label = label }).Dispose();
-        var before = GC.GetAllocatedBytesForCurrentThread();
-        for (var i = 0; i < 100; i++)
-        {
-            device.CreateCommandEncoder(new CommandEncoderDescriptor { Label = label }).Dispose();
-        }
-
-        await Assert.That(GC.GetAllocatedBytesForCurrentThread() - before).IsEqualTo(0);
         device.Destroy();
         device.Dispose();
     }

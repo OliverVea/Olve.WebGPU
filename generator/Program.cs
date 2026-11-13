@@ -53,6 +53,12 @@ var (marshalCs, initC) = api.EmitMarshalCheck(e => Availability.Web(e.Tags) && A
 Write(Path.Combine(root, "tests", "Shared", "MarshalCheck.g.cs"), marshalCs);
 Write(Path.Combine(root, "native", "init_check.g.c"), initC);
 
+// iOS links Dawn statically and the binding finds its functions by name at run time, so the native linker would drop them:
+// one ReferenceNativeSymbol per imported function keeps them (Olve.WebGPU.Native's build files import this for iOS apps)
+var symbols = string.Concat(raw.Functions.Select(f => $"    <ReferenceNativeSymbol Include=\"{f.Name}\" SymbolType=\"Function\" />\n"));
+Write(Path.Combine(root, "src", "Olve.WebGPU.Native", "buildTransitive", "Olve.WebGPU.Native.iOS.g.targets"),
+    $"<!-- {Raw.Banner[3..]} -->\n<Project>\n  <ItemGroup>\n{symbols}  </ItemGroup>\n</Project>\n");
+
 // The whole generated public API, one line per member: CI fails on any diff against the committed file, so every API change shows in review
 Write(Path.Combine(generated, "PublicApi.g.txt"), string.Join('\n', api.FullManifest) + "\n");
 

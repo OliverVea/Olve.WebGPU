@@ -23,6 +23,7 @@ python scripts/verify-web.py artifacts/web/tests/wwwroot tests                  
 dotnet run -c Release --project benchmarks/Olve.WebGPU.Benchmarks -- --filter '*'   # benchmarks
 RID=android-x64 scripts/build-natives.sh                    # Android natives (ANDROID_NDK_HOME: NDK r27d); also android-arm64
 scripts/run-android-tests.sh <apk>                         # tests/Olve.WebGPU.Tests.Android on a device or emulator; PASS/FAIL from logcat
+scripts/run-ios-tests.sh <app>                             # tests/Olve.WebGPU.Tests.iOS in an iPhone simulator (Mac only; RID=ios-arm64/iossimulator natives)
 ```
 
 `-p:NativeSource=package` builds the tests and the web sample against `artifacts/packages` (pack with `-p:Version=<v>` and pass the same version), instead of the projects and `artifacts/native`.

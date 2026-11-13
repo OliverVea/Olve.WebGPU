@@ -6,11 +6,11 @@
         <IsPackable>true</IsPackable>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <NoWarn>$(NoWarn);NU5128</NoWarn>
-        <Description>Olve.WebGPU on desktop and Android: Dawn's webgpu_dawn shared library for win-x64, linux-x64, osx-arm64, osx-x64, android-arm64 and android-x64. On Windows, copies DirectXShaderCompiler from Microsoft.Direct3D.DXC next to it.</Description>
+        <Description>Olve.WebGPU on desktop, Android and iOS: Dawn's webgpu_dawn shared library for win-x64, linux-x64, osx-arm64, osx-x64, android-arm64 and android-x64, and its static library for iOS devices and the simulator, which an iOS app's build links in. On Windows, copies DirectXShaderCompiler from Microsoft.Direct3D.DXC next to it.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <!-- Our packaging (MIT), Dawn and Tint (BSD-3-Clause), and the Apache-2.0 code Dawn links in (Abseil, SPIRV-Tools); texts in licenses/ -->
         <PackageLicenseExpression>MIT AND BSD-3-Clause AND Apache-2.0</PackageLicenseExpression>
-        <NativeRids>win-x64;linux-x64;osx-arm64;osx-x64;android-arm64;android-x64</NativeRids>
+        <NativeRids>win-x64;linux-x64;osx-arm64;osx-x64;android-arm64;android-x64;ios-arm64;iossimulator</NativeRids>
         <_DxcVersionProps>$(BaseIntermediateOutputPath)Olve.WebGPU.Native.props</_DxcVersionProps>
     </PropertyGroup>
     <ItemGroup>
@@ -30,6 +30,10 @@
         <None Include="$(RepoRoot)artifacts/native/osx-x64/*" Pack="true" PackagePath="runtimes/osx-x64/native/" />
         <None Include="$(RepoRoot)artifacts/native/android-arm64/*" Pack="true" PackagePath="runtimes/android-arm64/native/" />
         <None Include="$(RepoRoot)artifacts/native/android-x64/*" Pack="true" PackagePath="runtimes/android-x64/native/" />
+        <!-- Not under runtimes/: the iOS SDK would link a static library from there without force-loading it, and drop all of Dawn.
+             buildTransitive/ adds it as a NativeReference instead. iossimulator holds both simulator architectures. -->
+        <None Include="$(RepoRoot)artifacts/native/ios-arm64/*" Pack="true" PackagePath="ios/ios-arm64/" />
+        <None Include="$(RepoRoot)artifacts/native/iossimulator/*" Pack="true" PackagePath="ios/iossimulator/" />
         <_NativeRid Include="$(NativeRids)" />
     </ItemGroup>
 

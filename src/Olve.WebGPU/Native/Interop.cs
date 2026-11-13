@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -12,6 +13,22 @@ internal static unsafe partial class Interop
     public const string Library = "webgpu_dawn";
 
     public static readonly nuint Strlen = nuint.MaxValue;
+
+    /// <summary>
+    /// On iOS, Dawn is a static library linked into the app (Olve.WebGPU.Native's build files force-load it), and apps can't load
+    /// webgpu_dawn as a file: its symbols resolve in the app's own executable.
+    /// </summary>
+#pragma warning disable CA2255 // A module initializer in a library: the resolver must be in place before the first P/Invoke
+    [ModuleInitializer]
+#pragma warning restore CA2255
+    internal static void ResolveInTheAppOnIos()
+    {
+        if (OperatingSystem.IsIOS())
+        {
+            NativeLibrary.SetDllImportResolver(typeof(Interop).Assembly,
+                static (name, _, _) => name == Library ? NativeLibrary.GetMainProgramHandle() : 0);
+        }
+    }
 
     public static string ToManaged(WGPUStringView view)
     {

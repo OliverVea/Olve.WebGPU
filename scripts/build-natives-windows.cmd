@@ -6,4 +6,6 @@ for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\
 if not defined VS (echo Visual Studio with the C++ tools not found & exit /b 1)
 call "%VS%\VC\Auxiliary\Build\vcvars64.bat" >nul || exit /b 1
 link /nologo /DLL /OUT:"%~2\webgpu_dawn.dll" /DEF:"%~3\webgpu_dawn.def" /IMPLIB:"%~3\webgpu_dawn.lib" /OPT:REF /OPT:ICF /ignore:4221 "%~1\lib\webgpu_dawn.lib" user32.lib onecore_apiset.lib dxguid.lib advapi32.lib dbghelp.lib || exit /b 1
-cl /nologo /LD /O1 /I"%~1\include" "%~dp0..\native\webgpu_layout_check.c" /Fe"%~3\webgpu_layout_check.dll" /Fo"%~3\\" /link /EXPORT:wgpu_layout_values /EXPORT:wgpu_init_struct || exit /b 1
+cl /nologo /c /O1 /I"%~1\include" "%~dp0..\native\webgpu_layout_check.c" /Fo"%~3\webgpu_layout_check.obj" || exit /b 1
+cl /nologo /c /O1 /std:c++20 /EHsc /I"%~1\include" "%~dp0..\native\dawn_layout_check.cpp" /Fo"%~3\dawn_layout_check.obj" || exit /b 1
+link /nologo /DLL /OUT:"%~3\webgpu_layout_check.dll" "%~3\webgpu_layout_check.obj" "%~3\dawn_layout_check.obj" /EXPORT:wgpu_layout_values /EXPORT:wgpu_init_struct || exit /b 1

@@ -15,7 +15,7 @@ Descriptors get webgpu.h's defaults from `new()` and object initialisers, like w
 |---|---|
 | `Olve.WebGPU` | The binding (net10.0). No implementation: a library can reference it alone, but an app can't. |
 | `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, osx-arm64 and osx-x64. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
-| `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
+| `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu, from the same Dawn release, into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
 **An app must reference `Olve.WebGPU.Native` (desktop) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
 
@@ -37,7 +37,7 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 | Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
 | Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
 | macOS (arm64, x64) | Metal. The binding maps `SurfaceSourceMetalLayer`, but there's no sample host; you create the `CAMetalLayer`. |
-| Browser | emdawnwebgpu, from the `wasm-tools` workload. In the browser, the workload picks the Dawn release, not `dawn/version.env`. The browser tests check every struct layout and enum value against it. |
+| Browser | emdawnwebgpu from the Dawn release in `dawn/version.env`. The package ships that release's remote port file; on the first build, Emscripten downloads the port from Dawn's GitHub release and checks its SHA-512. The browser tests check every struct layout and enum value against it. |
 
 In the browser, emdawnwebgpu aborts on `Surface.Present()`: the browser presents when the frame callback returns.
 
@@ -70,7 +70,7 @@ To move to a new Dawn release:
 1. Update `DAWN_TAG` and `DAWN_COMMIT` in `dawn/version.env`.
 2. Fetch `src/dawn/dawn.json` at that commit into `dawn/`, and regenerate.
 3. Diff the API manifests before and after the upgrade.
-4. Check that the `wasm-tools` workload's emdawnwebgpu port matches the new release.
+4. Replace `src/Olve.WebGPU.Browser/port/emdawnwebgpu.remoteport.py` with the release's `emdawnwebgpu-<tag>.remoteport.py`. CI checks it against `DAWN_TAG`.
 5. Run the tests on each platform. The layout check compares 955 sizes, offsets and enum values with the C compiler's.
 
 ## License

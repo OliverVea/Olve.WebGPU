@@ -6,11 +6,15 @@
         <NoWarn>$(NoWarn);NU5128</NoWarn>
         <Description>Olve.WebGPU in the browser: links Emscripten's emdawnwebgpu port into a .NET WebAssembly app (needs the wasm-tools workload of .NET 11 or later).</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- Our build files (MIT) and Dawn's emdawnwebgpu remote port file, under Emscripten's license (port/LICENSE) -->
+        <PackageLicenseExpression>MIT AND (MIT OR NCSA)</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Olve.WebGPU\Olve.WebGPU.csproj" />
         <None Include="buildTransitive/*" Pack="true" PackagePath="buildTransitive/" />
         <None Include="native/*" Pack="true" PackagePath="native/" />
+        <None Include="port/*" Pack="true" PackagePath="port/" />
+        <None Include="$(RepoRoot)THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="\" />
         <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>

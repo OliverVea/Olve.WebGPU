@@ -54,12 +54,14 @@ jobs:
         run: scripts/download-dawn.sh
       - name: Link webgpu_dawn and the layout checker
         run: scripts/build-natives.sh
-      - name: Check dawn.json and the generated code match the pin
+      - name: Check dawn.json, the emdawnwebgpu port and the generated code match the pin
         if: runner.os == 'Linux'
         run: |
           source scripts/common.sh
           curl -sSfL "https://raw.githubusercontent.com/google/dawn/$DAWN_COMMIT/src/dawn/dawn.json" -o artifacts/dawn.json
           cmp artifacts/dawn.json dawn/dawn.json || { echo "::error::dawn/dawn.json differs from DAWN_COMMIT's"; exit 1; }
+          curl -sSfL "https://github.com/google/dawn/releases/download/$DAWN_TAG/emdawnwebgpu-$DAWN_TAG.remoteport.py" -o artifacts/emdawnwebgpu.remoteport.py
+          cmp artifacts/emdawnwebgpu.remoteport.py src/Olve.WebGPU.Browser/port/emdawnwebgpu.remoteport.py || { echo "::error::the emdawnwebgpu remote port differs from DAWN_TAG's"; exit 1; }
           dotnet run --project generator -c Release
           git status --porcelain
           git diff --exit-code

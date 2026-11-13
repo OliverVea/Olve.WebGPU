@@ -1,10 +1,13 @@
 <Project>
-    <!-- Links emdawnwebgpu (Emscripten's WebGPU port, from the wasm-tools workload) into dotnet.native.wasm.
-         Set in .props so the project can still override them. -->
+    <!-- Links emdawnwebgpu (Dawn's WebGPU port for Emscripten) into dotnet.native.wasm. The port is the remote port of the
+         Dawn release in dawn/version.env: on the first build, Emscripten downloads that release's emdawnwebgpu and checks it
+         against the SHA-512 in the file. Set in .props so the project can still override them. -->
     <PropertyGroup>
+        <_OlveWebGPUPort>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../port/emdawnwebgpu.remoteport.py'))</_OlveWebGPUPort>
         <WasmBuildNative>true</WasmBuildNative>
-        <EmccFlags>$(EmccFlags) --use-port=emdawnwebgpu:cpp_bindings=false</EmccFlags>
-        <EmccExtraLDFlags>$(EmccExtraLDFlags) --use-port=emdawnwebgpu:cpp_bindings=false -sDEFAULT_TO_CXX</EmccExtraLDFlags>
+        <EmccFlags>$(EmccFlags) &quot;--use-port=$(_OlveWebGPUPort):cpp_bindings=false&quot;</EmccFlags>
+        <!-- EmccFlags also go to the link; a port given by path can only be loaded once -->
+        <EmccExtraLDFlags>$(EmccExtraLDFlags) -sDEFAULT_TO_CXX</EmccExtraLDFlags>
         <!-- The SDK's Emscripten cache is read-only; the port builds into a writable one (on Windows, on the SDK's drive) -->
         <WasmCachePath Condition="'$(WasmCachePath)' == ''">$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))/olve-webgpu/emscripten-cache/$(NETCoreSdkVersion)</WasmCachePath>
     </PropertyGroup>

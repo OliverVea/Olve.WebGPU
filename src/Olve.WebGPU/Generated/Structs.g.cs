@@ -266,6 +266,14 @@ public ref partial struct ComputeState()
     public ReadOnlySpan<ConstantEntry> Constants { get; init; }
 }
 
+public partial record struct CompatibilityModeLimits()
+{
+    public uint MaxStorageBuffersInVertexStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxStorageTexturesInVertexStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxStorageBuffersInFragmentStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxStorageTexturesInFragmentStage { get; init; } = Wgpu.LimitU32Undefined;
+}
+
 public partial record struct SupportedFeatures()
 {
     public FeatureName[] Features { get; init; } = [];
@@ -651,6 +659,11 @@ public partial record struct SubgroupMatrixConfig()
     public uint K { get; init; }
     public uint MinSubgroupSize { get; init; }
     public uint MaxSubgroupSize { get; init; }
+}
+
+public partial record struct AdapterPropertiesSubgroupMatrixConfigs()
+{
+    public SubgroupMatrixConfig[] Configs { get; init; } = [];
 }
 
 public delegate void DeviceLostCallback(Device device, DeviceLostReason reason, string message);

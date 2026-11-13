@@ -1050,4 +1050,5 @@ internal static unsafe partial class Interop
     [LibraryImport(Library)] public static partial void wgpuSupportedFeaturesFreeMembers(WGPUSupportedFeatures value);
     [LibraryImport(Library)] public static partial void wgpuSupportedInstanceFeaturesFreeMembers(WGPUSupportedInstanceFeatures value);
     [LibraryImport(Library)] public static partial void wgpuSupportedWGSLLanguageFeaturesFreeMembers(WGPUSupportedWGSLLanguageFeatures value);
+    [LibraryImport(Library)] public static partial void wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers(WGPUAdapterPropertiesSubgroupMatrixConfigs value);
 }

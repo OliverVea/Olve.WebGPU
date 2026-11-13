@@ -68,5 +68,14 @@ catch (InvalidOperationException e)
     failures++;
 }
 
+var (limitsStatus, limits, compatibility) = await OutChains.AdapterLimitsAsync();
+Console.WriteLine($"GetLimits with CompatibilityModeLimits: {limitsStatus}, {compatibility}");
+failures += limitsStatus == Status.Success && compatibility.MaxStorageBuffersInVertexStage != Wgpu.LimitU32Undefined
+    && compatibility.MaxStorageBuffersInFragmentStage <= limits.MaxStorageBuffersPerShaderStage ? 0 : 1;
+
+var (infoStatus, _, configs, hasSubgroupMatrix) = await OutChains.SubgroupMatrixAsync();
+Console.WriteLine($"GetInfo with AdapterPropertiesSubgroupMatrixConfigs: {infoStatus}, feature {hasSubgroupMatrix}, {configs.Configs.Length} configs");
+failures += configs.Configs.Length > 0 == hasSubgroupMatrix && (!hasSubgroupMatrix || infoStatus == Status.Success) ? 0 : 1;
+
 Console.WriteLine(failures == 0 ? "PASS" : $"FAIL ({failures})");
 return failures;

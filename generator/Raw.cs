@@ -60,7 +60,7 @@ public sealed class Raw
 
     /// <summary>Out structs whose members point at memory the implementation owns.</summary>
     public static bool HasFreeMembers(Entry e) =>
-        (e.Out || e.Extensible == "out") && e.Members.Any(m => m.IsPointer || m.Type == "string view");
+        (e.Out || e.Extensible == "out" || e.Chained == "out") && e.Members.Any(m => m.IsPointer || m.Type == "string view");
 
     private void Include(string name)
     {

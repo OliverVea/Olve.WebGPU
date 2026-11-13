@@ -87,12 +87,36 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
         return result;
     }
 
+    public Status GetLimits(out Limits limits, out CompatibilityModeLimits compatibilityModeLimits)
+    {
+        var n_limits = new WGPULimits();
+        var n_compatibilityModeLimits = new WGPUCompatibilityModeLimits { Chain = new WGPUChainedStruct { SType = SType.CompatibilityModeLimits } };
+        n_limits.NextInChain = &n_compatibilityModeLimits.Chain;
+        var result = wgpuAdapterGetLimits(Handle, &n_limits);
+        limits = Marshalling.FromNative(n_limits);
+        compatibilityModeLimits = Marshalling.FromNative(n_compatibilityModeLimits);
+        return result;
+    }
+
     public Status GetInfo(out AdapterInfo info)
     {
         var n_info = new WGPUAdapterInfo();
         var result = wgpuAdapterGetInfo(Handle, &n_info);
         info = Marshalling.FromNative(n_info);
         wgpuAdapterInfoFreeMembers(n_info);
+        return result;
+    }
+
+    public Status GetInfo(out AdapterInfo info, out AdapterPropertiesSubgroupMatrixConfigs adapterPropertiesSubgroupMatrixConfigs)
+    {
+        var n_info = new WGPUAdapterInfo();
+        var n_adapterPropertiesSubgroupMatrixConfigs = new WGPUAdapterPropertiesSubgroupMatrixConfigs { Chain = new WGPUChainedStruct { SType = SType.AdapterPropertiesSubgroupMatrixConfigs } };
+        n_info.NextInChain = &n_adapterPropertiesSubgroupMatrixConfigs.Chain;
+        var result = wgpuAdapterGetInfo(Handle, &n_info);
+        info = Marshalling.FromNative(n_info);
+        wgpuAdapterInfoFreeMembers(n_info);
+        adapterPropertiesSubgroupMatrixConfigs = Marshalling.FromNative(n_adapterPropertiesSubgroupMatrixConfigs);
+        wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers(n_adapterPropertiesSubgroupMatrixConfigs);
         return result;
     }
 
@@ -334,6 +358,17 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         return result;
     }
 
+    public Status GetLimits(out Limits limits, out CompatibilityModeLimits compatibilityModeLimits)
+    {
+        var n_limits = new WGPULimits();
+        var n_compatibilityModeLimits = new WGPUCompatibilityModeLimits { Chain = new WGPUChainedStruct { SType = SType.CompatibilityModeLimits } };
+        n_limits.NextInChain = &n_compatibilityModeLimits.Chain;
+        var result = wgpuDeviceGetLimits(Handle, &n_limits);
+        limits = Marshalling.FromNative(n_limits);
+        compatibilityModeLimits = Marshalling.FromNative(n_compatibilityModeLimits);
+        return result;
+    }
+
     public Future GetLostFuture()
     {
         var result = Marshalling.FromNative(wgpuDeviceGetLostFuture(Handle));
@@ -361,6 +396,19 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         var result = wgpuDeviceGetAdapterInfo(Handle, &n_adapterInfo);
         adapterInfo = Marshalling.FromNative(n_adapterInfo);
         wgpuAdapterInfoFreeMembers(n_adapterInfo);
+        return result;
+    }
+
+    public Status GetAdapterInfo(out AdapterInfo adapterInfo, out AdapterPropertiesSubgroupMatrixConfigs adapterPropertiesSubgroupMatrixConfigs)
+    {
+        var n_adapterInfo = new WGPUAdapterInfo();
+        var n_adapterPropertiesSubgroupMatrixConfigs = new WGPUAdapterPropertiesSubgroupMatrixConfigs { Chain = new WGPUChainedStruct { SType = SType.AdapterPropertiesSubgroupMatrixConfigs } };
+        n_adapterInfo.NextInChain = &n_adapterPropertiesSubgroupMatrixConfigs.Chain;
+        var result = wgpuDeviceGetAdapterInfo(Handle, &n_adapterInfo);
+        adapterInfo = Marshalling.FromNative(n_adapterInfo);
+        wgpuAdapterInfoFreeMembers(n_adapterInfo);
+        adapterPropertiesSubgroupMatrixConfigs = Marshalling.FromNative(n_adapterPropertiesSubgroupMatrixConfigs);
+        wgpuAdapterPropertiesSubgroupMatrixConfigsFreeMembers(n_adapterPropertiesSubgroupMatrixConfigs);
         return result;
     }
 

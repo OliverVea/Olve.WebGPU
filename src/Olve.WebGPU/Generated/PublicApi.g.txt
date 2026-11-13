@@ -532,7 +532,9 @@ enum WaitStatus.Success = 0x1
 enum WaitStatus.TimedOut = 0x2
 method Adapter.GetFeatures() : SupportedFeatures
 method Adapter.GetInfo(out AdapterInfo info) : Status
+method Adapter.GetInfo(out AdapterInfo info, out AdapterPropertiesSubgroupMatrixConfigs adapterPropertiesSubgroupMatrixConfigs) : Status
 method Adapter.GetLimits(out Limits limits) : Status
+method Adapter.GetLimits(out Limits limits, out CompatibilityModeLimits compatibilityModeLimits) : Status
 method Adapter.HasFeature(FeatureName feature) : bool
 method Adapter.RequestDeviceAsync() : Task<RequestDeviceResult>
 method Adapter.RequestDeviceAsync(in DeviceDescriptor descriptor) : Task<RequestDeviceResult>
@@ -604,8 +606,10 @@ method Device.CreateShaderModule(in ShaderModuleDescriptor descriptor) : ShaderM
 method Device.CreateTexture(in TextureDescriptor descriptor) : Texture
 method Device.Destroy() : void
 method Device.GetAdapterInfo(out AdapterInfo adapterInfo) : Status
+method Device.GetAdapterInfo(out AdapterInfo adapterInfo, out AdapterPropertiesSubgroupMatrixConfigs adapterPropertiesSubgroupMatrixConfigs) : Status
 method Device.GetFeatures() : SupportedFeatures
 method Device.GetLimits(out Limits limits) : Status
+method Device.GetLimits(out Limits limits, out CompatibilityModeLimits compatibilityModeLimits) : Status
 method Device.GetLostFuture() : Future
 method Device.GetQueue() : Queue
 method Device.HasFeature(FeatureName feature) : bool
@@ -741,6 +745,8 @@ struct AdapterInfo.SubgroupMaxSize : uint
 struct AdapterInfo.SubgroupMinSize : uint
 struct AdapterInfo.Vendor : string = ""
 struct AdapterInfo.VendorID : uint
+struct AdapterPropertiesSubgroupMatrixConfigs : Out
+struct AdapterPropertiesSubgroupMatrixConfigs.Configs : SubgroupMatrixConfig[] = []
 struct BindGroupDescriptor : Ref
 struct BindGroupDescriptor.Entries : ReadOnlySpan<BindGroupEntry>
 struct BindGroupDescriptor.Label : ReadOnlySpan<byte>
@@ -795,6 +801,11 @@ struct CommandBufferDescriptor : Ref
 struct CommandBufferDescriptor.Label : ReadOnlySpan<byte>
 struct CommandEncoderDescriptor : Ref
 struct CommandEncoderDescriptor.Label : ReadOnlySpan<byte>
+struct CompatibilityModeLimits : Out
+struct CompatibilityModeLimits.MaxStorageBuffersInFragmentStage : uint = Wgpu.LimitU32Undefined
+struct CompatibilityModeLimits.MaxStorageBuffersInVertexStage : uint = Wgpu.LimitU32Undefined
+struct CompatibilityModeLimits.MaxStorageTexturesInFragmentStage : uint = Wgpu.LimitU32Undefined
+struct CompatibilityModeLimits.MaxStorageTexturesInVertexStage : uint = Wgpu.LimitU32Undefined
 struct CompilationInfo : Out
 struct CompilationInfo.Messages : CompilationMessage[] = []
 struct CompilationInfoResult(CompilationInfoRequestStatus Status, CompilationInfo CompilationInfo)
@@ -1017,7 +1028,7 @@ struct StorageTextureBindingLayout : Plain
 struct StorageTextureBindingLayout.Access : StorageTextureAccess = StorageTextureAccess.Undefined
 struct StorageTextureBindingLayout.Format : TextureFormat
 struct StorageTextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension.Undefined
-struct SubgroupMatrixConfig : Plain
+struct SubgroupMatrixConfig : Out
 struct SubgroupMatrixConfig.ComponentType : SubgroupMatrixComponentType
 struct SubgroupMatrixConfig.K : uint
 struct SubgroupMatrixConfig.M : uint

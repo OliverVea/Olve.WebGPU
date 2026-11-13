@@ -8,7 +8,8 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json`. The README d
 - `src/Olve.WebGPU/`: the binding. `Generated/` is generator output, so never edit it by hand. `Instance.cs` and `Native/Interop.cs` are hand-written.
 - `src/Olve.WebGPU.Native/`, `src/Olve.WebGPU.Browser/`: packaging only. The Native package packs `artifacts/native/<rid>/`. The Browser package ships `buildTransitive` files and the empty `webgpu_dawn.c` module.
 - `native/`: the layout checker's C side. `tests/Shared/`: code shared by the desktop tests and the browser tests.
-- `dawn/version.env`: the Dawn and DXC pin. Scripts, CI and package metadata read it.
+- `dawn/version.env`: the Dawn pin and the exact `Microsoft.Direct3D.DXC` version. Scripts, CI and package metadata read it.
+- `src/Olve.WebGPU.Native/buildTransitive/`: copies DXC next to `webgpu_dawn.dll` for package consumers. `build/ProjectNatives.targets` does the same for this repo's tests and samples, and also copies `artifacts/native`.
 
 ## Commands
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Links Dawn's static library into the shared library the binding loads, and builds the layout checker the tests use.
-#   artifacts/native/<rid>/        webgpu_dawn (+ dxcompiler, dxil on Windows): what Olve.WebGPU.Native packs
+#   artifacts/native/<rid>/        webgpu_dawn: what Olve.WebGPU.Native packs
 #   artifacts/layout-check/<rid>/  webgpu_layout_check: test-only, compares struct layouts and enum values with the C compiler
 # Run download-dawn.sh first.
 source "$(dirname "$0")/common.sh"
@@ -30,7 +30,6 @@ case "$RID" in
     win-x64)
         "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.def"
         cmd //c "$(cygpath -w "$ROOT/scripts/build-natives-windows.cmd")" "$(cygpath -w "$DAWN_DIR")" "$(cygpath -w "$NATIVE_DIR")" "$(cygpath -w "$LAYOUT_DIR")"
-        cp "$ROOT/artifacts/dxc/bin/x64/dxcompiler.dll" "$ROOT/artifacts/dxc/bin/x64/dxil.dll" "$NATIVE_DIR/"
         ;;
 esac
 ls -l "$NATIVE_DIR" "$LAYOUT_DIR"

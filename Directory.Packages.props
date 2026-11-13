@@ -3,6 +3,8 @@
     <PackageVersion Include="Olve.Results" Version="0.61.0" />
     <PackageVersion Include="Silk.NET.Windowing" Version="2.23.0" />
     <PackageVersion Include="TUnit" Version="1.84.0" />
+    <!-- Exact: Olve.WebGPU.Native's build files copy DXC from this version's package folder -->
+    <PackageVersion Include="Microsoft.Direct3D.DXC" Version="[$(OlveWebGPUDxcVersion)]" />
     <!-- This repo's own packages, for the package checks (-p:NativeSource=package, restored from artifacts/packages) -->
     <PackageVersion Include="Olve.WebGPU.Native" Version="$(Version)" />
     <PackageVersion Include="Olve.WebGPU.Browser" Version="$(Version)" />

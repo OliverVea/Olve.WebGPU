@@ -1,0 +1,11 @@
+<Project>
+    <!-- Packages depend on the exact version of the projects they reference ([x.y.z], not NuGet's >= x.y.z),
+         so Olve.WebGPU.Native and Olve.WebGPU.Browser never meet another Olve.WebGPU than the one they shipped with -->
+    <Target Name="PinProjectReferenceVersions" AfterTargets="_GetProjectReferenceVersions" Condition="'$(IsPackable)' == 'true'">
+        <ItemGroup>
+            <_ProjectReferencesWithVersions>
+                <ProjectVersion>[%(_ProjectReferencesWithVersions.ProjectVersion)]</ProjectVersion>
+            </_ProjectReferencesWithVersions>
+        </ItemGroup>
+    </Target>
+</Project>

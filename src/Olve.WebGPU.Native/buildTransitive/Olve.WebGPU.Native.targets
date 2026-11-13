@@ -1,0 +1,28 @@
+<Project>
+    <!-- Dawn's D3D12 backend loads dxcompiler.dll and dxil.dll from webgpu_dawn.dll's directory. They come from the
+         Microsoft.Direct3D.DXC package (a C++ package, so .NET builds get nothing from it): this copies its win-x64 DLLs
+         next to webgpu_dawn.dll in the build and publish output.
+           no RuntimeIdentifier (portable): runtimes/win-x64/native/, where the host loads webgpu_dawn.dll from
+           win-x64:                         the app directory, where the SDK puts webgpu_dawn.dll
+           any other RuntimeIdentifier:     nothing, there's no webgpu_dawn.dll for D3D12 to load them for
+         OlveWebGPUCopyDxc=false turns it off; OlveWebGPUDxcDestination overrides the folder. -->
+    <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == ''">
+        <OlveWebGPUCopyDxc Condition="'$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64'">true</OlveWebGPUCopyDxc>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == 'true'">
+        <OlveWebGPUDxcDestination Condition="'$(OlveWebGPUDxcDestination)' == '' and '$(RuntimeIdentifier)' == ''">runtimes/win-x64/native/</OlveWebGPUDxcDestination>
+        <_OlveWebGPUDxcBin>$([MSBuild]::EnsureTrailingSlash($(NuGetPackageRoot)))microsoft.direct3d.dxc/$(OlveWebGPUDxcVersion)/build/native/bin/x64/</_OlveWebGPUDxcBin>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(OlveWebGPUCopyDxc)' == 'true'">
+        <None Include="$(_OlveWebGPUDxcBin)dxcompiler.dll" Link="$(OlveWebGPUDxcDestination)dxcompiler.dll" TargetPath="$(OlveWebGPUDxcDestination)dxcompiler.dll"
+              CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" Visible="false" />
+        <None Include="$(_OlveWebGPUDxcBin)dxil.dll" Link="$(OlveWebGPUDxcDestination)dxil.dll" TargetPath="$(OlveWebGPUDxcDestination)dxil.dll"
+              CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" Visible="false" />
+    </ItemGroup>
+
+    <Target Name="OlveWebGPUCheckDxc" BeforeTargets="AssignTargetPaths" Condition="'$(OlveWebGPUCopyDxc)' == 'true' and '$(DesignTimeBuild)' != 'true'">
+        <Error Condition="!Exists('$(_OlveWebGPUDxcBin)dxcompiler.dll')"
+               Text="Olve.WebGPU.Native: Microsoft.Direct3D.DXC $(OlveWebGPUDxcVersion) not found in $(NuGetPackageRoot). It is a dependency of Olve.WebGPU.Native: restore, and don't override its version. Set OlveWebGPUCopyDxc=false to skip DXC (D3D12 then can't compile shaders)." />
+    </Target>
+</Project>

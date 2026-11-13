@@ -10,12 +10,13 @@ internal static partial class MarshalCheck
     /// <summary>Fake handles and pointers: ToNative only copies them, nothing calls through them.</summary>
     private const nint HandleBase = 0x10000;
 
-    /// <summary>Every field marshalled by the binding, and every default against webgpu.h's *_INIT.</summary>
+    /// <summary>Every field marshalled by the binding, every default against webgpu.h's *_INIT, and every struct read back from native memory.</summary>
     public static Results Run()
     {
         var r = new Results();
         Fields(r);
         Defaults(r);
+        FromNatives(r);
         return r;
     }
 
@@ -35,10 +36,10 @@ internal static partial class MarshalCheck
 
         public List<string> Mismatches { get; } = [];
 
-        public void Equal<T>(string path, T actual, T expected) where T : IEquatable<T>
+        public void Equal<T>(string path, T actual, T expected)
         {
             Checked++;
-            if (!actual.Equals(expected))
+            if (!EqualityComparer<T>.Default.Equals(actual, expected))
             {
                 Mismatches.Add($"{path}: expected {expected}, got {actual}");
             }
@@ -110,6 +111,31 @@ internal static partial class MarshalCheck
     }
 
     private static T Read<T>(ReadOnlySpan<byte> b, int offset) where T : struct => MemoryMarshal.Read<T>(b[offset..]);
+
+    private static void Write<T>(Span<byte> b, int offset, T value) where T : struct => MemoryMarshal.Write(b[offset..], in value);
+
+    /// <summary>Native memory for the strings and arrays a native struct points at, freed after FromNative has copied them.</summary>
+    internal sealed class Allocations : IDisposable
+    {
+        private readonly List<nint> _pointers = [];
+
+        public nint Copy(byte[] bytes)
+        {
+            var p = Marshal.AllocHGlobal(Math.Max(bytes.Length, 1));
+            Marshal.Copy(bytes, 0, p, bytes.Length);
+            _pointers.Add(p);
+            return p;
+        }
+
+        public void String(Span<byte> b, int at, Counter n)
+        {
+            var bytes = n.String();
+            Write(b, at, Copy(bytes));
+            Write(b, at + IntPtr.Size, (nuint)bytes.Length);
+        }
+
+        public void Dispose() => _pointers.ForEach(Marshal.FreeHGlobal);
+    }
 
     private static int Off<T>(string field) => (int)Marshal.OffsetOf<T>(field);
 

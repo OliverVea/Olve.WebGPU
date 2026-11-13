@@ -45,6 +45,19 @@ public sealed partial class Api
 
         cs.Append("    }\n\n");
 
+        var read = ReadStructs();
+        cs.Append("    public static void FromNatives(Results r)\n    {\n");
+        foreach (var name in read)
+        {
+            var c = Pascal(name);
+            var rawName = Names.RawStruct(name);
+            cs.Append($"        {{\n            using var memory = new Allocations();\n            var n = new Counter();\n            var b = new byte[Unsafe.SizeOf<{rawName}>()];\n");
+            cs.Append($"            Write{c}(b, n, memory);\n            var v = Marshalling.FromNative(MemoryMarshal.Read<{rawName}>(b));\n");
+            cs.Append($"            n = new Counter();\n            Read{c}(v, n, \"{c}\", r);\n        }}\n");
+        }
+
+        cs.Append("    }\n\n");
+
         var defaults = structs.Where(n => inBothHeaders(E(n))).ToList();
         cs.Append("    public static void Defaults(Results r)\n    {\n");
         for (var i = 0; i < defaults.Count; i++)
@@ -64,6 +77,12 @@ public sealed partial class Api
             EmitMake(name, cs);
             EmitVerify(name, cs);
             EmitDefaults(name, cs);
+        }
+
+        foreach (var name in read)
+        {
+            EmitWrite(name, cs);
+            EmitRead(name, cs);
         }
 
         cs.Append("}\n");
@@ -321,5 +340,126 @@ public sealed partial class Api
         }
 
         sb.Append("    }\n\n");
+    }
+
+    // ---------------------------------------------------------------- FromNative: native values in, public members out
+
+    /// <summary>The structs FromNative reads: the ones the implementation fills, and those made only of values (Future).</summary>
+    private List<string> ReadStructs() =>
+        _reps.Where(r => !_skipped.Contains(r.Key) && E(r.Key).Category == "structure"
+                && (r.Value == Generator.Rep.Out || (r.Value == Generator.Rep.Plain && Chains(r.Key).Count == 0 && RoundTrips(r.Key))))
+            .Select(r => r.Key).OrderBy(n => n, StringComparer.Ordinal).ToList();
+
+    /// <summary>Writes distinct values into a native struct's bytes, in dawn.json's order; strings and arrays go to native memory.</summary>
+    private void EmitWrite(string name, StringBuilder sb)
+    {
+        var s = E(name);
+        var c = Pascal(name);
+        sb.Append($"    private static void Write{c}(Span<byte> b, Counter n, Allocations memory)\n    {{\n");
+        foreach (var f in s.Members)
+        {
+            var leaf = LeafOf(s, f);
+            var at = Offset(name, f.Name);
+            var type = _m.Resolve(f.Type);
+            switch (leaf)
+            {
+                case Leaf.Skip:
+                    break;
+                case Leaf.Count:
+                    sb.Append($"        Write(b, {at}, ({Wire(f.Type)}){ArrayLength});\n");
+                    break;
+                case Leaf.Handle or Leaf.Pointer:
+                    sb.Append($"        Write(b, {at}, HandleBase + n.Next());\n");
+                    break;
+                case Leaf.Bool:
+                    sb.Append($"        Write(b, {at}, 1u);\n");
+                    break;
+                case Leaf.Scalar:
+                    sb.Append($"        Write(b, {at}, ({Wire(f.Type)})n.Next());\n");
+                    break;
+                case Leaf.String:
+                    sb.Append($"        memory.String(b, {at}, n);\n");
+                    break;
+                case Leaf.Struct:
+                    sb.Append($"        Write{Pascal(type)}(b[{at}..], n, memory);\n");
+                    break;
+                case Leaf.StructPointer:
+                    var p = $"p_{Names.LowerCamel(f.Name)}";
+                    sb.Append($"        var {p} = new byte[Unsafe.SizeOf<{Names.RawStruct(type)}>()];\n        Write{Pascal(type)}({p}, n, memory);\n");
+                    sb.Append($"        Write(b, {at}, memory.Copy({p}));\n");
+                    break;
+                case Leaf.Array:
+                    var a = $"a_{Names.LowerCamel(f.Name)}";
+                    var size = Category(type) == "structure" ? $"Unsafe.SizeOf<{Names.RawStruct(type)}>()" : $"Unsafe.SizeOf<{Wire(type)}>()";
+                    sb.Append($"        var {a} = new byte[{ArrayLength} * {size}];\n        for (var i = 0; i < {ArrayLength}; i++)\n        {{\n");
+                    sb.Append(Category(type) switch
+                    {
+                        "structure" => $"            Write{Pascal(type)}({a}.AsSpan(i * {size}, {size}), n, memory);\n",
+                        "object" => $"            Write({a}, i * {size}, HandleBase + n.Next());\n",
+                        _ => $"            Write({a}, i * {size}, ({Wire(type)})n.Next());\n",
+                    });
+                    sb.Append($"        }}\n\n        Write(b, {at}, memory.Copy({a}));\n");
+                    break;
+            }
+        }
+
+        sb.Append("    }\n\n");
+    }
+
+    /// <summary>Compares the public members FromNative gave with the values Write put in, in the same order.</summary>
+    private void EmitRead(string name, StringBuilder sb)
+    {
+        var s = E(name);
+        var c = Pascal(name);
+        sb.Append($"    private static void Read{c}({c} v, Counter n, string path, Results r)\n    {{\n");
+        foreach (var f in s.Members)
+        {
+            var leaf = LeafOf(s, f);
+            var path = $"path + \".{MemberName(s, f)}\"";
+            var member = $"v.{MemberName(s, f)}";
+            var type = _m.Resolve(f.Type);
+            if (leaf is Leaf.StructPointer && f.Optional)
+            {
+                throw new InvalidOperationException($"marshal check: optional {s.Name}.{f.Name} read back is not handled");
+            }
+
+            switch (leaf)
+            {
+                case Leaf.Skip or Leaf.Count:
+                    break;
+                case Leaf.Handle:
+                    sb.Append($"        r.Equal({path}, {member}.Handle, HandleBase + n.Next());\n");
+                    break;
+                case Leaf.Pointer:
+                    sb.Append($"        r.Equal({path}, {member}, HandleBase + n.Next());\n");
+                    break;
+                case Leaf.Bool:
+                    sb.Append($"        r.Equal({path}, {member}, true);\n");
+                    break;
+                case Leaf.Scalar:
+                    sb.Append($"        r.Equal({path}, {member}, ({Scalar(type)})n.Next());\n");
+                    break;
+                case Leaf.String:
+                    sb.Append($"        r.Equal({path}, {member}.ToString(), $\"s{{n.Next()}}\");\n");
+                    break;
+                case Leaf.Struct or Leaf.StructPointer:
+                    sb.Append($"        Read{Pascal(type)}({member}, n, {path}, r);\n");
+                    break;
+                case Leaf.Array:
+                    sb.Append($"        r.Equal({path} + \".Length\", {member}.Length, {ArrayLength});\n");
+                    sb.Append($"        for (var i = 0; i < Math.Min({member}.Length, {ArrayLength}); i++)\n        {{\n");
+                    sb.Append(Category(type) switch
+                    {
+                        "structure" => $"            Read{Pascal(type)}({member}[i], n, {path} + $\"[{{i}}]\", r);\n",
+                        "object" => $"            r.Equal({path} + $\"[{{i}}]\", {member}[i].Handle, HandleBase + n.Next());\n",
+                        _ => $"            r.Equal({path} + $\"[{{i}}]\", {member}[i], ({Scalar(type)})n.Next());\n",
+                    });
+                    sb.Append("        }\n");
+                    break;
+            }
+        }
+
+        sb.Append("    }\n");
+        sb.Append("\n");
     }
 }

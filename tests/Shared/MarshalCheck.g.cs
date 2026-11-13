@@ -614,6 +614,289 @@ internal static partial class MarshalCheck
         }
     }
 
+    public static void FromNatives(Results r)
+    {
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUAdapterInfo>()];
+            WriteAdapterInfo(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUAdapterInfo>(b));
+            n = new Counter();
+            ReadAdapterInfo(v, n, "AdapterInfo", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUBlendComponent>()];
+            WriteBlendComponent(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUBlendComponent>(b));
+            n = new Counter();
+            ReadBlendComponent(v, n, "BlendComponent", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUBlendState>()];
+            WriteBlendState(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUBlendState>(b));
+            n = new Counter();
+            ReadBlendState(v, n, "BlendState", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUColor>()];
+            WriteColor(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUColor>(b));
+            n = new Counter();
+            ReadColor(v, n, "Color", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUCompilationInfo>()];
+            WriteCompilationInfo(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUCompilationInfo>(b));
+            n = new Counter();
+            ReadCompilationInfo(v, n, "CompilationInfo", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUCompilationMessage>()];
+            WriteCompilationMessage(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUCompilationMessage>(b));
+            n = new Counter();
+            ReadCompilationMessage(v, n, "CompilationMessage", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUDawnCompilationMessageUtf16>()];
+            WriteDawnCompilationMessageUtf16(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUDawnCompilationMessageUtf16>(b));
+            n = new Counter();
+            ReadDawnCompilationMessageUtf16(v, n, "DawnCompilationMessageUtf16", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUExtent3D>()];
+            WriteExtent3D(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUExtent3D>(b));
+            n = new Counter();
+            ReadExtent3D(v, n, "Extent3D", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUExternalTextureBindingEntry>()];
+            WriteExternalTextureBindingEntry(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUExternalTextureBindingEntry>(b));
+            n = new Counter();
+            ReadExternalTextureBindingEntry(v, n, "ExternalTextureBindingEntry", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUExternalTextureBindingLayout>()];
+            WriteExternalTextureBindingLayout(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUExternalTextureBindingLayout>(b));
+            n = new Counter();
+            ReadExternalTextureBindingLayout(v, n, "ExternalTextureBindingLayout", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUFuture>()];
+            WriteFuture(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUFuture>(b));
+            n = new Counter();
+            ReadFuture(v, n, "Future", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUFutureWaitInfo>()];
+            WriteFutureWaitInfo(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUFutureWaitInfo>(b));
+            n = new Counter();
+            ReadFutureWaitInfo(v, n, "FutureWaitInfo", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUInstanceLimits>()];
+            WriteInstanceLimits(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUInstanceLimits>(b));
+            n = new Counter();
+            ReadInstanceLimits(v, n, "InstanceLimits", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPULimits>()];
+            WriteLimits(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPULimits>(b));
+            n = new Counter();
+            ReadLimits(v, n, "Limits", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUOrigin3D>()];
+            WriteOrigin3D(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUOrigin3D>(b));
+            n = new Counter();
+            ReadOrigin3D(v, n, "Origin3D", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPURenderPassMaxDrawCount>()];
+            WriteRenderPassMaxDrawCount(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPURenderPassMaxDrawCount>(b));
+            n = new Counter();
+            ReadRenderPassMaxDrawCount(v, n, "RenderPassMaxDrawCount", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPURequestAdapterWebXROptions>()];
+            WriteRequestAdapterWebXROptions(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPURequestAdapterWebXROptions>(b));
+            n = new Counter();
+            ReadRequestAdapterWebXROptions(v, n, "RequestAdapterWebXROptions", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUStencilFaceState>()];
+            WriteStencilFaceState(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUStencilFaceState>(b));
+            n = new Counter();
+            ReadStencilFaceState(v, n, "StencilFaceState", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSubgroupMatrixConfig>()];
+            WriteSubgroupMatrixConfig(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSubgroupMatrixConfig>(b));
+            n = new Counter();
+            ReadSubgroupMatrixConfig(v, n, "SubgroupMatrixConfig", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSupportedWGSLLanguageFeatures>()];
+            WriteSupportedWGSLLanguageFeatures(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSupportedWGSLLanguageFeatures>(b));
+            n = new Counter();
+            ReadSupportedWGSLLanguageFeatures(v, n, "SupportedWGSLLanguageFeatures", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSupportedFeatures>()];
+            WriteSupportedFeatures(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSupportedFeatures>(b));
+            n = new Counter();
+            ReadSupportedFeatures(v, n, "SupportedFeatures", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSupportedInstanceFeatures>()];
+            WriteSupportedInstanceFeatures(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSupportedInstanceFeatures>(b));
+            n = new Counter();
+            ReadSupportedInstanceFeatures(v, n, "SupportedInstanceFeatures", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSurfaceCapabilities>()];
+            WriteSurfaceCapabilities(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSurfaceCapabilities>(b));
+            n = new Counter();
+            ReadSurfaceCapabilities(v, n, "SurfaceCapabilities", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSurfaceColorManagement>()];
+            WriteSurfaceColorManagement(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSurfaceColorManagement>(b));
+            n = new Counter();
+            ReadSurfaceColorManagement(v, n, "SurfaceColorManagement", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUSurfaceTexture>()];
+            WriteSurfaceTexture(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUSurfaceTexture>(b));
+            n = new Counter();
+            ReadSurfaceTexture(v, n, "SurfaceTexture", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTexelCopyBufferInfo>()];
+            WriteTexelCopyBufferInfo(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTexelCopyBufferInfo>(b));
+            n = new Counter();
+            ReadTexelCopyBufferInfo(v, n, "TexelCopyBufferInfo", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTexelCopyBufferLayout>()];
+            WriteTexelCopyBufferLayout(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTexelCopyBufferLayout>(b));
+            n = new Counter();
+            ReadTexelCopyBufferLayout(v, n, "TexelCopyBufferLayout", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTexelCopyTextureInfo>()];
+            WriteTexelCopyTextureInfo(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTexelCopyTextureInfo>(b));
+            n = new Counter();
+            ReadTexelCopyTextureInfo(v, n, "TexelCopyTextureInfo", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTextureBindingViewDimension>()];
+            WriteTextureBindingViewDimension(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTextureBindingViewDimension>(b));
+            n = new Counter();
+            ReadTextureBindingViewDimension(v, n, "TextureBindingViewDimension", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTextureComponentSwizzle>()];
+            WriteTextureComponentSwizzle(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTextureComponentSwizzle>(b));
+            n = new Counter();
+            ReadTextureComponentSwizzle(v, n, "TextureComponentSwizzle", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUTextureComponentSwizzleDescriptor>()];
+            WriteTextureComponentSwizzleDescriptor(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUTextureComponentSwizzleDescriptor>(b));
+            n = new Counter();
+            ReadTextureComponentSwizzleDescriptor(v, n, "TextureComponentSwizzleDescriptor", r);
+        }
+    }
+
     public static void Defaults(Results r)
     {
         {
@@ -3351,6 +3634,553 @@ internal static partial class MarshalCheck
         r.Same(path + ".constants", Read<nint>(ours, Off<WGPUVertexState>("Constants")), Read<nint>(init, Off<WGPUVertexState>("Constants")));
         r.Same(path + ".bufferCount", Read<nuint>(ours, Off<WGPUVertexState>("BufferCount")), Read<nuint>(init, Off<WGPUVertexState>("BufferCount")));
         r.Same(path + ".buffers", Read<nint>(ours, Off<WGPUVertexState>("Buffers")), Read<nint>(init, Off<WGPUVertexState>("Buffers")));
+    }
+
+    private static void WriteAdapterInfo(Span<byte> b, Counter n, Allocations memory)
+    {
+        memory.String(b, Off<WGPUAdapterInfo>("Vendor"), n);
+        memory.String(b, Off<WGPUAdapterInfo>("Architecture"), n);
+        memory.String(b, Off<WGPUAdapterInfo>("Device"), n);
+        memory.String(b, Off<WGPUAdapterInfo>("Description"), n);
+        Write(b, Off<WGPUAdapterInfo>("BackendType"), (uint)n.Next());
+        Write(b, Off<WGPUAdapterInfo>("AdapterType"), (uint)n.Next());
+        Write(b, Off<WGPUAdapterInfo>("VendorID"), (uint)n.Next());
+        Write(b, Off<WGPUAdapterInfo>("DeviceID"), (uint)n.Next());
+        Write(b, Off<WGPUAdapterInfo>("SubgroupMinSize"), (uint)n.Next());
+        Write(b, Off<WGPUAdapterInfo>("SubgroupMaxSize"), (uint)n.Next());
+    }
+
+    private static void ReadAdapterInfo(AdapterInfo v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Vendor", v.Vendor.ToString(), $"s{n.Next()}");
+        r.Equal(path + ".Architecture", v.Architecture.ToString(), $"s{n.Next()}");
+        r.Equal(path + ".Device", v.Device.ToString(), $"s{n.Next()}");
+        r.Equal(path + ".Description", v.Description.ToString(), $"s{n.Next()}");
+        r.Equal(path + ".BackendType", v.BackendType, (BackendType)n.Next());
+        r.Equal(path + ".AdapterType", v.AdapterType, (AdapterType)n.Next());
+        r.Equal(path + ".VendorID", v.VendorID, (uint)n.Next());
+        r.Equal(path + ".DeviceID", v.DeviceID, (uint)n.Next());
+        r.Equal(path + ".SubgroupMinSize", v.SubgroupMinSize, (uint)n.Next());
+        r.Equal(path + ".SubgroupMaxSize", v.SubgroupMaxSize, (uint)n.Next());
+    }
+
+    private static void WriteBlendComponent(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUBlendComponent>("Operation"), (uint)n.Next());
+        Write(b, Off<WGPUBlendComponent>("SrcFactor"), (uint)n.Next());
+        Write(b, Off<WGPUBlendComponent>("DstFactor"), (uint)n.Next());
+    }
+
+    private static void ReadBlendComponent(BlendComponent v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Operation", v.Operation, (BlendOperation)n.Next());
+        r.Equal(path + ".SrcFactor", v.SrcFactor, (BlendFactor)n.Next());
+        r.Equal(path + ".DstFactor", v.DstFactor, (BlendFactor)n.Next());
+    }
+
+    private static void WriteBlendState(Span<byte> b, Counter n, Allocations memory)
+    {
+        WriteBlendComponent(b[Off<WGPUBlendState>("Color")..], n, memory);
+        WriteBlendComponent(b[Off<WGPUBlendState>("Alpha")..], n, memory);
+    }
+
+    private static void ReadBlendState(BlendState v, Counter n, string path, Results r)
+    {
+        ReadBlendComponent(v.Color, n, path + ".Color", r);
+        ReadBlendComponent(v.Alpha, n, path + ".Alpha", r);
+    }
+
+    private static void WriteColor(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUColor>("R"), (double)n.Next());
+        Write(b, Off<WGPUColor>("G"), (double)n.Next());
+        Write(b, Off<WGPUColor>("B"), (double)n.Next());
+        Write(b, Off<WGPUColor>("A"), (double)n.Next());
+    }
+
+    private static void ReadColor(Color v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".R", v.R, (double)n.Next());
+        r.Equal(path + ".G", v.G, (double)n.Next());
+        r.Equal(path + ".B", v.B, (double)n.Next());
+        r.Equal(path + ".A", v.A, (double)n.Next());
+    }
+
+    private static void WriteCompilationInfo(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUCompilationInfo>("MessageCount"), (nuint)2);
+        var a_messages = new byte[2 * Unsafe.SizeOf<WGPUCompilationMessage>()];
+        for (var i = 0; i < 2; i++)
+        {
+            WriteCompilationMessage(a_messages.AsSpan(i * Unsafe.SizeOf<WGPUCompilationMessage>(), Unsafe.SizeOf<WGPUCompilationMessage>()), n, memory);
+        }
+
+        Write(b, Off<WGPUCompilationInfo>("Messages"), memory.Copy(a_messages));
+    }
+
+    private static void ReadCompilationInfo(CompilationInfo v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Messages" + ".Length", v.Messages.Length, 2);
+        for (var i = 0; i < Math.Min(v.Messages.Length, 2); i++)
+        {
+            ReadCompilationMessage(v.Messages[i], n, path + ".Messages" + $"[{i}]", r);
+        }
+    }
+
+    private static void WriteCompilationMessage(Span<byte> b, Counter n, Allocations memory)
+    {
+        memory.String(b, Off<WGPUCompilationMessage>("Message"), n);
+        Write(b, Off<WGPUCompilationMessage>("Type"), (uint)n.Next());
+        Write(b, Off<WGPUCompilationMessage>("LineNum"), (ulong)n.Next());
+        Write(b, Off<WGPUCompilationMessage>("LinePos"), (ulong)n.Next());
+        Write(b, Off<WGPUCompilationMessage>("Offset"), (ulong)n.Next());
+        Write(b, Off<WGPUCompilationMessage>("Length"), (ulong)n.Next());
+    }
+
+    private static void ReadCompilationMessage(CompilationMessage v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Message", v.Message.ToString(), $"s{n.Next()}");
+        r.Equal(path + ".Type", v.Type, (CompilationMessageType)n.Next());
+        r.Equal(path + ".LineNum", v.LineNum, (ulong)n.Next());
+        r.Equal(path + ".LinePos", v.LinePos, (ulong)n.Next());
+        r.Equal(path + ".Offset", v.Offset, (ulong)n.Next());
+        r.Equal(path + ".Length", v.Length, (ulong)n.Next());
+    }
+
+    private static void WriteDawnCompilationMessageUtf16(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUDawnCompilationMessageUtf16>("LinePos"), (ulong)n.Next());
+        Write(b, Off<WGPUDawnCompilationMessageUtf16>("Offset"), (ulong)n.Next());
+        Write(b, Off<WGPUDawnCompilationMessageUtf16>("Length"), (ulong)n.Next());
+    }
+
+    private static void ReadDawnCompilationMessageUtf16(DawnCompilationMessageUtf16 v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".LinePos", v.LinePos, (ulong)n.Next());
+        r.Equal(path + ".Offset", v.Offset, (ulong)n.Next());
+        r.Equal(path + ".Length", v.Length, (ulong)n.Next());
+    }
+
+    private static void WriteExtent3D(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUExtent3D>("Width"), (uint)n.Next());
+        Write(b, Off<WGPUExtent3D>("Height"), (uint)n.Next());
+        Write(b, Off<WGPUExtent3D>("DepthOrArrayLayers"), (uint)n.Next());
+    }
+
+    private static void ReadExtent3D(Extent3D v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Width", v.Width, (uint)n.Next());
+        r.Equal(path + ".Height", v.Height, (uint)n.Next());
+        r.Equal(path + ".DepthOrArrayLayers", v.DepthOrArrayLayers, (uint)n.Next());
+    }
+
+    private static void WriteExternalTextureBindingEntry(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUExternalTextureBindingEntry>("ExternalTexture"), HandleBase + n.Next());
+    }
+
+    private static void ReadExternalTextureBindingEntry(ExternalTextureBindingEntry v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".ExternalTexture", v.ExternalTexture.Handle, HandleBase + n.Next());
+    }
+
+    private static void WriteExternalTextureBindingLayout(Span<byte> b, Counter n, Allocations memory)
+    {
+    }
+
+    private static void ReadExternalTextureBindingLayout(ExternalTextureBindingLayout v, Counter n, string path, Results r)
+    {
+    }
+
+    private static void WriteFuture(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUFuture>("Id"), (ulong)n.Next());
+    }
+
+    private static void ReadFuture(Future v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Id", v.Id, (ulong)n.Next());
+    }
+
+    private static void WriteFutureWaitInfo(Span<byte> b, Counter n, Allocations memory)
+    {
+        WriteFuture(b[Off<WGPUFutureWaitInfo>("Future")..], n, memory);
+        Write(b, Off<WGPUFutureWaitInfo>("Completed"), 1u);
+    }
+
+    private static void ReadFutureWaitInfo(FutureWaitInfo v, Counter n, string path, Results r)
+    {
+        ReadFuture(v.Future, n, path + ".Future", r);
+        r.Equal(path + ".Completed", v.Completed, true);
+    }
+
+    private static void WriteInstanceLimits(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUInstanceLimits>("TimedWaitAnyMaxCount"), (nuint)n.Next());
+    }
+
+    private static void ReadInstanceLimits(InstanceLimits v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".TimedWaitAnyMaxCount", v.TimedWaitAnyMaxCount, (nuint)n.Next());
+    }
+
+    private static void WriteLimits(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPULimits>("MaxTextureDimension1D"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxTextureDimension2D"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxTextureDimension3D"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxTextureArrayLayers"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxBindGroups"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxBindGroupsPlusVertexBuffers"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxBindingsPerBindGroup"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxDynamicUniformBuffersPerPipelineLayout"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxDynamicStorageBuffersPerPipelineLayout"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxSampledTexturesPerShaderStage"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxSamplersPerShaderStage"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxStorageBuffersPerShaderStage"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxStorageTexturesPerShaderStage"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxUniformBuffersPerShaderStage"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxUniformBufferBindingSize"), (ulong)n.Next());
+        Write(b, Off<WGPULimits>("MaxStorageBufferBindingSize"), (ulong)n.Next());
+        Write(b, Off<WGPULimits>("MinUniformBufferOffsetAlignment"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MinStorageBufferOffsetAlignment"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxVertexBuffers"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxBufferSize"), (ulong)n.Next());
+        Write(b, Off<WGPULimits>("MaxVertexAttributes"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxVertexBufferArrayStride"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxInterStageShaderVariables"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxColorAttachments"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxColorAttachmentBytesPerSample"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeWorkgroupStorageSize"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeInvocationsPerWorkgroup"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeWorkgroupSizeX"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeWorkgroupSizeY"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeWorkgroupSizeZ"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxComputeWorkgroupsPerDimension"), (uint)n.Next());
+        Write(b, Off<WGPULimits>("MaxImmediateSize"), (uint)n.Next());
+    }
+
+    private static void ReadLimits(Limits v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".MaxTextureDimension1D", v.MaxTextureDimension1D, (uint)n.Next());
+        r.Equal(path + ".MaxTextureDimension2D", v.MaxTextureDimension2D, (uint)n.Next());
+        r.Equal(path + ".MaxTextureDimension3D", v.MaxTextureDimension3D, (uint)n.Next());
+        r.Equal(path + ".MaxTextureArrayLayers", v.MaxTextureArrayLayers, (uint)n.Next());
+        r.Equal(path + ".MaxBindGroups", v.MaxBindGroups, (uint)n.Next());
+        r.Equal(path + ".MaxBindGroupsPlusVertexBuffers", v.MaxBindGroupsPlusVertexBuffers, (uint)n.Next());
+        r.Equal(path + ".MaxBindingsPerBindGroup", v.MaxBindingsPerBindGroup, (uint)n.Next());
+        r.Equal(path + ".MaxDynamicUniformBuffersPerPipelineLayout", v.MaxDynamicUniformBuffersPerPipelineLayout, (uint)n.Next());
+        r.Equal(path + ".MaxDynamicStorageBuffersPerPipelineLayout", v.MaxDynamicStorageBuffersPerPipelineLayout, (uint)n.Next());
+        r.Equal(path + ".MaxSampledTexturesPerShaderStage", v.MaxSampledTexturesPerShaderStage, (uint)n.Next());
+        r.Equal(path + ".MaxSamplersPerShaderStage", v.MaxSamplersPerShaderStage, (uint)n.Next());
+        r.Equal(path + ".MaxStorageBuffersPerShaderStage", v.MaxStorageBuffersPerShaderStage, (uint)n.Next());
+        r.Equal(path + ".MaxStorageTexturesPerShaderStage", v.MaxStorageTexturesPerShaderStage, (uint)n.Next());
+        r.Equal(path + ".MaxUniformBuffersPerShaderStage", v.MaxUniformBuffersPerShaderStage, (uint)n.Next());
+        r.Equal(path + ".MaxUniformBufferBindingSize", v.MaxUniformBufferBindingSize, (ulong)n.Next());
+        r.Equal(path + ".MaxStorageBufferBindingSize", v.MaxStorageBufferBindingSize, (ulong)n.Next());
+        r.Equal(path + ".MinUniformBufferOffsetAlignment", v.MinUniformBufferOffsetAlignment, (uint)n.Next());
+        r.Equal(path + ".MinStorageBufferOffsetAlignment", v.MinStorageBufferOffsetAlignment, (uint)n.Next());
+        r.Equal(path + ".MaxVertexBuffers", v.MaxVertexBuffers, (uint)n.Next());
+        r.Equal(path + ".MaxBufferSize", v.MaxBufferSize, (ulong)n.Next());
+        r.Equal(path + ".MaxVertexAttributes", v.MaxVertexAttributes, (uint)n.Next());
+        r.Equal(path + ".MaxVertexBufferArrayStride", v.MaxVertexBufferArrayStride, (uint)n.Next());
+        r.Equal(path + ".MaxInterStageShaderVariables", v.MaxInterStageShaderVariables, (uint)n.Next());
+        r.Equal(path + ".MaxColorAttachments", v.MaxColorAttachments, (uint)n.Next());
+        r.Equal(path + ".MaxColorAttachmentBytesPerSample", v.MaxColorAttachmentBytesPerSample, (uint)n.Next());
+        r.Equal(path + ".MaxComputeWorkgroupStorageSize", v.MaxComputeWorkgroupStorageSize, (uint)n.Next());
+        r.Equal(path + ".MaxComputeInvocationsPerWorkgroup", v.MaxComputeInvocationsPerWorkgroup, (uint)n.Next());
+        r.Equal(path + ".MaxComputeWorkgroupSizeX", v.MaxComputeWorkgroupSizeX, (uint)n.Next());
+        r.Equal(path + ".MaxComputeWorkgroupSizeY", v.MaxComputeWorkgroupSizeY, (uint)n.Next());
+        r.Equal(path + ".MaxComputeWorkgroupSizeZ", v.MaxComputeWorkgroupSizeZ, (uint)n.Next());
+        r.Equal(path + ".MaxComputeWorkgroupsPerDimension", v.MaxComputeWorkgroupsPerDimension, (uint)n.Next());
+        r.Equal(path + ".MaxImmediateSize", v.MaxImmediateSize, (uint)n.Next());
+    }
+
+    private static void WriteOrigin3D(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUOrigin3D>("X"), (uint)n.Next());
+        Write(b, Off<WGPUOrigin3D>("Y"), (uint)n.Next());
+        Write(b, Off<WGPUOrigin3D>("Z"), (uint)n.Next());
+    }
+
+    private static void ReadOrigin3D(Origin3D v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".X", v.X, (uint)n.Next());
+        r.Equal(path + ".Y", v.Y, (uint)n.Next());
+        r.Equal(path + ".Z", v.Z, (uint)n.Next());
+    }
+
+    private static void WriteRenderPassMaxDrawCount(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPURenderPassMaxDrawCount>("MaxDrawCount"), (ulong)n.Next());
+    }
+
+    private static void ReadRenderPassMaxDrawCount(RenderPassMaxDrawCount v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".MaxDrawCount", v.MaxDrawCount, (ulong)n.Next());
+    }
+
+    private static void WriteRequestAdapterWebXROptions(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPURequestAdapterWebXROptions>("XrCompatible"), 1u);
+    }
+
+    private static void ReadRequestAdapterWebXROptions(RequestAdapterWebXROptions v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".XrCompatible", v.XrCompatible, true);
+    }
+
+    private static void WriteStencilFaceState(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUStencilFaceState>("Compare"), (uint)n.Next());
+        Write(b, Off<WGPUStencilFaceState>("FailOp"), (uint)n.Next());
+        Write(b, Off<WGPUStencilFaceState>("DepthFailOp"), (uint)n.Next());
+        Write(b, Off<WGPUStencilFaceState>("PassOp"), (uint)n.Next());
+    }
+
+    private static void ReadStencilFaceState(StencilFaceState v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Compare", v.Compare, (CompareFunction)n.Next());
+        r.Equal(path + ".FailOp", v.FailOp, (StencilOperation)n.Next());
+        r.Equal(path + ".DepthFailOp", v.DepthFailOp, (StencilOperation)n.Next());
+        r.Equal(path + ".PassOp", v.PassOp, (StencilOperation)n.Next());
+    }
+
+    private static void WriteSubgroupMatrixConfig(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSubgroupMatrixConfig>("ComponentType"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("ResultComponentType"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("M"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("N"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("K"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("MinSubgroupSize"), (uint)n.Next());
+        Write(b, Off<WGPUSubgroupMatrixConfig>("MaxSubgroupSize"), (uint)n.Next());
+    }
+
+    private static void ReadSubgroupMatrixConfig(SubgroupMatrixConfig v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".ComponentType", v.ComponentType, (SubgroupMatrixComponentType)n.Next());
+        r.Equal(path + ".ResultComponentType", v.ResultComponentType, (SubgroupMatrixComponentType)n.Next());
+        r.Equal(path + ".M", v.M, (uint)n.Next());
+        r.Equal(path + ".N", v.N, (uint)n.Next());
+        r.Equal(path + ".K", v.K, (uint)n.Next());
+        r.Equal(path + ".MinSubgroupSize", v.MinSubgroupSize, (uint)n.Next());
+        r.Equal(path + ".MaxSubgroupSize", v.MaxSubgroupSize, (uint)n.Next());
+    }
+
+    private static void WriteSupportedWGSLLanguageFeatures(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSupportedWGSLLanguageFeatures>("FeatureCount"), (nuint)2);
+        var a_features = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_features, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSupportedWGSLLanguageFeatures>("Features"), memory.Copy(a_features));
+    }
+
+    private static void ReadSupportedWGSLLanguageFeatures(SupportedWGSLLanguageFeatures v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Features" + ".Length", v.Features.Length, 2);
+        for (var i = 0; i < Math.Min(v.Features.Length, 2); i++)
+        {
+            r.Equal(path + ".Features" + $"[{i}]", v.Features[i], (WGSLLanguageFeatureName)n.Next());
+        }
+    }
+
+    private static void WriteSupportedFeatures(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSupportedFeatures>("FeatureCount"), (nuint)2);
+        var a_features = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_features, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSupportedFeatures>("Features"), memory.Copy(a_features));
+    }
+
+    private static void ReadSupportedFeatures(SupportedFeatures v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Features" + ".Length", v.Features.Length, 2);
+        for (var i = 0; i < Math.Min(v.Features.Length, 2); i++)
+        {
+            r.Equal(path + ".Features" + $"[{i}]", v.Features[i], (FeatureName)n.Next());
+        }
+    }
+
+    private static void WriteSupportedInstanceFeatures(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSupportedInstanceFeatures>("FeatureCount"), (nuint)2);
+        var a_features = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_features, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSupportedInstanceFeatures>("Features"), memory.Copy(a_features));
+    }
+
+    private static void ReadSupportedInstanceFeatures(SupportedInstanceFeatures v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Features" + ".Length", v.Features.Length, 2);
+        for (var i = 0; i < Math.Min(v.Features.Length, 2); i++)
+        {
+            r.Equal(path + ".Features" + $"[{i}]", v.Features[i], (InstanceFeatureName)n.Next());
+        }
+    }
+
+    private static void WriteSurfaceCapabilities(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSurfaceCapabilities>("Usages"), (ulong)n.Next());
+        Write(b, Off<WGPUSurfaceCapabilities>("FormatCount"), (nuint)2);
+        var a_formats = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_formats, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSurfaceCapabilities>("Formats"), memory.Copy(a_formats));
+        Write(b, Off<WGPUSurfaceCapabilities>("PresentModeCount"), (nuint)2);
+        var a_presentModes = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_presentModes, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSurfaceCapabilities>("PresentModes"), memory.Copy(a_presentModes));
+        Write(b, Off<WGPUSurfaceCapabilities>("AlphaModeCount"), (nuint)2);
+        var a_alphaModes = new byte[2 * Unsafe.SizeOf<uint>()];
+        for (var i = 0; i < 2; i++)
+        {
+            Write(a_alphaModes, i * Unsafe.SizeOf<uint>(), (uint)n.Next());
+        }
+
+        Write(b, Off<WGPUSurfaceCapabilities>("AlphaModes"), memory.Copy(a_alphaModes));
+    }
+
+    private static void ReadSurfaceCapabilities(SurfaceCapabilities v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Usages", v.Usages, (TextureUsage)n.Next());
+        r.Equal(path + ".Formats" + ".Length", v.Formats.Length, 2);
+        for (var i = 0; i < Math.Min(v.Formats.Length, 2); i++)
+        {
+            r.Equal(path + ".Formats" + $"[{i}]", v.Formats[i], (TextureFormat)n.Next());
+        }
+        r.Equal(path + ".PresentModes" + ".Length", v.PresentModes.Length, 2);
+        for (var i = 0; i < Math.Min(v.PresentModes.Length, 2); i++)
+        {
+            r.Equal(path + ".PresentModes" + $"[{i}]", v.PresentModes[i], (PresentMode)n.Next());
+        }
+        r.Equal(path + ".AlphaModes" + ".Length", v.AlphaModes.Length, 2);
+        for (var i = 0; i < Math.Min(v.AlphaModes.Length, 2); i++)
+        {
+            r.Equal(path + ".AlphaModes" + $"[{i}]", v.AlphaModes[i], (CompositeAlphaMode)n.Next());
+        }
+    }
+
+    private static void WriteSurfaceColorManagement(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSurfaceColorManagement>("ColorSpace"), (uint)n.Next());
+        Write(b, Off<WGPUSurfaceColorManagement>("ToneMappingMode"), (uint)n.Next());
+    }
+
+    private static void ReadSurfaceColorManagement(SurfaceColorManagement v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".ColorSpace", v.ColorSpace, (PredefinedColorSpace)n.Next());
+        r.Equal(path + ".ToneMappingMode", v.ToneMappingMode, (ToneMappingMode)n.Next());
+    }
+
+    private static void WriteSurfaceTexture(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUSurfaceTexture>("Texture"), HandleBase + n.Next());
+        Write(b, Off<WGPUSurfaceTexture>("Status"), (uint)n.Next());
+    }
+
+    private static void ReadSurfaceTexture(SurfaceTexture v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Texture", v.Texture.Handle, HandleBase + n.Next());
+        r.Equal(path + ".Status", v.Status, (SurfaceGetCurrentTextureStatus)n.Next());
+    }
+
+    private static void WriteTexelCopyBufferInfo(Span<byte> b, Counter n, Allocations memory)
+    {
+        WriteTexelCopyBufferLayout(b[Off<WGPUTexelCopyBufferInfo>("Layout")..], n, memory);
+        Write(b, Off<WGPUTexelCopyBufferInfo>("Buffer"), HandleBase + n.Next());
+    }
+
+    private static void ReadTexelCopyBufferInfo(TexelCopyBufferInfo v, Counter n, string path, Results r)
+    {
+        ReadTexelCopyBufferLayout(v.Layout, n, path + ".Layout", r);
+        r.Equal(path + ".Buffer", v.Buffer.Handle, HandleBase + n.Next());
+    }
+
+    private static void WriteTexelCopyBufferLayout(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUTexelCopyBufferLayout>("Offset"), (ulong)n.Next());
+        Write(b, Off<WGPUTexelCopyBufferLayout>("BytesPerRow"), (uint)n.Next());
+        Write(b, Off<WGPUTexelCopyBufferLayout>("RowsPerImage"), (uint)n.Next());
+    }
+
+    private static void ReadTexelCopyBufferLayout(TexelCopyBufferLayout v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Offset", v.Offset, (ulong)n.Next());
+        r.Equal(path + ".BytesPerRow", v.BytesPerRow, (uint)n.Next());
+        r.Equal(path + ".RowsPerImage", v.RowsPerImage, (uint)n.Next());
+    }
+
+    private static void WriteTexelCopyTextureInfo(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUTexelCopyTextureInfo>("Texture"), HandleBase + n.Next());
+        Write(b, Off<WGPUTexelCopyTextureInfo>("MipLevel"), (uint)n.Next());
+        WriteOrigin3D(b[Off<WGPUTexelCopyTextureInfo>("Origin")..], n, memory);
+        Write(b, Off<WGPUTexelCopyTextureInfo>("Aspect"), (uint)n.Next());
+    }
+
+    private static void ReadTexelCopyTextureInfo(TexelCopyTextureInfo v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Texture", v.Texture.Handle, HandleBase + n.Next());
+        r.Equal(path + ".MipLevel", v.MipLevel, (uint)n.Next());
+        ReadOrigin3D(v.Origin, n, path + ".Origin", r);
+        r.Equal(path + ".Aspect", v.Aspect, (TextureAspect)n.Next());
+    }
+
+    private static void WriteTextureBindingViewDimension(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUTextureBindingViewDimension>("TextureBindingViewDimension"), (uint)n.Next());
+    }
+
+    private static void ReadTextureBindingViewDimension(TextureBindingViewDimension v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".TextureBindingViewDimensionValue", v.TextureBindingViewDimensionValue, (TextureViewDimension)n.Next());
+    }
+
+    private static void WriteTextureComponentSwizzle(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUTextureComponentSwizzle>("R"), (uint)n.Next());
+        Write(b, Off<WGPUTextureComponentSwizzle>("G"), (uint)n.Next());
+        Write(b, Off<WGPUTextureComponentSwizzle>("B"), (uint)n.Next());
+        Write(b, Off<WGPUTextureComponentSwizzle>("A"), (uint)n.Next());
+    }
+
+    private static void ReadTextureComponentSwizzle(TextureComponentSwizzle v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".R", v.R, (ComponentSwizzle)n.Next());
+        r.Equal(path + ".G", v.G, (ComponentSwizzle)n.Next());
+        r.Equal(path + ".B", v.B, (ComponentSwizzle)n.Next());
+        r.Equal(path + ".A", v.A, (ComponentSwizzle)n.Next());
+    }
+
+    private static void WriteTextureComponentSwizzleDescriptor(Span<byte> b, Counter n, Allocations memory)
+    {
+        WriteTextureComponentSwizzle(b[Off<WGPUTextureComponentSwizzleDescriptor>("Swizzle")..], n, memory);
+    }
+
+    private static void ReadTextureComponentSwizzleDescriptor(TextureComponentSwizzleDescriptor v, Counter n, string path, Results r)
+    {
+        ReadTextureComponentSwizzle(v.Swizzle, n, path + ".Swizzle", r);
     }
 
 }

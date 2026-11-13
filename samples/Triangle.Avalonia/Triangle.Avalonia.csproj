@@ -4,6 +4,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Avalonia" />

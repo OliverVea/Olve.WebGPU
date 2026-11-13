@@ -1,0 +1,1139 @@
+const Wgpu.ArrayLayerCountUndefined : uint = uint.MaxValue
+const Wgpu.CopyStrideUndefined : uint = uint.MaxValue
+const Wgpu.DepthClearValueUndefined : float = float.NaN
+const Wgpu.DepthSliceUndefined : uint = uint.MaxValue
+const Wgpu.LimitU32Undefined : uint = uint.MaxValue
+const Wgpu.LimitU64Undefined : ulong = ulong.MaxValue
+const Wgpu.MipLevelCountUndefined : uint = uint.MaxValue
+const Wgpu.QuerySetIndexUndefined : uint = uint.MaxValue
+const Wgpu.Strlen : nuint = nuint.MaxValue
+const Wgpu.WholeMapSize : nuint = nuint.MaxValue
+const Wgpu.WholeSize : ulong = ulong.MaxValue
+delegate DeviceLostCallback(Device device, DeviceLostReason reason, string message)
+delegate UncapturedErrorCallback(Device device, ErrorType type, string message)
+enum AdapterType
+enum AdapterType.CPU = 0x3
+enum AdapterType.DiscreteGPU = 0x1
+enum AdapterType.IntegratedGPU = 0x2
+enum AdapterType.Unknown = 0x4
+enum AddressMode
+enum AddressMode.ClampToEdge = 0x1
+enum AddressMode.MirrorRepeat = 0x3
+enum AddressMode.Repeat = 0x2
+enum AddressMode.Undefined = 0x0
+enum BackendType
+enum BackendType.D3D11 = 0x3
+enum BackendType.D3D12 = 0x4
+enum BackendType.Metal = 0x5
+enum BackendType.Null = 0x1
+enum BackendType.OpenGL = 0x7
+enum BackendType.OpenGLES = 0x8
+enum BackendType.Undefined = 0x0
+enum BackendType.Vulkan = 0x6
+enum BackendType.WebGPU = 0x2
+enum BlendFactor
+enum BlendFactor.Constant = 0xC
+enum BlendFactor.Dst = 0x7
+enum BlendFactor.DstAlpha = 0x9
+enum BlendFactor.One = 0x2
+enum BlendFactor.OneMinusConstant = 0xD
+enum BlendFactor.OneMinusDst = 0x8
+enum BlendFactor.OneMinusDstAlpha = 0xA
+enum BlendFactor.OneMinusSrc = 0x4
+enum BlendFactor.OneMinusSrc1 = 0xF
+enum BlendFactor.OneMinusSrc1Alpha = 0x11
+enum BlendFactor.OneMinusSrcAlpha = 0x6
+enum BlendFactor.Src = 0x3
+enum BlendFactor.Src1 = 0xE
+enum BlendFactor.Src1Alpha = 0x10
+enum BlendFactor.SrcAlpha = 0x5
+enum BlendFactor.SrcAlphaSaturated = 0xB
+enum BlendFactor.Undefined = 0x0
+enum BlendFactor.Zero = 0x1
+enum BlendOperation
+enum BlendOperation.Add = 0x1
+enum BlendOperation.Max = 0x5
+enum BlendOperation.Min = 0x4
+enum BlendOperation.ReverseSubtract = 0x3
+enum BlendOperation.Subtract = 0x2
+enum BlendOperation.Undefined = 0x0
+enum BufferBindingType
+enum BufferBindingType.BindingNotUsed = 0x0
+enum BufferBindingType.ReadOnlyStorage = 0x4
+enum BufferBindingType.Storage = 0x3
+enum BufferBindingType.Undefined = 0x1
+enum BufferBindingType.Uniform = 0x2
+enum BufferMapState
+enum BufferMapState.Mapped = 0x3
+enum BufferMapState.Pending = 0x2
+enum BufferMapState.Unmapped = 0x1
+enum BufferUsage
+enum BufferUsage.CopyDst = 0x8
+enum BufferUsage.CopySrc = 0x4
+enum BufferUsage.Index = 0x10
+enum BufferUsage.Indirect = 0x100
+enum BufferUsage.MapRead = 0x1
+enum BufferUsage.MapWrite = 0x2
+enum BufferUsage.None = 0x0
+enum BufferUsage.QueryResolve = 0x200
+enum BufferUsage.Storage = 0x80
+enum BufferUsage.Uniform = 0x40
+enum BufferUsage.Vertex = 0x20
+enum CallbackMode
+enum CallbackMode.AllowProcessEvents = 0x2
+enum CallbackMode.AllowSpontaneous = 0x3
+enum CallbackMode.WaitAnyOnly = 0x1
+enum ColorWriteMask
+enum ColorWriteMask.All = 0xF
+enum ColorWriteMask.Alpha = 0x8
+enum ColorWriteMask.Blue = 0x4
+enum ColorWriteMask.Green = 0x2
+enum ColorWriteMask.None = 0x0
+enum ColorWriteMask.Red = 0x1
+enum CompareFunction
+enum CompareFunction.Always = 0x8
+enum CompareFunction.Equal = 0x3
+enum CompareFunction.Greater = 0x5
+enum CompareFunction.GreaterEqual = 0x7
+enum CompareFunction.Less = 0x2
+enum CompareFunction.LessEqual = 0x4
+enum CompareFunction.Never = 0x1
+enum CompareFunction.NotEqual = 0x6
+enum CompareFunction.Undefined = 0x0
+enum CompilationInfoRequestStatus
+enum CompilationInfoRequestStatus.CallbackCancelled = 0x2
+enum CompilationInfoRequestStatus.Success = 0x1
+enum CompilationMessageType
+enum CompilationMessageType.Error = 0x1
+enum CompilationMessageType.Info = 0x3
+enum CompilationMessageType.Warning = 0x2
+enum ComponentSwizzle
+enum ComponentSwizzle.A = 0x6
+enum ComponentSwizzle.B = 0x5
+enum ComponentSwizzle.G = 0x4
+enum ComponentSwizzle.One = 0x2
+enum ComponentSwizzle.R = 0x3
+enum ComponentSwizzle.Undefined = 0x0
+enum ComponentSwizzle.Zero = 0x1
+enum CompositeAlphaMode
+enum CompositeAlphaMode.Auto = 0x0
+enum CompositeAlphaMode.Inherit = 0x4
+enum CompositeAlphaMode.Opaque = 0x1
+enum CompositeAlphaMode.Premultiplied = 0x2
+enum CompositeAlphaMode.Unpremultiplied = 0x3
+enum CreatePipelineAsyncStatus
+enum CreatePipelineAsyncStatus.CallbackCancelled = 0x2
+enum CreatePipelineAsyncStatus.InternalError = 0x4
+enum CreatePipelineAsyncStatus.Success = 0x1
+enum CreatePipelineAsyncStatus.ValidationError = 0x3
+enum CullMode
+enum CullMode.Back = 0x3
+enum CullMode.Front = 0x2
+enum CullMode.None = 0x1
+enum CullMode.Undefined = 0x0
+enum DeviceLostReason
+enum DeviceLostReason.CallbackCancelled = 0x3
+enum DeviceLostReason.Destroyed = 0x2
+enum DeviceLostReason.FailedCreation = 0x4
+enum DeviceLostReason.Unknown = 0x1
+enum ErrorFilter
+enum ErrorFilter.Internal = 0x3
+enum ErrorFilter.OutOfMemory = 0x2
+enum ErrorFilter.Validation = 0x1
+enum ErrorType
+enum ErrorType.Internal = 0x4
+enum ErrorType.NoError = 0x1
+enum ErrorType.OutOfMemory = 0x3
+enum ErrorType.Unknown = 0x5
+enum ErrorType.Validation = 0x2
+enum FeatureLevel
+enum FeatureLevel.Compatibility = 0x1
+enum FeatureLevel.Core = 0x2
+enum FeatureLevel.Undefined = 0x0
+enum FeatureName
+enum FeatureName.AtomicVec2uMinMax = 0x19
+enum FeatureName.BGRA8UnormStorage = 0xD
+enum FeatureName.ChromiumExperimentalSubgroupMatrix = 0x50034
+enum FeatureName.ClipDistances = 0x10
+enum FeatureName.CoreFeaturesAndLimits = 0x1
+enum FeatureName.Depth32FloatStencil8 = 0x3
+enum FeatureName.DepthClipControl = 0x2
+enum FeatureName.DualSourceBlending = 0x11
+enum FeatureName.Float32Blendable = 0xF
+enum FeatureName.Float32Filterable = 0xE
+enum FeatureName.IndirectFirstInstance = 0xA
+enum FeatureName.MultiDrawIndirect = 0x50031
+enum FeatureName.PrimitiveIndex = 0x15
+enum FeatureName.RG11B10UfloatRenderable = 0xC
+enum FeatureName.ShaderF16 = 0xB
+enum FeatureName.SubgroupSizeControl = 0x17
+enum FeatureName.Subgroups = 0x12
+enum FeatureName.TextureComponentSwizzle = 0x16
+enum FeatureName.TextureCompressionASTC = 0x7
+enum FeatureName.TextureCompressionASTCSliced3D = 0x8
+enum FeatureName.TextureCompressionBC = 0x4
+enum FeatureName.TextureCompressionBCSliced3D = 0x5
+enum FeatureName.TextureCompressionETC2 = 0x6
+enum FeatureName.TextureCompressionUnaligned = 0x18
+enum FeatureName.TextureFormatsTier1 = 0x13
+enum FeatureName.TextureFormatsTier2 = 0x14
+enum FeatureName.TimestampQuery = 0x9
+enum FeatureName.Unorm16TextureFormats = 0x5000C
+enum FilterMode
+enum FilterMode.Linear = 0x2
+enum FilterMode.Nearest = 0x1
+enum FilterMode.Undefined = 0x0
+enum FrontFace
+enum FrontFace.CCW = 0x1
+enum FrontFace.CW = 0x2
+enum FrontFace.Undefined = 0x0
+enum IndexFormat
+enum IndexFormat.Uint16 = 0x1
+enum IndexFormat.Uint32 = 0x2
+enum IndexFormat.Undefined = 0x0
+enum InstanceFeatureName
+enum InstanceFeatureName.MultipleDevicesPerAdapter = 0x3
+enum InstanceFeatureName.ShaderSourceSPIRV = 0x2
+enum InstanceFeatureName.TimedWaitAny = 0x1
+enum LoadOp
+enum LoadOp.Clear = 0x2
+enum LoadOp.Load = 0x1
+enum LoadOp.Undefined = 0x0
+enum MapAsyncStatus
+enum MapAsyncStatus.Aborted = 0x4
+enum MapAsyncStatus.CallbackCancelled = 0x2
+enum MapAsyncStatus.Error = 0x3
+enum MapAsyncStatus.Success = 0x1
+enum MapMode
+enum MapMode.None = 0x0
+enum MapMode.Read = 0x1
+enum MapMode.Write = 0x2
+enum MipmapFilterMode
+enum MipmapFilterMode.Linear = 0x2
+enum MipmapFilterMode.Nearest = 0x1
+enum MipmapFilterMode.Undefined = 0x0
+enum OptionalBool
+enum OptionalBool.False = 0x0
+enum OptionalBool.True = 0x1
+enum OptionalBool.Undefined = 0x2
+enum PopErrorScopeStatus
+enum PopErrorScopeStatus.CallbackCancelled = 0x2
+enum PopErrorScopeStatus.Error = 0x3
+enum PopErrorScopeStatus.Success = 0x1
+enum PowerPreference
+enum PowerPreference.HighPerformance = 0x2
+enum PowerPreference.LowPower = 0x1
+enum PowerPreference.Undefined = 0x0
+enum PredefinedColorSpace
+enum PredefinedColorSpace.DisplayP3 = 0x2
+enum PredefinedColorSpace.SRGB = 0x1
+enum PresentMode
+enum PresentMode.Fifo = 0x1
+enum PresentMode.FifoRelaxed = 0x2
+enum PresentMode.Immediate = 0x3
+enum PresentMode.Mailbox = 0x4
+enum PresentMode.Undefined = 0x0
+enum PrimitiveTopology
+enum PrimitiveTopology.LineList = 0x2
+enum PrimitiveTopology.LineStrip = 0x3
+enum PrimitiveTopology.PointList = 0x1
+enum PrimitiveTopology.TriangleList = 0x4
+enum PrimitiveTopology.TriangleStrip = 0x5
+enum PrimitiveTopology.Undefined = 0x0
+enum QueryType
+enum QueryType.Occlusion = 0x1
+enum QueryType.Timestamp = 0x2
+enum QueueWorkDoneStatus
+enum QueueWorkDoneStatus.CallbackCancelled = 0x2
+enum QueueWorkDoneStatus.Error = 0x3
+enum QueueWorkDoneStatus.Success = 0x1
+enum RequestAdapterStatus
+enum RequestAdapterStatus.CallbackCancelled = 0x2
+enum RequestAdapterStatus.Error = 0x4
+enum RequestAdapterStatus.Success = 0x1
+enum RequestAdapterStatus.Unavailable = 0x3
+enum RequestDeviceStatus
+enum RequestDeviceStatus.CallbackCancelled = 0x2
+enum RequestDeviceStatus.Error = 0x3
+enum RequestDeviceStatus.Success = 0x1
+enum SType
+enum SType.AdapterPropertiesSubgroupMatrixConfigs = 0x5003B
+enum SType.CompatibilityModeLimits = 0xF
+enum SType.DawnCompilationMessageUtf16 = 0x5003F
+enum SType.EmscriptenSurfaceSourceCanvasHTMLSelector = 0x40000
+enum SType.ExternalTextureBindingEntry = 0xE
+enum SType.ExternalTextureBindingLayout = 0xD
+enum SType.RenderPassMaxDrawCount = 0x3
+enum SType.RequestAdapterWebXROptions = 0xB
+enum SType.ShaderSourceSPIRV = 0x1
+enum SType.ShaderSourceWGSL = 0x2
+enum SType.SurfaceColorManagement = 0xA
+enum SType.SurfaceSourceAndroidNativeWindow = 0x8
+enum SType.SurfaceSourceMetalLayer = 0x4
+enum SType.SurfaceSourceWaylandSurface = 0x7
+enum SType.SurfaceSourceWindowsHWND = 0x5
+enum SType.SurfaceSourceXCBWindow = 0x9
+enum SType.SurfaceSourceXlibWindow = 0x6
+enum SType.TextureBindingViewDimension = 0x10
+enum SType.TextureComponentSwizzleDescriptor = 0xC
+enum SamplerBindingType
+enum SamplerBindingType.BindingNotUsed = 0x0
+enum SamplerBindingType.Comparison = 0x4
+enum SamplerBindingType.Filtering = 0x2
+enum SamplerBindingType.NonFiltering = 0x3
+enum SamplerBindingType.Undefined = 0x1
+enum ShaderStage
+enum ShaderStage.Compute = 0x4
+enum ShaderStage.Fragment = 0x2
+enum ShaderStage.None = 0x0
+enum ShaderStage.Vertex = 0x1
+enum Status
+enum Status.Error = 0x2
+enum Status.Success = 0x1
+enum StencilOperation
+enum StencilOperation.DecrementClamp = 0x6
+enum StencilOperation.DecrementWrap = 0x8
+enum StencilOperation.IncrementClamp = 0x5
+enum StencilOperation.IncrementWrap = 0x7
+enum StencilOperation.Invert = 0x4
+enum StencilOperation.Keep = 0x1
+enum StencilOperation.Replace = 0x3
+enum StencilOperation.Undefined = 0x0
+enum StencilOperation.Zero = 0x2
+enum StorageTextureAccess
+enum StorageTextureAccess.BindingNotUsed = 0x0
+enum StorageTextureAccess.ReadOnly = 0x3
+enum StorageTextureAccess.ReadWrite = 0x4
+enum StorageTextureAccess.Undefined = 0x1
+enum StorageTextureAccess.WriteOnly = 0x2
+enum StoreOp
+enum StoreOp.Discard = 0x2
+enum StoreOp.Store = 0x1
+enum StoreOp.Undefined = 0x0
+enum SubgroupMatrixComponentType
+enum SubgroupMatrixComponentType.F16 = 0x2
+enum SubgroupMatrixComponentType.F32 = 0x1
+enum SubgroupMatrixComponentType.I32 = 0x4
+enum SubgroupMatrixComponentType.I8 = 0x6
+enum SubgroupMatrixComponentType.U32 = 0x3
+enum SubgroupMatrixComponentType.U8 = 0x5
+enum SurfaceGetCurrentTextureStatus
+enum SurfaceGetCurrentTextureStatus.Error = 0x6
+enum SurfaceGetCurrentTextureStatus.Lost = 0x5
+enum SurfaceGetCurrentTextureStatus.Outdated = 0x4
+enum SurfaceGetCurrentTextureStatus.SuccessOptimal = 0x1
+enum SurfaceGetCurrentTextureStatus.SuccessSuboptimal = 0x2
+enum SurfaceGetCurrentTextureStatus.Timeout = 0x3
+enum TextureAspect
+enum TextureAspect.All = 0x1
+enum TextureAspect.DepthOnly = 0x3
+enum TextureAspect.StencilOnly = 0x2
+enum TextureAspect.Undefined = 0x0
+enum TextureDimension
+enum TextureDimension.Undefined = 0x0
+enum TextureDimension._1D = 0x1
+enum TextureDimension._2D = 0x2
+enum TextureDimension._3D = 0x3
+enum TextureFormat
+enum TextureFormat.ASTC10x10Unorm = 0x60
+enum TextureFormat.ASTC10x10UnormSrgb = 0x61
+enum TextureFormat.ASTC10x5Unorm = 0x5A
+enum TextureFormat.ASTC10x5UnormSrgb = 0x5B
+enum TextureFormat.ASTC10x6Unorm = 0x5C
+enum TextureFormat.ASTC10x6UnormSrgb = 0x5D
+enum TextureFormat.ASTC10x8Unorm = 0x5E
+enum TextureFormat.ASTC10x8UnormSrgb = 0x5F
+enum TextureFormat.ASTC12x10Unorm = 0x62
+enum TextureFormat.ASTC12x10UnormSrgb = 0x63
+enum TextureFormat.ASTC12x12Unorm = 0x64
+enum TextureFormat.ASTC12x12UnormSrgb = 0x65
+enum TextureFormat.ASTC4x4Unorm = 0x4A
+enum TextureFormat.ASTC4x4UnormSrgb = 0x4B
+enum TextureFormat.ASTC5x4Unorm = 0x4C
+enum TextureFormat.ASTC5x4UnormSrgb = 0x4D
+enum TextureFormat.ASTC5x5Unorm = 0x4E
+enum TextureFormat.ASTC5x5UnormSrgb = 0x4F
+enum TextureFormat.ASTC6x5Unorm = 0x50
+enum TextureFormat.ASTC6x5UnormSrgb = 0x51
+enum TextureFormat.ASTC6x6Unorm = 0x52
+enum TextureFormat.ASTC6x6UnormSrgb = 0x53
+enum TextureFormat.ASTC8x5Unorm = 0x54
+enum TextureFormat.ASTC8x5UnormSrgb = 0x55
+enum TextureFormat.ASTC8x6Unorm = 0x56
+enum TextureFormat.ASTC8x6UnormSrgb = 0x57
+enum TextureFormat.ASTC8x8Unorm = 0x58
+enum TextureFormat.ASTC8x8UnormSrgb = 0x59
+enum TextureFormat.BC1RGBAUnorm = 0x32
+enum TextureFormat.BC1RGBAUnormSrgb = 0x33
+enum TextureFormat.BC2RGBAUnorm = 0x34
+enum TextureFormat.BC2RGBAUnormSrgb = 0x35
+enum TextureFormat.BC3RGBAUnorm = 0x36
+enum TextureFormat.BC3RGBAUnormSrgb = 0x37
+enum TextureFormat.BC4RSnorm = 0x39
+enum TextureFormat.BC4RUnorm = 0x38
+enum TextureFormat.BC5RGSnorm = 0x3B
+enum TextureFormat.BC5RGUnorm = 0x3A
+enum TextureFormat.BC6HRGBFloat = 0x3D
+enum TextureFormat.BC6HRGBUfloat = 0x3C
+enum TextureFormat.BC7RGBAUnorm = 0x3E
+enum TextureFormat.BC7RGBAUnormSrgb = 0x3F
+enum TextureFormat.BGRA8Unorm = 0x1B
+enum TextureFormat.BGRA8UnormSrgb = 0x1C
+enum TextureFormat.Depth16Unorm = 0x2D
+enum TextureFormat.Depth24Plus = 0x2E
+enum TextureFormat.Depth24PlusStencil8 = 0x2F
+enum TextureFormat.Depth32Float = 0x30
+enum TextureFormat.Depth32FloatStencil8 = 0x31
+enum TextureFormat.EACR11Snorm = 0x47
+enum TextureFormat.EACR11Unorm = 0x46
+enum TextureFormat.EACRG11Snorm = 0x49
+enum TextureFormat.EACRG11Unorm = 0x48
+enum TextureFormat.ETC2RGB8A1Unorm = 0x42
+enum TextureFormat.ETC2RGB8A1UnormSrgb = 0x43
+enum TextureFormat.ETC2RGB8Unorm = 0x40
+enum TextureFormat.ETC2RGB8UnormSrgb = 0x41
+enum TextureFormat.ETC2RGBA8Unorm = 0x44
+enum TextureFormat.ETC2RGBA8UnormSrgb = 0x45
+enum TextureFormat.R16Float = 0x9
+enum TextureFormat.R16Sint = 0x8
+enum TextureFormat.R16Snorm = 0x6
+enum TextureFormat.R16Uint = 0x7
+enum TextureFormat.R16Unorm = 0x5
+enum TextureFormat.R32Float = 0xE
+enum TextureFormat.R32Sint = 0x10
+enum TextureFormat.R32Uint = 0xF
+enum TextureFormat.R8Sint = 0x4
+enum TextureFormat.R8Snorm = 0x2
+enum TextureFormat.R8Uint = 0x3
+enum TextureFormat.R8Unorm = 0x1
+enum TextureFormat.RG11B10Ufloat = 0x1F
+enum TextureFormat.RG16Float = 0x15
+enum TextureFormat.RG16Sint = 0x14
+enum TextureFormat.RG16Snorm = 0x12
+enum TextureFormat.RG16Uint = 0x13
+enum TextureFormat.RG16Unorm = 0x11
+enum TextureFormat.RG32Float = 0x21
+enum TextureFormat.RG32Sint = 0x23
+enum TextureFormat.RG32Uint = 0x22
+enum TextureFormat.RG8Sint = 0xD
+enum TextureFormat.RG8Snorm = 0xB
+enum TextureFormat.RG8Uint = 0xC
+enum TextureFormat.RG8Unorm = 0xA
+enum TextureFormat.RGB10A2Uint = 0x1D
+enum TextureFormat.RGB10A2Unorm = 0x1E
+enum TextureFormat.RGB9E5Ufloat = 0x20
+enum TextureFormat.RGBA16Float = 0x28
+enum TextureFormat.RGBA16Sint = 0x27
+enum TextureFormat.RGBA16Snorm = 0x25
+enum TextureFormat.RGBA16Uint = 0x26
+enum TextureFormat.RGBA16Unorm = 0x24
+enum TextureFormat.RGBA32Float = 0x29
+enum TextureFormat.RGBA32Sint = 0x2B
+enum TextureFormat.RGBA32Uint = 0x2A
+enum TextureFormat.RGBA8Sint = 0x1A
+enum TextureFormat.RGBA8Snorm = 0x18
+enum TextureFormat.RGBA8Uint = 0x19
+enum TextureFormat.RGBA8Unorm = 0x16
+enum TextureFormat.RGBA8UnormSrgb = 0x17
+enum TextureFormat.Stencil8 = 0x2C
+enum TextureFormat.Undefined = 0x0
+enum TextureSampleType
+enum TextureSampleType.BindingNotUsed = 0x0
+enum TextureSampleType.Depth = 0x4
+enum TextureSampleType.Float = 0x2
+enum TextureSampleType.Sint = 0x5
+enum TextureSampleType.Uint = 0x6
+enum TextureSampleType.Undefined = 0x1
+enum TextureSampleType.UnfilterableFloat = 0x3
+enum TextureUsage
+enum TextureUsage.CopyDst = 0x2
+enum TextureUsage.CopySrc = 0x1
+enum TextureUsage.None = 0x0
+enum TextureUsage.RenderAttachment = 0x10
+enum TextureUsage.StorageBinding = 0x8
+enum TextureUsage.TextureBinding = 0x4
+enum TextureUsage.TransientAttachment = 0x20
+enum TextureViewDimension
+enum TextureViewDimension.Cube = 0x4
+enum TextureViewDimension.CubeArray = 0x5
+enum TextureViewDimension.Undefined = 0x0
+enum TextureViewDimension._1D = 0x1
+enum TextureViewDimension._2D = 0x2
+enum TextureViewDimension._2DArray = 0x3
+enum TextureViewDimension._3D = 0x6
+enum ToneMappingMode
+enum ToneMappingMode.Extended = 0x2
+enum ToneMappingMode.Standard = 0x1
+enum VertexFormat
+enum VertexFormat.Float16 = 0x19
+enum VertexFormat.Float16x2 = 0x1A
+enum VertexFormat.Float16x4 = 0x1B
+enum VertexFormat.Float32 = 0x1C
+enum VertexFormat.Float32x2 = 0x1D
+enum VertexFormat.Float32x3 = 0x1E
+enum VertexFormat.Float32x4 = 0x1F
+enum VertexFormat.Sint16 = 0x10
+enum VertexFormat.Sint16x2 = 0x11
+enum VertexFormat.Sint16x4 = 0x12
+enum VertexFormat.Sint32 = 0x24
+enum VertexFormat.Sint32x2 = 0x25
+enum VertexFormat.Sint32x3 = 0x26
+enum VertexFormat.Sint32x4 = 0x27
+enum VertexFormat.Sint8 = 0x4
+enum VertexFormat.Sint8x2 = 0x5
+enum VertexFormat.Sint8x4 = 0x6
+enum VertexFormat.Snorm10_10_10_2 = 0x2A
+enum VertexFormat.Snorm16 = 0x16
+enum VertexFormat.Snorm16x2 = 0x17
+enum VertexFormat.Snorm16x4 = 0x18
+enum VertexFormat.Snorm8 = 0xA
+enum VertexFormat.Snorm8x2 = 0xB
+enum VertexFormat.Snorm8x4 = 0xC
+enum VertexFormat.Uint16 = 0xD
+enum VertexFormat.Uint16x2 = 0xE
+enum VertexFormat.Uint16x4 = 0xF
+enum VertexFormat.Uint32 = 0x20
+enum VertexFormat.Uint32x2 = 0x21
+enum VertexFormat.Uint32x3 = 0x22
+enum VertexFormat.Uint32x4 = 0x23
+enum VertexFormat.Uint8 = 0x1
+enum VertexFormat.Uint8x2 = 0x2
+enum VertexFormat.Uint8x4 = 0x3
+enum VertexFormat.Unorm10_10_10_2 = 0x28
+enum VertexFormat.Unorm16 = 0x13
+enum VertexFormat.Unorm16x2 = 0x14
+enum VertexFormat.Unorm16x4 = 0x15
+enum VertexFormat.Unorm8 = 0x7
+enum VertexFormat.Unorm8x2 = 0x8
+enum VertexFormat.Unorm8x4 = 0x9
+enum VertexFormat.Unorm8x4BGRA = 0x29
+enum VertexStepMode
+enum VertexStepMode.Instance = 0x2
+enum VertexStepMode.Undefined = 0x0
+enum VertexStepMode.Vertex = 0x1
+enum WGSLLanguageFeatureName
+enum WGSLLanguageFeatureName.BufferView = 0xC
+enum WGSLLanguageFeatureName.FragmentDepth = 0xE
+enum WGSLLanguageFeatureName.ImmediateAddressSpace = 0xB
+enum WGSLLanguageFeatureName.LinearIndexing = 0xA
+enum WGSLLanguageFeatureName.Packed4x8IntegerDotProduct = 0x2
+enum WGSLLanguageFeatureName.PointerCompositeAccess = 0x4
+enum WGSLLanguageFeatureName.ReadonlyAndReadwriteStorageTextures = 0x1
+enum WGSLLanguageFeatureName.SubgroupId = 0x6
+enum WGSLLanguageFeatureName.SubgroupUniformity = 0x8
+enum WGSLLanguageFeatureName.SwizzleAssignment = 0xD
+enum WGSLLanguageFeatureName.TextureAndSamplerLet = 0x7
+enum WGSLLanguageFeatureName.TextureFormatsTier1 = 0x9
+enum WGSLLanguageFeatureName.UniformBufferStandardLayout = 0x5
+enum WGSLLanguageFeatureName.UnrestrictedPointerParameters = 0x3
+enum WaitStatus
+enum WaitStatus.Error = 0x3
+enum WaitStatus.Success = 0x1
+enum WaitStatus.TimedOut = 0x2
+method Adapter.GetFeatures() : SupportedFeatures
+method Adapter.GetInfo(out AdapterInfo info) : Status
+method Adapter.GetLimits(out Limits limits) : Status
+method Adapter.HasFeature(FeatureName feature) : bool
+method Adapter.RequestDeviceAsync() : Task<RequestDeviceResult>
+method Adapter.RequestDeviceAsync(in DeviceDescriptor descriptor) : Task<RequestDeviceResult>
+method Adapter.RequestDeviceAsync(in DeviceDescriptor descriptor, out Future future) : Task<RequestDeviceResult>
+method BindGroup.SetLabel(ReadOnlySpan<byte> label) : void
+method BindGroupLayout.SetLabel(ReadOnlySpan<byte> label) : void
+method Buffer.Destroy() : void
+method Buffer.GetConstMappedRange(nuint offset, nuint size) : ReadOnlySpan<byte>
+method Buffer.GetMapState() : BufferMapState
+method Buffer.GetMappedRange(nuint offset, nuint size) : Span<byte>
+method Buffer.GetSize() : ulong
+method Buffer.GetUsage() : BufferUsage
+method Buffer.MapAsync(MapMode mode, nuint offset, nuint size) : Task<BufferMapResult>
+method Buffer.MapAsync(MapMode mode, nuint offset, nuint size, out Future future) : Task<BufferMapResult>
+method Buffer.ReadMappedRange<T>(nuint offset, Span<T> data) : Status
+method Buffer.SetLabel(ReadOnlySpan<byte> label) : void
+method Buffer.Unmap() : void
+method Buffer.WriteMappedRange<T>(nuint offset, ReadOnlySpan<T> data) : Status
+method CommandBuffer.SetLabel(ReadOnlySpan<byte> label) : void
+method CommandEncoder.BeginComputePass() : ComputePassEncoder
+method CommandEncoder.BeginComputePass(in ComputePassDescriptor descriptor) : ComputePassEncoder
+method CommandEncoder.BeginRenderPass(in RenderPassDescriptor descriptor) : RenderPassEncoder
+method CommandEncoder.ClearBuffer(Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize) : void
+method CommandEncoder.CopyBufferToBuffer(Buffer source, ulong sourceOffset, Buffer destination, ulong destinationOffset, ulong size) : void
+method CommandEncoder.CopyBufferToTexture(in TexelCopyBufferInfo source, in TexelCopyTextureInfo destination, in Extent3D copySize) : void
+method CommandEncoder.CopyTextureToBuffer(in TexelCopyTextureInfo source, in TexelCopyBufferInfo destination, in Extent3D copySize) : void
+method CommandEncoder.CopyTextureToTexture(in TexelCopyTextureInfo source, in TexelCopyTextureInfo destination, in Extent3D copySize) : void
+method CommandEncoder.Finish() : CommandBuffer
+method CommandEncoder.Finish(in CommandBufferDescriptor descriptor) : CommandBuffer
+method CommandEncoder.InsertDebugMarker(ReadOnlySpan<byte> markerLabel) : void
+method CommandEncoder.PopDebugGroup() : void
+method CommandEncoder.PushDebugGroup(ReadOnlySpan<byte> groupLabel) : void
+method CommandEncoder.ResolveQuerySet(QuerySet querySet, uint firstQuery, uint queryCount, Buffer destination, ulong destinationOffset) : void
+method CommandEncoder.SetLabel(ReadOnlySpan<byte> label) : void
+method CommandEncoder.WriteTimestamp(QuerySet querySet, uint queryIndex) : void
+method CompilationInfoResult.TryGetValue(out CompilationInfo) -> bool
+method ComputePassEncoder.DispatchWorkgroups(uint workgroupCountX, uint workgroupCountY = 1, uint workgroupCountZ = 1) : void
+method ComputePassEncoder.DispatchWorkgroupsIndirect(Buffer indirectBuffer, ulong indirectOffset) : void
+method ComputePassEncoder.End() : void
+method ComputePassEncoder.InsertDebugMarker(ReadOnlySpan<byte> markerLabel) : void
+method ComputePassEncoder.PopDebugGroup() : void
+method ComputePassEncoder.PushDebugGroup(ReadOnlySpan<byte> groupLabel) : void
+method ComputePassEncoder.SetBindGroup(uint groupIndex, BindGroup group, ReadOnlySpan<uint> dynamicOffsets = default) : void
+method ComputePassEncoder.SetImmediates<T>(uint offset, ReadOnlySpan<T> data) : void
+method ComputePassEncoder.SetLabel(ReadOnlySpan<byte> label) : void
+method ComputePassEncoder.SetPipeline(ComputePipeline pipeline) : void
+method ComputePassEncoder.WriteTimestamp(QuerySet querySet, uint queryIndex) : void
+method ComputePipeline.GetBindGroupLayout(uint groupIndex) : BindGroupLayout
+method ComputePipeline.SetLabel(ReadOnlySpan<byte> label) : void
+method CreateComputePipelineResult.TryGetValue(out ComputePipeline) -> bool
+method CreateRenderPipelineResult.TryGetValue(out RenderPipeline) -> bool
+method Device.CreateBindGroup(in BindGroupDescriptor descriptor) : BindGroup
+method Device.CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor) : BindGroupLayout
+method Device.CreateBuffer(in BufferDescriptor descriptor) : Buffer
+method Device.CreateCommandEncoder() : CommandEncoder
+method Device.CreateCommandEncoder(in CommandEncoderDescriptor descriptor) : CommandEncoder
+method Device.CreateComputePipeline(in ComputePipelineDescriptor descriptor) : ComputePipeline
+method Device.CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor) : Task<CreateComputePipelineResult>
+method Device.CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor, out Future future) : Task<CreateComputePipelineResult>
+method Device.CreatePipelineLayout(in PipelineLayoutDescriptor descriptor) : PipelineLayout
+method Device.CreateQuerySet(in QuerySetDescriptor descriptor) : QuerySet
+method Device.CreateRenderBundleEncoder(in RenderBundleEncoderDescriptor descriptor) : RenderBundleEncoder
+method Device.CreateRenderPipeline(in RenderPipelineDescriptor descriptor) : RenderPipeline
+method Device.CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor) : Task<CreateRenderPipelineResult>
+method Device.CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor, out Future future) : Task<CreateRenderPipelineResult>
+method Device.CreateSampler() : Sampler
+method Device.CreateSampler(in SamplerDescriptor descriptor) : Sampler
+method Device.CreateShaderModule(in ShaderModuleDescriptor descriptor) : ShaderModule
+method Device.CreateTexture(in TextureDescriptor descriptor) : Texture
+method Device.Destroy() : void
+method Device.GetAdapterInfo(out AdapterInfo adapterInfo) : Status
+method Device.GetFeatures() : SupportedFeatures
+method Device.GetLimits(out Limits limits) : Status
+method Device.GetLostFuture() : Future
+method Device.GetQueue() : Queue
+method Device.HasFeature(FeatureName feature) : bool
+method Device.PopErrorScopeAsync() : Task<PopErrorScopeResult>
+method Device.PopErrorScopeAsync(out Future future) : Task<PopErrorScopeResult>
+method Device.PushErrorScope(ErrorFilter filter) : void
+method Device.SetLabel(ReadOnlySpan<byte> label) : void
+method ExternalTexture.SetLabel(ReadOnlySpan<byte> label) : void
+method Instance.CreateSurface(in SurfaceDescriptor descriptor) : Surface
+method Instance.GetWGSLLanguageFeatures() : SupportedWGSLLanguageFeatures
+method Instance.HasWGSLLanguageFeature(WGSLLanguageFeatureName feature) : bool
+method Instance.ProcessEvents() : void
+method Instance.RequestAdapterAsync() : Task<RequestAdapterResult>
+method Instance.RequestAdapterAsync(in RequestAdapterOptions options) : Task<RequestAdapterResult>
+method Instance.RequestAdapterAsync(in RequestAdapterOptions options, out Future future) : Task<RequestAdapterResult>
+method Instance.WaitAny(Span<FutureWaitInfo> futures, ulong timeoutNS) : WaitStatus
+method PipelineLayout.SetLabel(ReadOnlySpan<byte> label) : void
+method PopErrorScopeResult.TryGetValue(out ErrorType) -> bool
+method QuerySet.Destroy() : void
+method QuerySet.GetCount() : uint
+method QuerySet.GetType() : QueryType
+method QuerySet.SetLabel(ReadOnlySpan<byte> label) : void
+method Queue.OnSubmittedWorkDoneAsync() : Task<QueueWorkDoneResult>
+method Queue.OnSubmittedWorkDoneAsync(out Future future) : Task<QueueWorkDoneResult>
+method Queue.SetLabel(ReadOnlySpan<byte> label) : void
+method Queue.Submit(ReadOnlySpan<CommandBuffer> commands) : void
+method Queue.WriteBuffer<T>(Buffer buffer, ulong bufferOffset, ReadOnlySpan<T> data) : void
+method Queue.WriteTexture<T>(in TexelCopyTextureInfo destination, ReadOnlySpan<T> data, in TexelCopyBufferLayout dataLayout, in Extent3D writeSize) : void
+method RenderBundle.SetLabel(ReadOnlySpan<byte> label) : void
+method RenderBundleEncoder.Draw(uint vertexCount, uint instanceCount = 1, uint firstVertex = 0, uint firstInstance = 0) : void
+method RenderBundleEncoder.DrawIndexed(uint indexCount, uint instanceCount = 1, uint firstIndex = 0, int baseVertex = 0, uint firstInstance = 0) : void
+method RenderBundleEncoder.DrawIndexedIndirect(Buffer indirectBuffer, ulong indirectOffset) : void
+method RenderBundleEncoder.DrawIndirect(Buffer indirectBuffer, ulong indirectOffset) : void
+method RenderBundleEncoder.Finish() : RenderBundle
+method RenderBundleEncoder.Finish(in RenderBundleDescriptor descriptor) : RenderBundle
+method RenderBundleEncoder.InsertDebugMarker(ReadOnlySpan<byte> markerLabel) : void
+method RenderBundleEncoder.PopDebugGroup() : void
+method RenderBundleEncoder.PushDebugGroup(ReadOnlySpan<byte> groupLabel) : void
+method RenderBundleEncoder.SetBindGroup(uint groupIndex, BindGroup group, ReadOnlySpan<uint> dynamicOffsets = default) : void
+method RenderBundleEncoder.SetImmediates<T>(uint offset, ReadOnlySpan<T> data) : void
+method RenderBundleEncoder.SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = Wgpu.WholeSize) : void
+method RenderBundleEncoder.SetLabel(ReadOnlySpan<byte> label) : void
+method RenderBundleEncoder.SetPipeline(RenderPipeline pipeline) : void
+method RenderBundleEncoder.SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize) : void
+method RenderPassEncoder.BeginOcclusionQuery(uint queryIndex) : void
+method RenderPassEncoder.Draw(uint vertexCount, uint instanceCount = 1, uint firstVertex = 0, uint firstInstance = 0) : void
+method RenderPassEncoder.DrawIndexed(uint indexCount, uint instanceCount = 1, uint firstIndex = 0, int baseVertex = 0, uint firstInstance = 0) : void
+method RenderPassEncoder.DrawIndexedIndirect(Buffer indirectBuffer, ulong indirectOffset) : void
+method RenderPassEncoder.DrawIndirect(Buffer indirectBuffer, ulong indirectOffset) : void
+method RenderPassEncoder.End() : void
+method RenderPassEncoder.EndOcclusionQuery() : void
+method RenderPassEncoder.ExecuteBundles(ReadOnlySpan<RenderBundle> bundles) : void
+method RenderPassEncoder.InsertDebugMarker(ReadOnlySpan<byte> markerLabel) : void
+method RenderPassEncoder.MultiDrawIndexedIndirect(Buffer indirectBuffer, ulong indirectOffset, uint maxDrawCount, Buffer drawCountBuffer, ulong drawCountBufferOffset = 0) : void
+method RenderPassEncoder.MultiDrawIndirect(Buffer indirectBuffer, ulong indirectOffset, uint maxDrawCount, Buffer drawCountBuffer, ulong drawCountBufferOffset = 0) : void
+method RenderPassEncoder.PopDebugGroup() : void
+method RenderPassEncoder.PushDebugGroup(ReadOnlySpan<byte> groupLabel) : void
+method RenderPassEncoder.SetBindGroup(uint groupIndex, BindGroup group, ReadOnlySpan<uint> dynamicOffsets = default) : void
+method RenderPassEncoder.SetBlendConstant(in Color color) : void
+method RenderPassEncoder.SetImmediates<T>(uint offset, ReadOnlySpan<T> data) : void
+method RenderPassEncoder.SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = Wgpu.WholeSize) : void
+method RenderPassEncoder.SetLabel(ReadOnlySpan<byte> label) : void
+method RenderPassEncoder.SetPipeline(RenderPipeline pipeline) : void
+method RenderPassEncoder.SetScissorRect(uint x, uint y, uint width, uint height) : void
+method RenderPassEncoder.SetStencilReference(uint reference) : void
+method RenderPassEncoder.SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize) : void
+method RenderPassEncoder.SetViewport(float x, float y, float width, float height, float minDepth, float maxDepth) : void
+method RenderPassEncoder.WriteTimestamp(QuerySet querySet, uint queryIndex) : void
+method RenderPipeline.GetBindGroupLayout(uint groupIndex) : BindGroupLayout
+method RenderPipeline.SetLabel(ReadOnlySpan<byte> label) : void
+method RequestAdapterResult.TryGetValue(out Adapter) -> bool
+method RequestDeviceResult.TryGetValue(out Device) -> bool
+method Sampler.SetLabel(ReadOnlySpan<byte> label) : void
+method ShaderModule.GetCompilationInfoAsync() : Task<CompilationInfoResult>
+method ShaderModule.GetCompilationInfoAsync(out Future future) : Task<CompilationInfoResult>
+method ShaderModule.SetLabel(ReadOnlySpan<byte> label) : void
+method Surface.Configure(in SurfaceConfiguration config) : void
+method Surface.GetCapabilities(Adapter adapter, out SurfaceCapabilities capabilities) : Status
+method Surface.GetCurrentTexture() : SurfaceTexture
+method Surface.Present() : Status
+method Surface.SetLabel(ReadOnlySpan<byte> label) : void
+method Surface.Unconfigure() : void
+method Texture.CreateView() : TextureView
+method Texture.CreateView(in TextureViewDescriptor descriptor) : TextureView
+method Texture.Destroy() : void
+method Texture.GetDepthOrArrayLayers() : uint
+method Texture.GetDimension() : TextureDimension
+method Texture.GetFormat() : TextureFormat
+method Texture.GetHeight() : uint
+method Texture.GetMipLevelCount() : uint
+method Texture.GetSampleCount() : uint
+method Texture.GetTextureBindingViewDimension() : TextureViewDimension
+method Texture.GetUsage() : TextureUsage
+method Texture.GetWidth() : uint
+method Texture.SetLabel(ReadOnlySpan<byte> label) : void
+method TextureView.SetLabel(ReadOnlySpan<byte> label) : void
+method Wgpu.CreateInstance() : Instance
+method Wgpu.CreateInstance(in InstanceDescriptor descriptor) : Instance
+method Wgpu.GetInstanceFeatures() : SupportedInstanceFeatures
+method Wgpu.GetInstanceLimits(out InstanceLimits limits) : Status
+method Wgpu.HasInstanceFeature(InstanceFeatureName feature) : bool
+object Adapter
+object BindGroup
+object BindGroupLayout
+object Buffer
+object CommandBuffer
+object CommandEncoder
+object ComputePassEncoder
+object ComputePipeline
+object Device
+object ExternalTexture
+object Instance
+object PipelineLayout
+object QuerySet
+object Queue
+object RenderBundle
+object RenderBundleEncoder
+object RenderPassEncoder
+object RenderPipeline
+object Sampler
+object ShaderModule
+object Surface
+object Texture
+object TextureView
+struct AdapterInfo : Out
+struct AdapterInfo.AdapterType : AdapterType
+struct AdapterInfo.Architecture : string = ""
+struct AdapterInfo.BackendType : BackendType
+struct AdapterInfo.Description : string = ""
+struct AdapterInfo.Device : string = ""
+struct AdapterInfo.DeviceID : uint
+struct AdapterInfo.SubgroupMaxSize : uint
+struct AdapterInfo.SubgroupMinSize : uint
+struct AdapterInfo.Vendor : string = ""
+struct AdapterInfo.VendorID : uint
+struct BindGroupDescriptor : Ref
+struct BindGroupDescriptor.Entries : ReadOnlySpan<BindGroupEntry>
+struct BindGroupDescriptor.Label : ReadOnlySpan<byte>
+struct BindGroupDescriptor.Layout : BindGroupLayout
+struct BindGroupEntry : Plain
+struct BindGroupEntry.Binding : uint
+struct BindGroupEntry.Buffer : Buffer
+struct BindGroupEntry.ExternalTextureBindingEntry : ExternalTextureBindingEntry?
+struct BindGroupEntry.Offset : ulong
+struct BindGroupEntry.Sampler : Sampler
+struct BindGroupEntry.Size : ulong = Wgpu.WholeSize
+struct BindGroupEntry.TextureView : TextureView
+struct BindGroupLayoutDescriptor : Ref
+struct BindGroupLayoutDescriptor.Entries : ReadOnlySpan<BindGroupLayoutEntry>
+struct BindGroupLayoutDescriptor.Label : ReadOnlySpan<byte>
+struct BindGroupLayoutEntry : Plain
+struct BindGroupLayoutEntry.Binding : uint
+struct BindGroupLayoutEntry.BindingArraySize : uint
+struct BindGroupLayoutEntry.Buffer : BufferBindingLayout
+struct BindGroupLayoutEntry.ExternalTextureBindingLayout : ExternalTextureBindingLayout?
+struct BindGroupLayoutEntry.Sampler : SamplerBindingLayout
+struct BindGroupLayoutEntry.StorageTexture : StorageTextureBindingLayout
+struct BindGroupLayoutEntry.Texture : TextureBindingLayout
+struct BindGroupLayoutEntry.Visibility : ShaderStage
+struct BlendComponent : Plain
+struct BlendComponent.DstFactor : BlendFactor = BlendFactor.Zero
+struct BlendComponent.Operation : BlendOperation = BlendOperation.Add
+struct BlendComponent.SrcFactor : BlendFactor = BlendFactor.One
+struct BlendState : Plain
+struct BlendState.Alpha : BlendComponent = new()
+struct BlendState.Color : BlendComponent = new()
+struct BufferBindingLayout : Plain
+struct BufferBindingLayout.HasDynamicOffset : bool
+struct BufferBindingLayout.MinBindingSize : ulong
+struct BufferBindingLayout.Type : BufferBindingType = BufferBindingType.Uniform
+struct BufferDescriptor : Ref
+struct BufferDescriptor.Label : ReadOnlySpan<byte>
+struct BufferDescriptor.MappedAtCreation : bool
+struct BufferDescriptor.Size : ulong
+struct BufferDescriptor.Usage : BufferUsage
+struct BufferMapResult(MapAsyncStatus Status, string Message)
+struct Color : Plain
+struct Color.A : double
+struct Color.B : double
+struct Color.G : double
+struct Color.R : double
+struct ColorTargetState : Plain
+struct ColorTargetState.Blend : BlendState?
+struct ColorTargetState.Format : TextureFormat
+struct ColorTargetState.WriteMask : ColorWriteMask = ColorWriteMask.All
+struct CommandBufferDescriptor : Ref
+struct CommandBufferDescriptor.Label : ReadOnlySpan<byte>
+struct CommandEncoderDescriptor : Ref
+struct CommandEncoderDescriptor.Label : ReadOnlySpan<byte>
+struct CompilationInfo : Out
+struct CompilationInfo.Messages : CompilationMessage[] = []
+struct CompilationInfoResult(CompilationInfoRequestStatus Status, CompilationInfo CompilationInfo)
+struct CompilationMessage : Out
+struct CompilationMessage.Length : ulong
+struct CompilationMessage.LineNum : ulong
+struct CompilationMessage.LinePos : ulong
+struct CompilationMessage.Message : string = ""
+struct CompilationMessage.Offset : ulong
+struct CompilationMessage.Type : CompilationMessageType
+struct ComputePassDescriptor : Ref
+struct ComputePassDescriptor.Label : ReadOnlySpan<byte>
+struct ComputePassDescriptor.TimestampWrites : PassTimestampWrites?
+struct ComputePipelineDescriptor : Ref
+struct ComputePipelineDescriptor.Compute : ComputeState = new()
+struct ComputePipelineDescriptor.Label : ReadOnlySpan<byte>
+struct ComputePipelineDescriptor.Layout : PipelineLayout
+struct ComputeState : Ref
+struct ComputeState.Constants : ReadOnlySpan<ConstantEntry>
+struct ComputeState.EntryPoint : ReadOnlySpan<byte>
+struct ComputeState.Module : ShaderModule
+struct ConstantEntry : Plain
+struct ConstantEntry.Key : ReadOnlyMemory<byte>
+struct ConstantEntry.Value : double
+struct CreateComputePipelineResult(CreatePipelineAsyncStatus Status, ComputePipeline Pipeline, string Message)
+struct CreateRenderPipelineResult(CreatePipelineAsyncStatus Status, RenderPipeline Pipeline, string Message)
+struct DawnCompilationMessageUtf16 : Plain
+struct DawnCompilationMessageUtf16.Length : ulong
+struct DawnCompilationMessageUtf16.LinePos : ulong
+struct DawnCompilationMessageUtf16.Offset : ulong
+struct DepthStencilState : Plain
+struct DepthStencilState.DepthBias : int
+struct DepthStencilState.DepthBiasClamp : float
+struct DepthStencilState.DepthBiasSlopeScale : float
+struct DepthStencilState.DepthCompare : CompareFunction
+struct DepthStencilState.DepthWriteEnabled : OptionalBool
+struct DepthStencilState.Format : TextureFormat
+struct DepthStencilState.StencilBack : StencilFaceState = new()
+struct DepthStencilState.StencilFront : StencilFaceState = new()
+struct DepthStencilState.StencilReadMask : uint = 0xFFFFFFFF
+struct DepthStencilState.StencilWriteMask : uint = 0xFFFFFFFF
+struct DeviceDescriptor : Ref
+struct DeviceDescriptor.DefaultQueue : QueueDescriptor = new()
+struct DeviceDescriptor.DeviceLostCallbackInfo : DeviceLostCallbackInfo
+struct DeviceDescriptor.Label : ReadOnlySpan<byte>
+struct DeviceDescriptor.RequiredFeatures : ReadOnlySpan<FeatureName>
+struct DeviceDescriptor.RequiredLimits : Limits?
+struct DeviceDescriptor.UncapturedErrorCallbackInfo : UncapturedErrorCallbackInfo
+struct DeviceLostCallbackInfo.Callback : DeviceLostCallback?
+struct DeviceLostCallbackInfo.Mode : CallbackMode
+struct EmscriptenSurfaceSourceCanvasHTMLSelector : Ref
+struct EmscriptenSurfaceSourceCanvasHTMLSelector.Selector : ReadOnlySpan<byte>
+struct Extent3D : Plain
+struct Extent3D.DepthOrArrayLayers : uint = 1
+struct Extent3D.Height : uint = 1
+struct Extent3D.Width : uint
+struct ExternalTextureBindingEntry : Plain
+struct ExternalTextureBindingEntry.ExternalTexture : ExternalTexture
+struct ExternalTextureBindingLayout : Plain
+struct FragmentState : Ref
+struct FragmentState.Constants : ReadOnlySpan<ConstantEntry>
+struct FragmentState.EntryPoint : ReadOnlySpan<byte>
+struct FragmentState.Module : ShaderModule
+struct FragmentState.Targets : ReadOnlySpan<ColorTargetState>
+struct Future : Plain
+struct Future.Id : ulong
+struct FutureWaitInfo : Plain
+struct FutureWaitInfo.Completed : bool
+struct FutureWaitInfo.Future : Future = new()
+struct InstanceDescriptor : Ref
+struct InstanceDescriptor.RequiredFeatures : ReadOnlySpan<InstanceFeatureName>
+struct InstanceDescriptor.RequiredLimits : InstanceLimits?
+struct InstanceLimits : Out
+struct InstanceLimits.TimedWaitAnyMaxCount : nuint
+struct Limits : Out
+struct Limits.MaxBindGroups : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxBindGroupsPlusVertexBuffers : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxBindingsPerBindGroup : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxBufferSize : ulong = Wgpu.LimitU64Undefined
+struct Limits.MaxColorAttachmentBytesPerSample : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxColorAttachments : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeInvocationsPerWorkgroup : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeWorkgroupSizeX : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeWorkgroupSizeY : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeWorkgroupSizeZ : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeWorkgroupStorageSize : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxComputeWorkgroupsPerDimension : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxDynamicStorageBuffersPerPipelineLayout : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxDynamicUniformBuffersPerPipelineLayout : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxImmediateSize : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxInterStageShaderVariables : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxSampledTexturesPerShaderStage : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxSamplersPerShaderStage : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxStorageBufferBindingSize : ulong = Wgpu.LimitU64Undefined
+struct Limits.MaxStorageBuffersPerShaderStage : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxStorageTexturesPerShaderStage : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxTextureArrayLayers : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxTextureDimension1D : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxTextureDimension2D : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxTextureDimension3D : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxUniformBufferBindingSize : ulong = Wgpu.LimitU64Undefined
+struct Limits.MaxUniformBuffersPerShaderStage : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxVertexAttributes : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxVertexBufferArrayStride : uint = Wgpu.LimitU32Undefined
+struct Limits.MaxVertexBuffers : uint = Wgpu.LimitU32Undefined
+struct Limits.MinStorageBufferOffsetAlignment : uint = Wgpu.LimitU32Undefined
+struct Limits.MinUniformBufferOffsetAlignment : uint = Wgpu.LimitU32Undefined
+struct MultisampleState : Plain
+struct MultisampleState.AlphaToCoverageEnabled : bool
+struct MultisampleState.Count : uint = 1
+struct MultisampleState.Mask : uint = 0xFFFFFFFF
+struct Origin3D : Plain
+struct Origin3D.X : uint
+struct Origin3D.Y : uint
+struct Origin3D.Z : uint
+struct PassTimestampWrites : Plain
+struct PassTimestampWrites.BeginningOfPassWriteIndex : uint = Wgpu.QuerySetIndexUndefined
+struct PassTimestampWrites.EndOfPassWriteIndex : uint = Wgpu.QuerySetIndexUndefined
+struct PassTimestampWrites.QuerySet : QuerySet
+struct PipelineLayoutDescriptor : Ref
+struct PipelineLayoutDescriptor.BindGroupLayouts : ReadOnlySpan<BindGroupLayout>
+struct PipelineLayoutDescriptor.ImmediateSize : uint
+struct PipelineLayoutDescriptor.Label : ReadOnlySpan<byte>
+struct PopErrorScopeResult(PopErrorScopeStatus Status, ErrorType Type, string Message)
+struct PrimitiveState : Plain
+struct PrimitiveState.CullMode : CullMode = CullMode.None
+struct PrimitiveState.FrontFace : FrontFace = FrontFace.CCW
+struct PrimitiveState.StripIndexFormat : IndexFormat
+struct PrimitiveState.Topology : PrimitiveTopology = PrimitiveTopology.TriangleList
+struct PrimitiveState.UnclippedDepth : bool
+struct QuerySetDescriptor : Ref
+struct QuerySetDescriptor.Count : uint
+struct QuerySetDescriptor.Label : ReadOnlySpan<byte>
+struct QuerySetDescriptor.Type : QueryType
+struct QueueDescriptor : Ref
+struct QueueDescriptor.Label : ReadOnlySpan<byte>
+struct QueueWorkDoneResult(QueueWorkDoneStatus Status, string Message)
+struct RenderBundleDescriptor : Ref
+struct RenderBundleDescriptor.Label : ReadOnlySpan<byte>
+struct RenderBundleEncoderDescriptor : Ref
+struct RenderBundleEncoderDescriptor.ColorFormats : ReadOnlySpan<TextureFormat>
+struct RenderBundleEncoderDescriptor.DepthReadOnly : bool
+struct RenderBundleEncoderDescriptor.DepthStencilFormat : TextureFormat
+struct RenderBundleEncoderDescriptor.Label : ReadOnlySpan<byte>
+struct RenderBundleEncoderDescriptor.SampleCount : uint = 1
+struct RenderBundleEncoderDescriptor.StencilReadOnly : bool
+struct RenderPassColorAttachment : Plain
+struct RenderPassColorAttachment.ClearValue : Color = new()
+struct RenderPassColorAttachment.DepthSlice : uint = Wgpu.DepthSliceUndefined
+struct RenderPassColorAttachment.LoadOp : LoadOp
+struct RenderPassColorAttachment.ResolveTarget : TextureView
+struct RenderPassColorAttachment.StoreOp : StoreOp
+struct RenderPassColorAttachment.View : TextureView
+struct RenderPassDepthStencilAttachment : Plain
+struct RenderPassDepthStencilAttachment.DepthClearValue : float = Wgpu.DepthClearValueUndefined
+struct RenderPassDepthStencilAttachment.DepthLoadOp : LoadOp
+struct RenderPassDepthStencilAttachment.DepthReadOnly : bool
+struct RenderPassDepthStencilAttachment.DepthStoreOp : StoreOp
+struct RenderPassDepthStencilAttachment.StencilClearValue : uint
+struct RenderPassDepthStencilAttachment.StencilLoadOp : LoadOp
+struct RenderPassDepthStencilAttachment.StencilReadOnly : bool
+struct RenderPassDepthStencilAttachment.StencilStoreOp : StoreOp
+struct RenderPassDepthStencilAttachment.View : TextureView
+struct RenderPassDescriptor : Ref
+struct RenderPassDescriptor.ColorAttachments : ReadOnlySpan<RenderPassColorAttachment>
+struct RenderPassDescriptor.DepthStencilAttachment : RenderPassDepthStencilAttachment?
+struct RenderPassDescriptor.Label : ReadOnlySpan<byte>
+struct RenderPassDescriptor.OcclusionQuerySet : QuerySet
+struct RenderPassDescriptor.RenderPassMaxDrawCount : RenderPassMaxDrawCount?
+struct RenderPassDescriptor.TimestampWrites : PassTimestampWrites?
+struct RenderPassMaxDrawCount : Plain
+struct RenderPassMaxDrawCount.MaxDrawCount : ulong = 50000000
+struct RenderPipelineDescriptor : Ref
+struct RenderPipelineDescriptor.DepthStencil : DepthStencilState?
+struct RenderPipelineDescriptor.Fragment : optional FragmentState
+struct RenderPipelineDescriptor.Label : ReadOnlySpan<byte>
+struct RenderPipelineDescriptor.Layout : PipelineLayout
+struct RenderPipelineDescriptor.Multisample : MultisampleState = new()
+struct RenderPipelineDescriptor.Primitive : PrimitiveState = new()
+struct RenderPipelineDescriptor.Vertex : VertexState = new()
+struct RequestAdapterOptions : Plain
+struct RequestAdapterOptions.BackendType : BackendType
+struct RequestAdapterOptions.CompatibleSurface : Surface
+struct RequestAdapterOptions.FeatureLevel : FeatureLevel = FeatureLevel.Core
+struct RequestAdapterOptions.ForceFallbackAdapter : bool
+struct RequestAdapterOptions.PowerPreference : PowerPreference
+struct RequestAdapterOptions.RequestAdapterWebXROptions : RequestAdapterWebXROptions?
+struct RequestAdapterResult(RequestAdapterStatus Status, Adapter Adapter, string Message)
+struct RequestAdapterWebXROptions : Plain
+struct RequestAdapterWebXROptions.XrCompatible : bool
+struct RequestDeviceResult(RequestDeviceStatus Status, Device Device, string Message)
+struct SamplerBindingLayout : Plain
+struct SamplerBindingLayout.Type : SamplerBindingType = SamplerBindingType.Filtering
+struct SamplerDescriptor : Ref
+struct SamplerDescriptor.AddressModeU : AddressMode = AddressMode.ClampToEdge
+struct SamplerDescriptor.AddressModeV : AddressMode = AddressMode.ClampToEdge
+struct SamplerDescriptor.AddressModeW : AddressMode = AddressMode.ClampToEdge
+struct SamplerDescriptor.Compare : CompareFunction
+struct SamplerDescriptor.Label : ReadOnlySpan<byte>
+struct SamplerDescriptor.LodMaxClamp : float = 32f
+struct SamplerDescriptor.LodMinClamp : float
+struct SamplerDescriptor.MagFilter : FilterMode = FilterMode.Nearest
+struct SamplerDescriptor.MaxAnisotropy : ushort = 1
+struct SamplerDescriptor.MinFilter : FilterMode = FilterMode.Nearest
+struct SamplerDescriptor.MipmapFilter : MipmapFilterMode = MipmapFilterMode.Nearest
+struct ShaderModuleDescriptor : Ref
+struct ShaderModuleDescriptor.Label : ReadOnlySpan<byte>
+struct ShaderModuleDescriptor.ShaderSourceSPIRV : optional ShaderSourceSPIRV
+struct ShaderModuleDescriptor.ShaderSourceWGSL : optional ShaderSourceWGSL
+struct ShaderSourceSPIRV : Ref
+struct ShaderSourceSPIRV.Code : ReadOnlySpan<uint>
+struct ShaderSourceWGSL : Ref
+struct ShaderSourceWGSL.Code : ReadOnlySpan<byte>
+struct StencilFaceState : Plain
+struct StencilFaceState.Compare : CompareFunction = CompareFunction.Always
+struct StencilFaceState.DepthFailOp : StencilOperation = StencilOperation.Keep
+struct StencilFaceState.FailOp : StencilOperation = StencilOperation.Keep
+struct StencilFaceState.PassOp : StencilOperation = StencilOperation.Keep
+struct StorageTextureBindingLayout : Plain
+struct StorageTextureBindingLayout.Access : StorageTextureAccess = StorageTextureAccess.WriteOnly
+struct StorageTextureBindingLayout.Format : TextureFormat
+struct StorageTextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension._2D
+struct SubgroupMatrixConfig : Plain
+struct SubgroupMatrixConfig.ComponentType : SubgroupMatrixComponentType
+struct SubgroupMatrixConfig.K : uint
+struct SubgroupMatrixConfig.M : uint
+struct SubgroupMatrixConfig.MaxSubgroupSize : uint
+struct SubgroupMatrixConfig.MinSubgroupSize : uint
+struct SubgroupMatrixConfig.N : uint
+struct SubgroupMatrixConfig.ResultComponentType : SubgroupMatrixComponentType
+struct SupportedFeatures : Out
+struct SupportedFeatures.Features : FeatureName[] = []
+struct SupportedInstanceFeatures : Out
+struct SupportedInstanceFeatures.Features : InstanceFeatureName[] = []
+struct SupportedWGSLLanguageFeatures : Out
+struct SupportedWGSLLanguageFeatures.Features : WGSLLanguageFeatureName[] = []
+struct SurfaceCapabilities : Out
+struct SurfaceCapabilities.AlphaModes : CompositeAlphaMode[] = []
+struct SurfaceCapabilities.Formats : TextureFormat[] = []
+struct SurfaceCapabilities.PresentModes : PresentMode[] = []
+struct SurfaceCapabilities.Usages : TextureUsage
+struct SurfaceColorManagement : Plain
+struct SurfaceColorManagement.ColorSpace : PredefinedColorSpace
+struct SurfaceColorManagement.ToneMappingMode : ToneMappingMode
+struct SurfaceConfiguration : Ref
+struct SurfaceConfiguration.AlphaMode : CompositeAlphaMode = CompositeAlphaMode.Auto
+struct SurfaceConfiguration.Device : Device
+struct SurfaceConfiguration.Format : TextureFormat
+struct SurfaceConfiguration.Height : uint
+struct SurfaceConfiguration.PresentMode : PresentMode = PresentMode.Fifo
+struct SurfaceConfiguration.Usage : TextureUsage = TextureUsage.RenderAttachment
+struct SurfaceConfiguration.ViewFormats : ReadOnlySpan<TextureFormat>
+struct SurfaceConfiguration.Width : uint
+struct SurfaceDescriptor : Ref
+struct SurfaceDescriptor.EmscriptenSurfaceSourceCanvasHTMLSelector : optional EmscriptenSurfaceSourceCanvasHTMLSelector
+struct SurfaceDescriptor.Label : ReadOnlySpan<byte>
+struct SurfaceDescriptor.SurfaceColorManagement : SurfaceColorManagement?
+struct SurfaceDescriptor.SurfaceSourceAndroidNativeWindow : SurfaceSourceAndroidNativeWindow?
+struct SurfaceDescriptor.SurfaceSourceMetalLayer : SurfaceSourceMetalLayer?
+struct SurfaceDescriptor.SurfaceSourceWaylandSurface : SurfaceSourceWaylandSurface?
+struct SurfaceDescriptor.SurfaceSourceWindowsHWND : SurfaceSourceWindowsHWND?
+struct SurfaceDescriptor.SurfaceSourceXCBWindow : SurfaceSourceXCBWindow?
+struct SurfaceDescriptor.SurfaceSourceXlibWindow : SurfaceSourceXlibWindow?
+struct SurfaceSourceAndroidNativeWindow : Plain
+struct SurfaceSourceAndroidNativeWindow.Window : nint
+struct SurfaceSourceMetalLayer : Plain
+struct SurfaceSourceMetalLayer.Layer : nint
+struct SurfaceSourceWaylandSurface : Plain
+struct SurfaceSourceWaylandSurface.Display : nint
+struct SurfaceSourceWaylandSurface.Surface : nint
+struct SurfaceSourceWindowsHWND : Plain
+struct SurfaceSourceWindowsHWND.Hinstance : nint
+struct SurfaceSourceWindowsHWND.Hwnd : nint
+struct SurfaceSourceXCBWindow : Plain
+struct SurfaceSourceXCBWindow.Connection : nint
+struct SurfaceSourceXCBWindow.Window : uint
+struct SurfaceSourceXlibWindow : Plain
+struct SurfaceSourceXlibWindow.Display : nint
+struct SurfaceSourceXlibWindow.Window : ulong
+struct SurfaceTexture : Out
+struct SurfaceTexture.Status : SurfaceGetCurrentTextureStatus
+struct SurfaceTexture.Texture : Texture
+struct TexelCopyBufferInfo : Plain
+struct TexelCopyBufferInfo.Buffer : Buffer
+struct TexelCopyBufferInfo.Layout : TexelCopyBufferLayout = new()
+struct TexelCopyBufferLayout : Plain
+struct TexelCopyBufferLayout.BytesPerRow : uint = Wgpu.CopyStrideUndefined
+struct TexelCopyBufferLayout.Offset : ulong
+struct TexelCopyBufferLayout.RowsPerImage : uint = Wgpu.CopyStrideUndefined
+struct TexelCopyTextureInfo : Plain
+struct TexelCopyTextureInfo.Aspect : TextureAspect = TextureAspect.All
+struct TexelCopyTextureInfo.MipLevel : uint
+struct TexelCopyTextureInfo.Origin : Origin3D = new()
+struct TexelCopyTextureInfo.Texture : Texture
+struct TextureBindingLayout : Plain
+struct TextureBindingLayout.Multisampled : bool
+struct TextureBindingLayout.SampleType : TextureSampleType = TextureSampleType.Float
+struct TextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension._2D
+struct TextureBindingViewDimension : Plain
+struct TextureBindingViewDimension.TextureBindingViewDimensionValue : TextureViewDimension
+struct TextureComponentSwizzle : Plain
+struct TextureComponentSwizzle.A : ComponentSwizzle = ComponentSwizzle.A
+struct TextureComponentSwizzle.B : ComponentSwizzle = ComponentSwizzle.B
+struct TextureComponentSwizzle.G : ComponentSwizzle = ComponentSwizzle.G
+struct TextureComponentSwizzle.R : ComponentSwizzle = ComponentSwizzle.R
+struct TextureComponentSwizzleDescriptor : Plain
+struct TextureComponentSwizzleDescriptor.Swizzle : TextureComponentSwizzle = new()
+struct TextureDescriptor : Ref
+struct TextureDescriptor.Dimension : TextureDimension = TextureDimension._2D
+struct TextureDescriptor.Format : TextureFormat
+struct TextureDescriptor.Label : ReadOnlySpan<byte>
+struct TextureDescriptor.MipLevelCount : uint = 1
+struct TextureDescriptor.SampleCount : uint = 1
+struct TextureDescriptor.Size : Extent3D = new()
+struct TextureDescriptor.TextureBindingViewDimension : TextureBindingViewDimension?
+struct TextureDescriptor.Usage : TextureUsage
+struct TextureDescriptor.ViewFormats : ReadOnlySpan<TextureFormat>
+struct TextureViewDescriptor : Ref
+struct TextureViewDescriptor.ArrayLayerCount : uint = Wgpu.ArrayLayerCountUndefined
+struct TextureViewDescriptor.Aspect : TextureAspect = TextureAspect.All
+struct TextureViewDescriptor.BaseArrayLayer : uint
+struct TextureViewDescriptor.BaseMipLevel : uint
+struct TextureViewDescriptor.Dimension : TextureViewDimension
+struct TextureViewDescriptor.Format : TextureFormat
+struct TextureViewDescriptor.Label : ReadOnlySpan<byte>
+struct TextureViewDescriptor.MipLevelCount : uint = Wgpu.MipLevelCountUndefined
+struct TextureViewDescriptor.TextureComponentSwizzleDescriptor : TextureComponentSwizzleDescriptor?
+struct TextureViewDescriptor.Usage : TextureUsage = TextureUsage.None
+struct UncapturedErrorCallbackInfo.Callback : UncapturedErrorCallback?
+struct VertexAttribute : Plain
+struct VertexAttribute.Format : VertexFormat
+struct VertexAttribute.Offset : ulong
+struct VertexAttribute.ShaderLocation : uint
+struct VertexBufferLayout : Plain
+struct VertexBufferLayout.ArrayStride : ulong
+struct VertexBufferLayout.Attributes : ReadOnlyMemory<VertexAttribute>
+struct VertexBufferLayout.StepMode : VertexStepMode
+struct VertexState : Ref
+struct VertexState.Buffers : ReadOnlySpan<VertexBufferLayout>
+struct VertexState.Constants : ReadOnlySpan<ConstantEntry>
+struct VertexState.EntryPoint : ReadOnlySpan<byte>
+struct VertexState.Module : ShaderModule

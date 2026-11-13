@@ -16,4 +16,6 @@ The license texts are from the revisions in Dawn's `third_party/` at the pinned 
 
 On Windows, Olve.WebGPU.Native depends on Microsoft's [Microsoft.Direct3D.DXC](https://www.nuget.org/packages/Microsoft.Direct3D.DXC) package. Its build files copy that package's `dxcompiler.dll` and `dxil.dll` into the app's output. This package doesn't distribute the two DLLs; Microsoft's package does, under the licenses in that package. An app that ships them distributes them under Microsoft's terms.
 
+The Olve.WebGPU.Browser package (`MIT AND (MIT OR NCSA)`) ships Dawn's emdawnwebgpu remote port file for the pinned release (`port/emdawnwebgpu.remoteport.py`), under Emscripten's license (`port/LICENSE`). When an app builds, Emscripten downloads emdawnwebgpu itself from that Dawn release (BSD-3-Clause, and Emscripten's license for some files) and links it into the app; the package doesn't distribute it.
+
 The repository also contains Dawn's `dawn.json` (in `dawn/`), the input to the generator, under Dawn's BSD-3-Clause license.

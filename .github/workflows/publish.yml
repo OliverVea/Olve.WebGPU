@@ -1,7 +1,8 @@
 name: Publish
 
 # Builds, tests and packs everything (ci.yml), then pushes the packages to nuget.org.
-# Only on a published GitHub release (tag v<version>) or a manual run; needs the NUGET_API_KEY secret.
+# Only on a published GitHub release (tag v<version>) or a manual run. Uses nuget.org trusted publishing:
+# NuGet/login trades the job's OIDC token for a short-lived API key, so no secret is stored.
 on:
   release:
     types: [published]
@@ -31,14 +32,20 @@ jobs:
   publish:
     needs: ci
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
     steps:
       - uses: actions/download-artifact@v8
         with:
           name: packages
           path: packages
+      - name: Log in to nuget.org
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: OliverVea
       - name: Push to nuget.org
         env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
-          if [ -z "$NUGET_API_KEY" ]; then echo "::error::NUGET_API_KEY is not set"; exit 1; fi
           dotnet nuget push "packages/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

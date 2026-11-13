@@ -146,7 +146,14 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode_$required.app/Contents/Developer" >> "$GITHUB_ENV"
             echo "XcodeLocation=/Applications/Xcode_$required.app" >> "$GITHUB_ENV"
           fi
+          # An Xcode other than the image's default may not have run its first-launch setup, which installs its tools
+          sudo xcodebuild -runFirstLaunch
           xcodebuild -version
+          # The iOS build looks these up; print where they are, or that they aren't
+          xcrun -find install_name_tool || true
+          xcrun -sdk macosx -find install_name_tool || true
+          xcodebuild -sdk macosx -find install_name_tool || true
+          ls -l "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool" || true
           # The trial build above left MSBuild nodes running with the default Xcode's environment; later builds would reuse them
           dotnet build-server shutdown
       - name: Dawn's iOS libraries, and the layout checker for the simulator

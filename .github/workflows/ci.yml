@@ -161,9 +161,12 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: native-ios
+          # With layout-check/ beside native/, the artifact keeps the native/<rid>/ layout Pack expects
           path: |
             artifacts/native/ios-arm64/
             artifacts/native/iossimulator/
+            artifacts/layout-check/ios-arm64/
+            artifacts/layout-check/iossimulator/
           if-no-files-found: error
       - name: Build the iOS test runner (project references)
         run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION

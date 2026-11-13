@@ -1093,6 +1093,20 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static WGPUSubgroupMatrixConfig ToNative(in SubgroupMatrixConfig v, Arena arena)
+    {
+        return new WGPUSubgroupMatrixConfig
+        {
+            ComponentType = v.ComponentType,
+            ResultComponentType = v.ResultComponentType,
+            M = v.M,
+            N = v.N,
+            K = v.K,
+            MinSubgroupSize = v.MinSubgroupSize,
+            MaxSubgroupSize = v.MaxSubgroupSize,
+        };
+    }
+
     public static WGPUDeviceLostCallbackInfo ToNative(in DeviceLostCallbackInfo v, void* other) => v.Callback is null && other == null ? default : new WGPUDeviceLostCallbackInfo
     {
         Mode = v.Callback is null ? CallbackMode.AllowSpontaneous : v.Mode,

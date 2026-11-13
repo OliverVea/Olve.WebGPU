@@ -3,7 +3,7 @@
 # University of Illinois/NCSA Open Source License.  Both these licenses can be
 # found in the LICENSE file.
 
-# https://dawn.googlesource.com/dawn/+/31e25af254ab572c77054edec4946d2244e184dd/src/emdawnwebgpu/pkg/README.md
+# https://dawn.googlesource.com/dawn/+/e327e2a60b08179ee8a04056f58dad8ca4b69b5f/src/emdawnwebgpu/pkg/README.md
 r"""
 This "remote port" instructs Emscripten (4.0.10+) how to automatically download
 the actual port for Emdawnwebgpu. See README below for instructions.
@@ -150,14 +150,14 @@ if __name__ == '__main__':
     print('Please see documentation inside this file for details on how to use this port.')
     sys.exit(1)
 
-_VERSION = 'v20260423.175430'
+_VERSION = 'v20261111.144539'
 
 # Remote-specific port information
 
 # - Where to download the port
 EXTERNAL_PORT = f'https://github.com/google/dawn/releases/download/{_VERSION}/emdawnwebgpu_pkg-{_VERSION}.zip'
 # - Hash to verify the download integrity
-SHA512 = '42784f70b67197c614322f9fabb0f1dc64228a0de10e88f99941fa9d29bee9ad6683f4651d4eefd5a7a9fbd1f976eb522b190b683219ed1793e9b531c602ffa6'
+SHA512 = '9fe091b89f2375cb4bddf075385e34b58d263f359536d4b7cf13dd2b16eca1a1525faaf4adf73d6df91ab8da5c02e1f018898a06473087d9d91a8a1d507bb9e9'
 # - Path of the port inside the zip file
 PORT_FILE = 'emdawnwebgpu_pkg/emdawnwebgpu.port.py'
 
@@ -168,7 +168,7 @@ LICENSE = "Some files: BSD 3-Clause License. Other files: Emscripten's license (
 
 # - Visible in emcc --use-port=emdawnwebgpu:help
 DESCRIPTION = "Emdawnwebgpu implements webgpu.h on WebGPU, replacing -sUSE_WEBGPU. **For info on usage and filing feedback, see link below.**"
-URL = 'https://dawn.googlesource.com/dawn/+/31e25af254ab572c77054edec4946d2244e184dd/src/emdawnwebgpu/pkg/README.md'
+URL = 'https://dawn.googlesource.com/dawn/+/e327e2a60b08179ee8a04056f58dad8ca4b69b5f/src/emdawnwebgpu/pkg/README.md'
 
 
 # Emscripten <4.0.10 won't notice EXTERNAL_PORT and will try to use this.

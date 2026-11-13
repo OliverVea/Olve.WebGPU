@@ -632,6 +632,17 @@ public partial record struct TextureComponentSwizzleDescriptor()
     public TextureComponentSwizzle Swizzle { get; init; } = new();
 }
 
+public partial record struct SubgroupMatrixConfig()
+{
+    public SubgroupMatrixComponentType ComponentType { get; init; }
+    public SubgroupMatrixComponentType ResultComponentType { get; init; }
+    public uint M { get; init; }
+    public uint N { get; init; }
+    public uint K { get; init; }
+    public uint MinSubgroupSize { get; init; }
+    public uint MaxSubgroupSize { get; init; }
+}
+
 public delegate void DeviceLostCallback(Device device, DeviceLostReason reason, string message);
 
 public record struct DeviceLostCallbackInfo()

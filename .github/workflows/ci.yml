@@ -174,6 +174,13 @@ jobs:
           if-no-files-found: error
       - name: Build the iOS test runner (project references)
         run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION
+      - name: Show what the iOS build linked
+        run: |
+          dotnet msbuild tests/Olve.WebGPU.Tests.iOS -p:Configuration=Release -getItem:NativeReference -getProperty:_OlveWebGPUPlatform -getProperty:_OlveWebGPUIosSlice -getProperty:OlveWebGPUIosLibraries | head -40
+          echo "ReferenceNativeSymbol items: $(dotnet msbuild tests/Olve.WebGPU.Tests.iOS -p:Configuration=Release -getItem:ReferenceNativeSymbol | grep -c '"Identity"')"
+          app="$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"
+          echo "wgpu symbols in the app's executable: $(nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -c ' _wgpu')"
+          nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -E ' _(wgpuCreateInstance|wgpu_layout_values|dawn_layout_values)$' || echo "not exported: _wgpuCreateInstance"
       - name: Run the checks in an iPhone simulator
         timeout-minutes: 15
         run: scripts/run-ios-tests.sh "$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"

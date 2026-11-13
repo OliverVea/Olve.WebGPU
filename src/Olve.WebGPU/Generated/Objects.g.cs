@@ -402,13 +402,15 @@ public readonly unsafe partial record struct Buffer(nint Handle) : IDisposable
 
     public Span<byte> GetMappedRange(nuint offset, nuint size)
     {
-        var result = new Span<byte>(wgpuBufferGetMappedRange(Handle, offset, size), checked((int)size));
+        var pointer = wgpuBufferGetMappedRange(Handle, offset, size);
+        var result = pointer == null ? default : new Span<byte>(pointer, checked((int)(size == nuint.MaxValue ? checked((nuint)(GetSize() - offset)) : size)));
         return result;
     }
 
     public ReadOnlySpan<byte> GetConstMappedRange(nuint offset, nuint size)
     {
-        var result = new ReadOnlySpan<byte>(wgpuBufferGetConstMappedRange(Handle, offset, size), checked((int)size));
+        var pointer = wgpuBufferGetConstMappedRange(Handle, offset, size);
+        var result = pointer == null ? default : new ReadOnlySpan<byte>(pointer, checked((int)(size == nuint.MaxValue ? checked((nuint)(GetSize() - offset)) : size)));
         return result;
     }
 

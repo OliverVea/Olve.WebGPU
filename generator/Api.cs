@@ -910,8 +910,12 @@ public sealed class Api
         }
         else if (returnType is "void *" or "void const *" && fields.Any(f => f.Name == "size"))
         {
+            // Null (an invalid range) is an empty span; webgpu.h's whole map size is the rest of the buffer
             csReturn = returnType == "void *" ? "Span<byte>" : "ReadOnlySpan<byte>";
-            wrap = call => $"var result = new {csReturn}({call}, checked((int)size));";
+            var whole = fields.First(f => f.Name == "size").Default is { } d && _m.Entries.TryGetValue(d, out var c) && c.Category == "constant"
+                ? $"size == {Constant(c).Expression} ? checked((nuint)(GetSize() - offset)) : size"
+                : "size";
+            wrap = call => $"var pointer = {call};\n        var result = pointer == null ? default : new {csReturn}(pointer, checked((int)({whole})));";
         }
         else if (Scalar(returnType) is { } scalar)
         {

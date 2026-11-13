@@ -107,9 +107,6 @@ internal static unsafe partial class Callbacks
 
     public static void Unregister(void* id) => Registered.TryRemove((nint)id, out _);
 
-    /// <summary>For tests: how many callback infos are registered.</summary>
-    public static int RegisteredCount => Registered.Count;
-
     public static T Take<T>(void* userdata)
     {
         var handle = GCHandle.FromIntPtr((nint)userdata);

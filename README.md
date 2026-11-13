@@ -41,7 +41,7 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 |---|---|
 | Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
 | Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
-| macOS (arm64, x64) | Metal. The binding maps `SurfaceSourceMetalLayer`, but there's no sample host; you create the `CAMetalLayer`. |
+| macOS (arm64, x64) | Metal. A window needs a `CAMetalLayer` for `SurfaceSourceMetalLayer`; the desktop sample makes one through the Objective-C runtime (`samples/Triangle.Desktop/MetalLayer.cs`). That host hasn't been run on a Mac yet. |
 | Browser | emdawnwebgpu from the Dawn release in `dawn/version.env`. The package ships that release's remote port file; on the first build, Emscripten downloads the port from Dawn's GitHub release and checks its SHA-512. The browser tests check every struct layout and enum value against it. |
 
 In the browser, emdawnwebgpu aborts on `Surface.Present()`: the browser presents when the frame callback returns.

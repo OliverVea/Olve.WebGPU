@@ -3,6 +3,7 @@ using Silk.NET.GLFW;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Triangle;
+using Triangle.Desktop;
 
 // The triangle in a Silk.NET window, through Dawn native.
 //   --frames N                    closes the window after N frames
@@ -42,6 +43,10 @@ window.Load += () =>
         { X11: { } x11 } => new SurfaceDescriptor
         {
             SurfaceSourceXlibWindow = new SurfaceSourceXlibWindow { Display = x11.Display, Window = (ulong)x11.Window },
+        },
+        { Cocoa: { } nsWindow } => new SurfaceDescriptor
+        {
+            SurfaceSourceMetalLayer = new SurfaceSourceMetalLayer { Layer = MetalLayer.For(nsWindow) },
         },
         var native => throw new PlatformNotSupportedException($"No surface source for {native.Kind} windows"),
     });

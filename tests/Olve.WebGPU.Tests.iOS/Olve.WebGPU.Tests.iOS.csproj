@@ -3,7 +3,8 @@
          runs it in a simulator. Needs a Mac with Xcode, the ios workload, and the libraries scripts/build-natives.sh puts in artifacts/
          for RID=ios-arm64 and RID=iossimulator. Not in the solution: it can't build on Linux or Windows. -->
     <PropertyGroup>
-        <TargetFramework>net11.0-ios</TargetFramework>
+        <!-- net10.0-ios: .NET 11 for iOS needs Xcode 27, which the macOS runners don't have yet -->
+        <TargetFramework>net10.0-ios</TargetFramework>
         <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
         <OutputType>Exe</OutputType>
         <ApplicationId>dev.olve.webgpu.tests</ApplicationId>

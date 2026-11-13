@@ -40,5 +40,28 @@ var (waitStatus, waitCompleted) = await FinishedFuture.WaitAsync();
 Console.WriteLine($"WaitAny on a finished request: {waitStatus}, completed {waitCompleted}");
 failures += waitStatus == WaitStatus.Success && waitCompleted ? 0 : 1;
 
+try
+{
+    var output = await Flows.ComputeAndReadBackAsync();
+    var ok = output.SequenceEqual(Flows.Doubled());
+    Console.WriteLine($"compute and read back: {(ok ? "matches" : string.Join(",", output.Take(8)) + "...")}");
+    failures += ok ? 0 : 1;
+
+    const string label = "deliberately-invalid-buffer";
+    var (scope, uncaptured) = await Flows.CatchValidationErrorAsync(label);
+    var caught = scope.TryGetValue(out var type) && type == ErrorType.Validation && scope.Message.Contains(label) && uncaptured == 0;
+    Console.WriteLine($"error scope: {scope.Status}, {type}, uncaptured {uncaptured}: {scope.Message}");
+    failures += caught ? 0 : 1;
+
+    var (calls, reason, futureStatus, futureCompleted) = await Flows.DestroyAsync();
+    Console.WriteLine($"destroy: lost callback {calls}x ({reason}), lost future {futureStatus}, completed {futureCompleted}");
+    failures += calls == 1 && reason == DeviceLostReason.Destroyed && futureStatus == WaitStatus.Success && futureCompleted ? 0 : 1;
+}
+catch (InvalidOperationException e)
+{
+    Console.WriteLine(e.Message);
+    failures++;
+}
+
 Console.WriteLine(failures == 0 ? "PASS" : $"FAIL ({failures})");
 return failures;

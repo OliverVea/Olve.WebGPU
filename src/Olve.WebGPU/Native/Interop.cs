@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -83,14 +84,28 @@ internal static partial class Marshalling
 }
 
 /// <summary>
-/// Userdata for native callbacks: a GCHandle to the managed target. Requests take (and free) theirs when they complete,
-/// so a request that never completes leaks one handle; callback infos keep theirs for the life of the process.
+/// Userdata for native callbacks. Requests pass a GCHandle and take (and free) it when they complete,
+/// so a request that never completes leaks one handle.
+/// Callback infos pass an id that is never reused, and the device lost callback unregisters the device's ids:
+/// a callback that still arrives afterwards (emdawnwebgpu doesn't clear them) finds nothing instead of a freed handle.
 /// </summary>
 internal static unsafe partial class Callbacks
 {
+    private static readonly ConcurrentDictionary<nint, object> Registered = new();
+    private static long _lastId;
+
     public static void* Wrap(object target) => (void*)GCHandle.ToIntPtr(GCHandle.Alloc(target));
 
-    public static T Get<T>(void* userdata) => (T)GCHandle.FromIntPtr((nint)userdata).Target!;
+    public static void* Register(object target)
+    {
+        var id = (nint)Interlocked.Increment(ref _lastId);
+        Registered[id] = target;
+        return (void*)id;
+    }
+
+    public static T? Find<T>(void* id) where T : class => Registered.TryGetValue((nint)id, out var target) ? (T)target : null;
+
+    public static void Unregister(void* id) => Registered.TryRemove((nint)id, out _);
 
     public static T Take<T>(void* userdata)
     {

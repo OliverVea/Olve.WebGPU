@@ -85,13 +85,17 @@ internal static unsafe partial class Callbacks
     public static nint DeviceLostCallbackDelegate => (nint)(delegate* unmanaged<nint*, DeviceLostReason, WGPUStringView, void*, void*, void>)&OnDeviceLostCallbackDelegate;
 
     [UnmanagedCallersOnly]
-    private static void OnDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2) =>
-        Get<DeviceLostCallback>(userdata1)(device == null ? default : new Device(*device), reason, ToManaged(message));
+    private static void OnDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2)
+    {
+        Find<DeviceLostCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), reason, ToManaged(message));
+        Unregister(userdata1);
+        Unregister(userdata2);
+    }
 
     public static nint UncapturedErrorCallbackDelegate => (nint)(delegate* unmanaged<nint*, ErrorType, WGPUStringView, void*, void*, void>)&OnUncapturedErrorCallbackDelegate;
 
     [UnmanagedCallersOnly]
     private static void OnUncapturedErrorCallbackDelegate(nint* device, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2) =>
-        Get<UncapturedErrorCallback>(userdata1)(device == null ? default : new Device(*device), type, ToManaged(message));
+        Find<UncapturedErrorCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), type, ToManaged(message));
 
 }

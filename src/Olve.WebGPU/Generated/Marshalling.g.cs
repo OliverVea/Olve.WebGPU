@@ -56,6 +56,7 @@ internal static unsafe partial class Marshalling
 
     public static WGPUDeviceDescriptor ToNative(in DeviceDescriptor v, Arena arena)
     {
+        var uncapturedErrorCallbackInfo = ToNative(v.UncapturedErrorCallbackInfo);
         return new WGPUDeviceDescriptor
         {
             Label = arena.String(v.Label),
@@ -63,8 +64,8 @@ internal static unsafe partial class Marshalling
             RequiredFeatures = arena.Copy(v.RequiredFeatures),
             RequiredLimits = v.RequiredLimits.HasValue ? arena.Alloc(ToNative(v.RequiredLimits.Value, arena)) : null,
             DefaultQueue = ToNative(v.DefaultQueue, arena),
-            DeviceLostCallbackInfo = ToNative(v.DeviceLostCallbackInfo),
-            UncapturedErrorCallbackInfo = ToNative(v.UncapturedErrorCallbackInfo),
+            DeviceLostCallbackInfo = ToNative(v.DeviceLostCallbackInfo, uncapturedErrorCallbackInfo.Userdata1),
+            UncapturedErrorCallbackInfo = uncapturedErrorCallbackInfo,
         };
     }
 
@@ -1092,17 +1093,18 @@ internal static unsafe partial class Marshalling
         };
     }
 
-    public static WGPUDeviceLostCallbackInfo ToNative(in DeviceLostCallbackInfo v) => v.Callback is null ? default : new WGPUDeviceLostCallbackInfo
+    public static WGPUDeviceLostCallbackInfo ToNative(in DeviceLostCallbackInfo v, void* other) => v.Callback is null && other == null ? default : new WGPUDeviceLostCallbackInfo
     {
-        Mode = v.Mode,
+        Mode = v.Callback is null ? CallbackMode.AllowSpontaneous : v.Mode,
         Callback = Callbacks.DeviceLostCallbackDelegate,
-        Userdata1 = Callbacks.Wrap(v.Callback),
+        Userdata1 = v.Callback is null ? null : Callbacks.Register(v.Callback),
+        Userdata2 = other,
     };
 
     public static WGPUUncapturedErrorCallbackInfo ToNative(in UncapturedErrorCallbackInfo v) => v.Callback is null ? default : new WGPUUncapturedErrorCallbackInfo
     {
         Callback = Callbacks.UncapturedErrorCallbackDelegate,
-        Userdata1 = Callbacks.Wrap(v.Callback),
+        Userdata1 = Callbacks.Register(v.Callback),
     };
 
 }

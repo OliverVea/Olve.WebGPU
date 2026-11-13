@@ -20,8 +20,11 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 ```csharp
 var instance = Wgpu.CreateInstance();
 // Requests complete inside ProcessEvents, as promises do in the browser's event loop
-var result = await instance.ProcessEventsUntil(instance.RequestAdapterAsync());
+var result = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync());
 if (result.TryPickProblems(out var problems, out var adapter)) { /* no adapter */ }
+
+// Desktop only: pump on this thread, without async
+var device = instance.ProcessEventsUntil(adapter.RequestDeviceAsync(), TimeSpan.FromSeconds(5));
 ```
 
 `Wgpu` holds webgpu.h's free functions and constants (`wgpuCreateInstance` is `Wgpu.CreateInstance`). Handles keep webgpu.h's names, so in a file that imports both `System` and `Olve.WebGPU`, `Buffer` is ambiguous with `System.Buffer`. Add `using Buffer = Olve.WebGPU.Buffer;` to resolve it.

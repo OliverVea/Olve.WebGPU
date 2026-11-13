@@ -11,11 +11,11 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 
 | Package | What it is |
 |---|---|
-| `Olve.WebGPU` | The binding (net10.0). |
+| `Olve.WebGPU` | The binding (net10.0). No implementation: a library can reference it alone, but an app can't. |
 | `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64. |
 | `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
-Reference `Olve.WebGPU.Native` from a desktop app, or `Olve.WebGPU.Browser` from a `browser-wasm` app. Both bring in `Olve.WebGPU`. All three always ship at the same version. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
+**An app must reference `Olve.WebGPU.Native` (desktop) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
 
 ```csharp
 var instance = WebGPU.CreateInstance();

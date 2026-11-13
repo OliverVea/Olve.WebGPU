@@ -10,6 +10,20 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 
 Descriptors get webgpu.h's defaults from `new()` and object initialisers: the same values as webgpu.h's `*_INIT` macros, which a test compares field by field. Like those macros, an enum member that has an `Undefined` value defaults to it, which means "use the default": `new BlendComponent().Operation` is `BlendOperation.Undefined`, which the implementation treats as `Add`. `default(T)` and `new T[n]` skip them, like `= {0}` in C: the elements of `new ColorTargetState[n]` have `WriteMask = None` and draw nothing. Build arrays from `new()` values, for example with collection expressions.
 
+Descriptors that hold spans or strings are `ref struct`s, so `"label"u8`, `stackalloc` and collection expressions need no copies. That also means they can't be stored in a field, captured by a lambda, used as a type argument (`Task<T>`, `List<T>`) or passed to an async method. Build them where you make the call. To prepare one elsewhere, keep your own type with arrays and convert it at the call:
+
+```csharp
+record MeshPipeline(byte[] Label, VertexBufferLayout[] Buffers);   // storable: yours
+
+device.CreateRenderPipeline(new RenderPipelineDescriptor
+{
+    Label = mesh.Label,
+    Vertex = new VertexState { Module = module, EntryPoint = "vs"u8, Buffers = mesh.Buffers },
+});
+```
+
+An optional struct member is `T?`, except when `T` is itself a `ref struct`, which C# can't make nullable. Then the member is a plain `T` with a `HasX` flag that setting it in an initializer sets: `new RenderPipelineDescriptor { Fragment = new FragmentState { ... } }` has `HasFragment == true`.
+
 ## Packages
 
 | Package | What it is |

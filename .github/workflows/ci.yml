@@ -140,11 +140,14 @@ jobs:
           required="$(dotnet build tests/Olve.WebGPU.Tests.iOS -c Release 2>&1 | sed -nE 's/.*requires Xcode ([0-9.]+)\..*/\1/p' | head -1)"
           echo "the workload requires Xcode ${required:-(no requirement reported)}"
           if [[ -n "$required" ]]; then
-            sudo xcode-select -s "/Applications/Xcode_$required.app"
+            # The image's Xcode_<major.minor>.app is a symlink; tools looked up through a path in it aren't found, so name the real one
+            xcode="$(cd "/Applications/Xcode_$required.app" && pwd -P)"
+            echo "using $xcode"
+            sudo xcode-select -s "$xcode"
             # xcrun follows DEVELOPER_DIR; the iOS SDK follows XcodeLocation (an MSBuild property, also read from the environment)
             # before the runner image's Settings.plist, which names its default Xcode
-            echo "DEVELOPER_DIR=/Applications/Xcode_$required.app/Contents/Developer" >> "$GITHUB_ENV"
-            echo "XcodeLocation=/Applications/Xcode_$required.app" >> "$GITHUB_ENV"
+            echo "DEVELOPER_DIR=$xcode/Contents/Developer" >> "$GITHUB_ENV"
+            echo "XcodeLocation=$xcode" >> "$GITHUB_ENV"
           fi
           # An Xcode other than the image's default may not have run its first-launch setup, which installs its tools
           sudo xcodebuild -runFirstLaunch

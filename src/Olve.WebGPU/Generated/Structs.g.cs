@@ -14,7 +14,7 @@ public partial record struct RequestAdapterWebXROptions()
 
 public partial record struct RequestAdapterOptions()
 {
-    public FeatureLevel FeatureLevel { get; init; } = FeatureLevel.Core;
+    public FeatureLevel FeatureLevel { get; init; } = FeatureLevel.Undefined;
     public PowerPreference PowerPreference { get; init; }
     public bool ForceFallbackAdapter { get; init; }
     public BackendType BackendType { get; init; }
@@ -107,20 +107,20 @@ public ref partial struct BindGroupDescriptor()
 
 public partial record struct BufferBindingLayout()
 {
-    public BufferBindingType Type { get; init; } = BufferBindingType.Uniform;
+    public BufferBindingType Type { get; init; } = BufferBindingType.Undefined;
     public bool HasDynamicOffset { get; init; }
     public ulong MinBindingSize { get; init; }
 }
 
 public partial record struct SamplerBindingLayout()
 {
-    public SamplerBindingType Type { get; init; } = SamplerBindingType.Filtering;
+    public SamplerBindingType Type { get; init; } = SamplerBindingType.Undefined;
 }
 
 public partial record struct TextureBindingLayout()
 {
-    public TextureSampleType SampleType { get; init; } = TextureSampleType.Float;
-    public TextureViewDimension ViewDimension { get; init; } = TextureViewDimension._2D;
+    public TextureSampleType SampleType { get; init; } = TextureSampleType.Undefined;
+    public TextureViewDimension ViewDimension { get; init; } = TextureViewDimension.Undefined;
     public bool Multisampled { get; init; }
 }
 
@@ -141,7 +141,7 @@ public ref partial struct SurfaceConfiguration()
     public uint Height { get; init; }
     public ReadOnlySpan<TextureFormat> ViewFormats { get; init; }
     public CompositeAlphaMode AlphaMode { get; init; } = CompositeAlphaMode.Auto;
-    public PresentMode PresentMode { get; init; } = PresentMode.Fifo;
+    public PresentMode PresentMode { get; init; } = PresentMode.Undefined;
 }
 
 public partial record struct ExternalTextureBindingEntry()
@@ -155,9 +155,9 @@ public partial record struct ExternalTextureBindingLayout()
 
 public partial record struct StorageTextureBindingLayout()
 {
-    public StorageTextureAccess Access { get; init; } = StorageTextureAccess.WriteOnly;
+    public StorageTextureAccess Access { get; init; } = StorageTextureAccess.Undefined;
     public TextureFormat Format { get; init; }
-    public TextureViewDimension ViewDimension { get; init; } = TextureViewDimension._2D;
+    public TextureViewDimension ViewDimension { get; init; } = TextureViewDimension.Undefined;
 }
 
 public partial record struct BindGroupLayoutEntry()
@@ -180,9 +180,9 @@ public ref partial struct BindGroupLayoutDescriptor()
 
 public partial record struct BlendComponent()
 {
-    public BlendOperation Operation { get; init; } = BlendOperation.Add;
-    public BlendFactor SrcFactor { get; init; } = BlendFactor.One;
-    public BlendFactor DstFactor { get; init; } = BlendFactor.Zero;
+    public BlendOperation Operation { get; init; } = BlendOperation.Undefined;
+    public BlendFactor SrcFactor { get; init; } = BlendFactor.Undefined;
+    public BlendFactor DstFactor { get; init; } = BlendFactor.Undefined;
 }
 
 public ref partial struct BufferDescriptor()
@@ -313,7 +313,7 @@ public partial record struct TexelCopyTextureInfo()
     public Texture Texture { get; init; }
     public uint MipLevel { get; init; }
     public Origin3D Origin { get; init; } = new();
-    public TextureAspect Aspect { get; init; } = TextureAspect.All;
+    public TextureAspect Aspect { get; init; } = TextureAspect.Undefined;
 }
 
 public partial record struct Future()
@@ -429,25 +429,25 @@ public ref partial struct VertexState()
 
 public partial record struct PrimitiveState()
 {
-    public PrimitiveTopology Topology { get; init; } = PrimitiveTopology.TriangleList;
+    public PrimitiveTopology Topology { get; init; } = PrimitiveTopology.Undefined;
     public IndexFormat StripIndexFormat { get; init; }
-    public FrontFace FrontFace { get; init; } = FrontFace.CCW;
-    public CullMode CullMode { get; init; } = CullMode.None;
+    public FrontFace FrontFace { get; init; } = FrontFace.Undefined;
+    public CullMode CullMode { get; init; } = CullMode.Undefined;
     public bool UnclippedDepth { get; init; }
 }
 
 public partial record struct StencilFaceState()
 {
-    public CompareFunction Compare { get; init; } = CompareFunction.Always;
-    public StencilOperation FailOp { get; init; } = StencilOperation.Keep;
-    public StencilOperation DepthFailOp { get; init; } = StencilOperation.Keep;
-    public StencilOperation PassOp { get; init; } = StencilOperation.Keep;
+    public CompareFunction Compare { get; init; } = CompareFunction.Undefined;
+    public StencilOperation FailOp { get; init; } = StencilOperation.Undefined;
+    public StencilOperation DepthFailOp { get; init; } = StencilOperation.Undefined;
+    public StencilOperation PassOp { get; init; } = StencilOperation.Undefined;
 }
 
 public partial record struct DepthStencilState()
 {
     public TextureFormat Format { get; init; }
-    public OptionalBool DepthWriteEnabled { get; init; }
+    public OptionalBool DepthWriteEnabled { get; init; } = OptionalBool.Undefined;
     public CompareFunction DepthCompare { get; init; }
     public StencilFaceState StencilFront { get; init; } = new();
     public StencilFaceState StencilBack { get; init; } = new();
@@ -501,12 +501,12 @@ public ref partial struct RenderPipelineDescriptor()
 public ref partial struct SamplerDescriptor()
 {
     public ReadOnlySpan<byte> Label { get; init; }
-    public AddressMode AddressModeU { get; init; } = AddressMode.ClampToEdge;
-    public AddressMode AddressModeV { get; init; } = AddressMode.ClampToEdge;
-    public AddressMode AddressModeW { get; init; } = AddressMode.ClampToEdge;
-    public FilterMode MagFilter { get; init; } = FilterMode.Nearest;
-    public FilterMode MinFilter { get; init; } = FilterMode.Nearest;
-    public MipmapFilterMode MipmapFilter { get; init; } = MipmapFilterMode.Nearest;
+    public AddressMode AddressModeU { get; init; } = AddressMode.Undefined;
+    public AddressMode AddressModeV { get; init; } = AddressMode.Undefined;
+    public AddressMode AddressModeW { get; init; } = AddressMode.Undefined;
+    public FilterMode MagFilter { get; init; } = FilterMode.Undefined;
+    public FilterMode MinFilter { get; init; } = FilterMode.Undefined;
+    public MipmapFilterMode MipmapFilter { get; init; } = MipmapFilterMode.Undefined;
     public float LodMinClamp { get; init; }
     public float LodMaxClamp { get; init; } = 32f;
     public CompareFunction Compare { get; init; }
@@ -601,7 +601,7 @@ public ref partial struct TextureDescriptor()
 {
     public ReadOnlySpan<byte> Label { get; init; }
     public TextureUsage Usage { get; init; }
-    public TextureDimension Dimension { get; init; } = TextureDimension._2D;
+    public TextureDimension Dimension { get; init; } = TextureDimension.Undefined;
     public Extent3D Size { get; init; } = new();
     public TextureFormat Format { get; init; }
     public uint MipLevelCount { get; init; } = 1;
@@ -624,17 +624,17 @@ public ref partial struct TextureViewDescriptor()
     public uint MipLevelCount { get; init; } = Wgpu.MipLevelCountUndefined;
     public uint BaseArrayLayer { get; init; }
     public uint ArrayLayerCount { get; init; } = Wgpu.ArrayLayerCountUndefined;
-    public TextureAspect Aspect { get; init; } = TextureAspect.All;
+    public TextureAspect Aspect { get; init; } = TextureAspect.Undefined;
     public TextureUsage Usage { get; init; } = TextureUsage.None;
     public TextureComponentSwizzleDescriptor? TextureComponentSwizzleDescriptor { get; init; }
 }
 
 public partial record struct TextureComponentSwizzle()
 {
-    public ComponentSwizzle R { get; init; } = ComponentSwizzle.R;
-    public ComponentSwizzle G { get; init; } = ComponentSwizzle.G;
-    public ComponentSwizzle B { get; init; } = ComponentSwizzle.B;
-    public ComponentSwizzle A { get; init; } = ComponentSwizzle.A;
+    public ComponentSwizzle R { get; init; } = ComponentSwizzle.Undefined;
+    public ComponentSwizzle G { get; init; } = ComponentSwizzle.Undefined;
+    public ComponentSwizzle B { get; init; } = ComponentSwizzle.Undefined;
+    public ComponentSwizzle A { get; init; } = ComponentSwizzle.Undefined;
 }
 
 public partial record struct TextureComponentSwizzleDescriptor()

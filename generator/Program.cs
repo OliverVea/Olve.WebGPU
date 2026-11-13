@@ -3,7 +3,8 @@ using Olve.WebGPU.Generator;
 
 // usage: [<dawn.json> [<repo root>]] [--header-check <dir>] [--manifest <api.txt>]
 //   default:        reads dawn/dawn.json and writes src/Olve.WebGPU/Generated/*.g.cs, the public API (Generated/PublicApi.g.txt),
-//                   tests/Shared/LayoutCheck.g.cs and native/layout_check.g.c under the repo root (the current directory)
+//                   tests/Shared/LayoutCheck.g.cs, tests/Shared/MarshalCheck.g.cs, native/layout_check.g.c and native/init_check.g.c
+//                   under the repo root (the current directory)
 //   --header-check: writes the raw layer as webgpu.h's regex generator saw it (desktop types, functions in both headers) to <dir>
 //   --manifest:     also writes the 80/20 subset of the public API, one line per member, for diffing between Dawn versions
 var positional = new List<string>();
@@ -47,6 +48,10 @@ foreach (var (file, text) in api.Emit())
 {
     Write(Path.Combine(generated, file), text);
 }
+
+var (marshalCs, initC) = api.EmitMarshalCheck(e => Availability.Web(e.Tags) && Availability.Desktop(e.Tags));
+Write(Path.Combine(root, "tests", "Shared", "MarshalCheck.g.cs"), marshalCs);
+Write(Path.Combine(root, "native", "init_check.g.c"), initC);
 
 // The whole generated public API, one line per member: CI fails on any diff against the committed file, so every API change shows in review
 Write(Path.Combine(generated, "PublicApi.g.txt"), string.Join('\n', api.FullManifest) + "\n");

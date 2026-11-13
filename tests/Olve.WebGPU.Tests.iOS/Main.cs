@@ -9,13 +9,9 @@ UIApplication.Main(args, null, typeof(AppDelegate));
 [Register("AppDelegate")]
 public class AppDelegate : UIApplicationDelegate
 {
-    public override UIWindow? Window { get; set; }
-
+    // No window: the checks render offscreen, and the result goes to stdout
     public override bool FinishedLaunching(UIApplication application, NSDictionary? launchOptions)
     {
-        Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = new UIViewController() };
-        Window.MakeKeyAndVisible();
-
         // The layout checker is a static library linked into the app, like Dawn: its symbols are in the app's executable
         NativeLibrary.SetDllImportResolver(typeof(AppDelegate).Assembly,
             static (name, _, _) => name == "webgpu_layout_check" ? NativeLibrary.GetMainProgramHandle() : 0);

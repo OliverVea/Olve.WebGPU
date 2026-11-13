@@ -75,6 +75,16 @@ jobs:
       - name: Run the desktop sample in a window (the CAMetalLayer host)
         if: runner.os == 'macOS'
         run: dotnet run --project samples/Triangle.Desktop -c Release --no-build -- --frames 60
+      - name: Build the Avalonia sample
+        run: dotnet build samples/Triangle.Avalonia -c Release -p:Version=$VERSION
+      - name: Run the Avalonia sample's viewport for 60 frames
+        run: |
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            sudo apt-get install -y --no-install-recommends xvfb
+            xvfb-run -a -s "-screen 0 1280x800x24" dotnet run --project samples/Triangle.Avalonia -c Release --no-build -- --frames 60
+          else
+            dotnet run --project samples/Triangle.Avalonia -c Release --no-build -- --frames 60
+          fi
       - name: Run the benchmarks once (a dry job, so they keep building and running; real runs are off-cadence)
         if: runner.os == 'Linux'
         run: dotnet run --project benchmarks/Olve.WebGPU.Benchmarks -c Release -p:Version=$VERSION -- --filter '*' --job Dry --inProcess

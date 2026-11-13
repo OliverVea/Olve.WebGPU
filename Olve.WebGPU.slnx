@@ -18,6 +18,7 @@
   <Folder Name="/samples/">
     <Project Path="samples/Triangle/Triangle.csproj" />
     <Project Path="samples/Triangle.Desktop/Triangle.Desktop.csproj" />
+    <Project Path="samples/Triangle.Avalonia/Triangle.Avalonia.csproj" />
     <Project Path="samples/Triangle.Web/Triangle.Web.csproj" />
   </Folder>
 </Solution>

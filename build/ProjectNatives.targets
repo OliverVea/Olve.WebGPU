@@ -1,0 +1,15 @@
+<Project>
+    <!-- For this repo's tests and samples built against the projects (not the packages): webgpu_dawn from artifacts/native/<rid>/
+         next to the app, and on Windows DXC next to it, the way Olve.WebGPU.Native's build files do it for package consumers. -->
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+        <OlveWebGPUDxcDestination>./</OlveWebGPUDxcDestination>
+    </PropertyGroup>
+    <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
+        <OlveWebGPUCopyDxc>false</OlveWebGPUCopyDxc>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(NativeDir)*" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+        <PackageReference Include="Microsoft.Direct3D.DXC" Condition="$([MSBuild]::IsOSPlatform('Windows'))" ExcludeAssets="all" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Native/buildTransitive/Olve.WebGPU.Native.targets" />
+</Project>

@@ -12,7 +12,7 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 | Package | What it is |
 |---|---|
 | `Olve.WebGPU` | The binding (net10.0). No implementation: a library can reference it alone, but an app can't. |
-| `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64. |
+| `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, osx-arm64 and osx-x64. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
 | `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
 **An app must reference `Olve.WebGPU.Native` (desktop) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
@@ -30,7 +30,7 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 
 | Platform | Status |
 |---|---|
-| Windows x64 | D3D12, using the DirectXShaderCompiler next to `webgpu_dawn.dll`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
+| Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
 | Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
 | macOS (arm64, x64) | Metal. The binding maps `SurfaceSourceMetalLayer`, but there's no sample host; you create the `CAMetalLayer`. |
 | Browser | emdawnwebgpu, from the `wasm-tools` workload. In the browser, the workload picks the Dawn release, not `dawn/version.env`. The browser tests check every struct layout and enum value against it. |
@@ -42,7 +42,7 @@ The build files set `WasmCachePath` to a writable folder, because the emdawnwebg
 ## Building
 
 ```bash
-scripts/download-dawn.sh              # Dawn (and DXC on Windows) for this platform into artifacts/
+scripts/download-dawn.sh              # Dawn for this platform into artifacts/
 scripts/build-natives.sh              # links artifacts/native/<rid>/webgpu_dawn and the test-only layout checker
 dotnet run --project tests/Olve.WebGPU.Tests             # layout check + offscreen triangle readback
 dotnet run --project samples/Triangle.Desktop            # the triangle in a window
@@ -71,4 +71,4 @@ To move to a new Dawn release:
 
 ## License
 
-MIT. `Olve.WebGPU.Native` also ships Dawn (BSD-3-Clause) and DirectXShaderCompiler; see [THIRD_PARTY_NOTICES.md](https://github.com/OliverVea/Olve.WebGPU/blob/main/THIRD_PARTY_NOTICES.md).
+MIT. `Olve.WebGPU.Native` is `MIT AND BSD-3-Clause AND Apache-2.0`, because it also ships Dawn and code that Dawn links in. DXC comes from Microsoft's package, under Microsoft's licenses. See [THIRD_PARTY_NOTICES.md](https://github.com/OliverVea/Olve.WebGPU/blob/main/THIRD_PARTY_NOTICES.md).

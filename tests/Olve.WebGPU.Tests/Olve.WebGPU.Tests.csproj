@@ -13,9 +13,9 @@
     </ItemGroup>
     <ItemGroup Condition="'$(NativeSource)' != 'package'">
         <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
-        <None Include="$(NativeDir)*" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     </ItemGroup>
     <ItemGroup Condition="'$(NativeSource)' == 'package'">
         <PackageReference Include="Olve.WebGPU.Native" />
     </ItemGroup>
+    <Import Project="$(RepoRoot)build/ProjectNatives.targets" Condition="'$(NativeSource)' != 'package'" />
 </Project>

@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <!-- The triangle in a Silk.NET window, through Dawn native from artifacts/native/<rid>/ (scripts/build-natives.sh). -->
+    <!-- The triangle in a Silk.NET window, through Dawn native from artifacts/native/<rid>/ (scripts/build-natives.sh, build/ProjectNatives.targets). -->
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -7,6 +7,6 @@
     <ItemGroup>
         <PackageReference Include="Silk.NET.Windowing" />
         <ProjectReference Include="..\Triangle\Triangle.csproj" />
-        <None Include="$(NativeDir)*" CopyToOutputDirectory="PreserveNewest" Visible="false" />
     </ItemGroup>
+    <Import Project="$(RepoRoot)build/ProjectNatives.targets" />
 </Project>

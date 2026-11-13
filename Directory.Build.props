@@ -14,6 +14,7 @@
         <DawnVersionFile>$(RepoRoot)dawn/version.env</DawnVersionFile>
         <DawnTag>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText($(DawnVersionFile))), 'DAWN_TAG=(\S+)').Groups[1].Value)</DawnTag>
         <DawnCommit>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText($(DawnVersionFile))), 'DAWN_COMMIT=(\S+)').Groups[1].Value)</DawnCommit>
+        <OlveWebGPUDxcVersion>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText($(DawnVersionFile))), 'DXC_NUGET_VERSION=(\S+)').Groups[1].Value)</OlveWebGPUDxcVersion>
     </PropertyGroup>
 
     <!-- -p:NativeSource=package: projects that support it consume the packed packages from artifacts/packages -->

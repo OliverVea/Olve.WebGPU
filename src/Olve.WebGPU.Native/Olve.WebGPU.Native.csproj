@@ -1,19 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <!-- No code: Dawn linked into a shared library per platform (scripts/build-natives.sh), under runtimes/<rid>/native/.
+    <!-- No code: Dawn linked into a shared library per platform (scripts/build-natives.sh), under runtimes/<rid>/native/,
+         and build files that put Microsoft.Direct3D.DXC's DLLs next to it on Windows (buildTransitive/).
          Packs every RID from artifacts/native/<rid>/; -p:AllowMissingNatives=true packs whatever is there (local tries). -->
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <NoWarn>$(NoWarn);NU5128</NoWarn>
-        <Description>Olve.WebGPU on desktop: Dawn's webgpu_dawn shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64.</Description>
+        <Description>Olve.WebGPU on desktop: Dawn's webgpu_dawn shared library for win-x64, linux-x64, osx-arm64 and osx-x64. On Windows, copies DirectXShaderCompiler from Microsoft.Direct3D.DXC next to it.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- Our packaging (MIT), Dawn and Tint (BSD-3-Clause), and the Apache-2.0 code Dawn links in (Abseil, SPIRV-Tools); texts in licenses/ -->
+        <PackageLicenseExpression>MIT AND BSD-3-Clause AND Apache-2.0</PackageLicenseExpression>
         <NativeRids>win-x64;linux-x64;osx-arm64;osx-x64</NativeRids>
+        <_DxcVersionProps>$(BaseIntermediateOutputPath)Olve.WebGPU.Native.props</_DxcVersionProps>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <!-- A dependency of the package, so it's restored for every app that references Olve.WebGPU.Native -->
+        <PackageReference Include="Microsoft.Direct3D.DXC" />
         <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
         <None Include="$(RepoRoot)THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="\" />
         <None Include="$(RepoRoot)licenses/**/*" Pack="true" PackagePath="licenses/" />
+        <None Include="buildTransitive/*" Pack="true" PackagePath="buildTransitive/" />
+        <None Include="$(_DxcVersionProps)" Pack="true" PackagePath="buildTransitive/" Visible="false" />
     </ItemGroup>
     <ItemGroup>
         <None Include="$(RepoRoot)artifacts/native/win-x64/*" Pack="true" PackagePath="runtimes/win-x64/native/" />
@@ -22,6 +30,12 @@
         <None Include="$(RepoRoot)artifacts/native/osx-x64/*" Pack="true" PackagePath="runtimes/osx-x64/native/" />
         <_NativeRid Include="$(NativeRids)" />
     </ItemGroup>
+
+    <!-- The DXC version the targets copy from: the one this package depends on exactly -->
+    <Target Name="WriteDxcVersionProps" BeforeTargets="_GetPackageFiles">
+        <WriteLinesToFile File="$(_DxcVersionProps)" Overwrite="true" WriteOnlyWhenDifferent="true"
+                          Lines="&lt;Project&gt;;  &lt;PropertyGroup&gt;;    &lt;OlveWebGPUDxcVersion Condition=&quot;'%24(OlveWebGPUDxcVersion)' == ''&quot;&gt;$(OlveWebGPUDxcVersion)&lt;/OlveWebGPUDxcVersion&gt;;  &lt;/PropertyGroup&gt;;&lt;/Project&gt;" />
+    </Target>
 
     <Target Name="CheckNatives" BeforeTargets="GenerateNuspec" Condition="'$(AllowMissingNatives)' != 'true'">
         <Error Condition="!Exists('$(RepoRoot)artifacts/native/%(_NativeRid.Identity)')" Text="No natives for %(_NativeRid.Identity) in artifacts/native/: run scripts/build-natives.sh on that platform, or pack with -p:AllowMissingNatives=true" />

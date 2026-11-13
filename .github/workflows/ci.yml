@@ -72,6 +72,12 @@ jobs:
         run: dotnet run --project tests/Olve.WebGPU.Tests -c Release --no-build -- --output Detailed
       - name: Build the desktop sample
         run: dotnet build samples/Triangle.Desktop -c Release -p:Version=$VERSION
+      - name: Run the desktop sample in a window (the CAMetalLayer host)
+        if: runner.os == 'macOS'
+        run: dotnet run --project samples/Triangle.Desktop -c Release --no-build -- --frames 60
+      - name: Run the benchmarks once (a dry job, so they keep building and running; real runs are off-cadence)
+        if: runner.os == 'Linux'
+        run: dotnet run --project benchmarks/Olve.WebGPU.Benchmarks -c Release -p:Version=$VERSION -- --filter '*' --job Dry --inProcess
       - uses: actions/upload-artifact@v7
         with:
           name: native-${{ matrix.rid }}

@@ -35,6 +35,8 @@
         <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('iossimulator-'))">iossimulator</_OlveWebGPUIosSlice>
         <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('ios-'))">ios-arm64</_OlveWebGPUIosSlice>
     </PropertyGroup>
+    <!-- Keeps every webgpu.h function the binding imports through the native link (generated) -->
+    <Import Project="$(MSBuildThisFileDirectory)Olve.WebGPU.Native.iOS.g.targets" Condition="'$(TargetPlatformIdentifier)' == 'ios'" />
     <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'ios' and '$(_OlveWebGPUIosSlice)' != ''">
         <NativeReference Include="$(OlveWebGPUIosLibraries)$(_OlveWebGPUIosSlice)/libwebgpu_dawn.a" Kind="Static" ForceLoad="true" IsCxx="true"
                          Frameworks="Metal QuartzCore IOSurface Foundation CoreFoundation UIKit" />

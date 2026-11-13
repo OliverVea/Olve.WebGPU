@@ -21,6 +21,8 @@
         <!-- Test-only: the layout checker, built for the simulator by scripts/build-natives.sh on a Mac -->
         <NativeReference Include="$(RepoRoot)artifacts/layout-check/iossimulator/libwebgpu_layout_check.a" Kind="Static" ForceLoad="true" IsCxx="true"
                          Condition="$(RuntimeIdentifier.StartsWith('iossimulator-'))" />
+        <!-- Found by name at run time, so the native linker must keep them -->
+        <ReferenceNativeSymbol Include="wgpu_layout_values;wgpu_init_struct;dawn_layout_values" SymbolType="Function" />
     </ItemGroup>
     <ItemGroup Condition="'$(NativeSource)' != 'package'">
         <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />

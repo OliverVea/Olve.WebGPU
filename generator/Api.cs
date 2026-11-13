@@ -27,6 +27,9 @@ public sealed class Api
     // Callbacks whose message is part of the result rather than the reason for a failure
     private static readonly HashSet<string> KeepMessage = ["pop error scope callback"];
 
+    // A device's last callback: Dawn clears the device's other callbacks before calling it, so it unregisters them
+    private static readonly HashSet<string> LastCallbacks = ["device lost callback"];
+
     // The 80/20 subset the churn manifest covers: these objects and their methods minus the niche ones
     private static readonly HashSet<string> ScopeObjects =
     [
@@ -549,6 +552,21 @@ public sealed class Api
                 case Kind.Struct:
                     inits.Add($"{field} = ToNative({value}, arena)");
                     break;
+                case Kind.CallbackInfo when LastCallbacks.Contains(CallbackOf(m.Field.Type)):
+                    var others = members.Where(o => o.Kind == Kind.CallbackInfo && o != m).ToList();
+                    if (others.Count > 1)
+                    {
+                        throw new InvalidOperationException($"{s.Name}: the last callback can only unregister one other");
+                    }
+
+                    var other = others.Count == 0 ? "null" : $"{Names.LowerCamel(others[0].Field.Name)}.Userdata1";
+                    inits.Add($"{field} = ToNative({value}, {other})");
+                    break;
+                case Kind.CallbackInfo when members.Any(o => o.Kind == Kind.CallbackInfo && LastCallbacks.Contains(CallbackOf(o.Field.Type))):
+                    var infoLocal = Names.LowerCamel(m.Field.Name);
+                    sb.Append($"        var {infoLocal} = ToNative({value});\n");
+                    inits.Add($"{field} = {infoLocal}");
+                    break;
                 case Kind.CallbackInfo:
                     inits.Add($"{field} = ToNative({value})");
                     break;
@@ -729,10 +747,20 @@ public sealed class Api
         var cb = E(callback);
         var args = cb.Args.Select(Callback).ToList();
         var name = Pascal(callback);
+        var invoke = $"Find<{name}>(userdata1)?.Invoke({string.Join(", ", args.Select(a => a!.Convert))});";
         sb.Append($"    public static nint {name}Delegate => (nint)(delegate* unmanaged<{RawCallbackSignature(cb)}, void>)&On{name}Delegate;\n\n");
-        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)}) =>\n");
-        sb.Append($"        Get<{name}>(userdata1)({string.Join(", ", args.Select(a => a!.Convert))});\n\n");
+        if (LastCallbacks.Contains(callback))
+        {
+            // userdata2 is the device's other callback, which can't be called after this one
+            sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)})\n    {{\n");
+            sb.Append($"        {invoke}\n        Unregister(userdata1);\n        Unregister(userdata2);\n    }}\n\n");
+            return;
+        }
+
+        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)}) =>\n        {invoke}\n\n");
     }
+
+    private string CallbackOf(string callbackInfo) => E(callbackInfo).Members.First(m => m.Name == "callback").Type;
 
     private void EmitCallbackInfo(string callback, StringBuilder structs, StringBuilder marshal)
     {
@@ -764,14 +792,23 @@ public sealed class Api
             _manifest.Add((info.Name, $"struct {infoName}.Callback : {name}?"));
             _reps.TryAdd(info.Name, Generator.Rep.Plain);
 
-            // The delegate stays alive as long as the process: a callback info has no end of life the binding could see
+            if (LastCallbacks.Contains(callback) && hasMode)
+            {
+                // Installed even without a callback of the caller's, to unregister the other callback when the device is lost
+                marshal.Append($"    public static WGPU{infoName} ToNative(in {infoName} v, void* other) => v.Callback is null && other == null ? default : new WGPU{infoName}\n    {{\n");
+                marshal.Append("        Mode = v.Callback is null ? CallbackMode.AllowSpontaneous : v.Mode,\n");
+                marshal.Append($"        Callback = Callbacks.{name}Delegate,\n        Userdata1 = v.Callback is null ? null : Callbacks.Register(v.Callback),\n        Userdata2 = other,\n    }};\n\n");
+                continue;
+            }
+
+            // Registered until the device's last callback; one that's never followed by it stays registered for the life of the process
             marshal.Append($"    public static WGPU{infoName} ToNative(in {infoName} v) => v.Callback is null ? default : new WGPU{infoName}\n    {{\n");
             if (hasMode)
             {
                 marshal.Append("        Mode = v.Mode,\n");
             }
 
-            marshal.Append($"        Callback = Callbacks.{name}Delegate,\n        Userdata1 = Callbacks.Wrap(v.Callback),\n    }};\n\n");
+            marshal.Append($"        Callback = Callbacks.{name}Delegate,\n        Userdata1 = Callbacks.Register(v.Callback),\n    }};\n\n");
         }
     }
 

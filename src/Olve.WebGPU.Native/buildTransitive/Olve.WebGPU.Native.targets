@@ -5,9 +5,10 @@
            no RuntimeIdentifier (portable): runtimes/win-x64/native/, where the host loads webgpu_dawn.dll from
            win-x64:                         the app directory, where the SDK puts webgpu_dawn.dll
            any other RuntimeIdentifier:     nothing, there's no webgpu_dawn.dll for D3D12 to load them for
+           Android and iOS apps:            nothing, whatever the RuntimeIdentifier (their outer build has none)
          OlveWebGPUCopyDxc=false turns it off; OlveWebGPUDxcDestination overrides the folder. -->
     <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == ''">
-        <OlveWebGPUCopyDxc Condition="'$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64'">true</OlveWebGPUCopyDxc>
+        <OlveWebGPUCopyDxc Condition="('$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64') and '$(TargetPlatformIdentifier)' != 'android' and '$(TargetPlatformIdentifier)' != 'ios'">true</OlveWebGPUCopyDxc>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == 'true'">
         <OlveWebGPUDxcDestination Condition="'$(OlveWebGPUDxcDestination)' == '' and '$(RuntimeIdentifier)' == ''">runtimes/win-x64/native/</OlveWebGPUDxcDestination>

@@ -86,6 +86,32 @@ jobs:
             artifacts/layout-check/${{ matrix.rid }}/
           if-no-files-found: error
 
+  android:
+    name: Native (android)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      # The NDK Dawn's own Android build uses (google/dawn .github/workflows/ci.yml at DAWN_COMMIT)
+      - uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r27d
+      - name: Link webgpu_dawn and the layout checker for android-arm64 and android-x64
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: |
+          for rid in android-arm64 android-x64; do
+            RID=$rid scripts/download-dawn.sh
+            RID=$rid scripts/build-natives.sh
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-android
+          path: |
+            artifacts/native/android-*/
+            artifacts/layout-check/android-*/
+          if-no-files-found: error
+
   browser:
     name: Browser (wasm, headless Chromium)
     runs-on: ubuntu-24.04
@@ -124,7 +150,7 @@ jobs:
 
   pack:
     name: Pack
-    needs: native
+    needs: [native, android]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
@@ -187,3 +213,42 @@ jobs:
         run: |
           dotnet build tests/Olve.WebGPU.Tests -c Release -p:Version=$VERSION -p:NativeSource=package -o artifacts/package-test
           dotnet artifacts/package-test/Olve.WebGPU.Tests.dll --output Detailed
+
+  package-check-android:
+    name: Package check (android, emulator)
+    needs: pack
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet workload install android
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: artifacts/packages
+      # Only the layout checker comes from the build: webgpu_dawn comes from Olve.WebGPU.Native
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-android
+          path: artifacts
+      - run: rm -rf artifacts/native
+      - name: Install the Android platform and build tools the workload targets
+        run: dotnet build tests/Olve.WebGPU.Tests.Android -t:InstallAndroidDependencies -f net11.0-android -p:AndroidSdkDirectory=$ANDROID_HOME -p:AcceptAndroidSDKLicenses=True
+      - name: Build the Android test runner against the packages
+        run: dotnet build tests/Olve.WebGPU.Tests.Android -c Release -p:Version=$VERSION -p:NativeSource=package -p:AndroidSdkDirectory=$ANDROID_HOME
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run the checks on an Android 14 emulator (Vulkan through SwiftShader)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          script: scripts/run-android-tests.sh tests/Olve.WebGPU.Tests.Android/bin/Release/net11.0-android/dev.olve.webgpu.tests-Signed.apk

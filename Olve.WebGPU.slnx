@@ -10,6 +10,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/Olve.WebGPU.Tests/Olve.WebGPU.Tests.csproj" />
     <Project Path="tests/Olve.WebGPU.Tests.Browser/Olve.WebGPU.Tests.Browser.csproj" />
+    <Project Path="tests/Olve.WebGPU.Tests.Android/Olve.WebGPU.Tests.Android.csproj" />
   </Folder>
   <Folder Name="/benchmarks/">
     <Project Path="benchmarks/Olve.WebGPU.Benchmarks/Olve.WebGPU.Benchmarks.csproj" />

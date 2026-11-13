@@ -17,4 +17,5 @@ xcrun simctl install "$udid" "$app"
 out="$(mktemp)"
 # The app exits when its checks are done; the console stream ends with it
 xcrun simctl launch --console-pty --terminate-running-process "$udid" "$bundle" | tee "$out" || true
-grep -q '^PASS' "$out"
+# The simulator's console prefixes each line with a timestamp and the process
+grep -qE '(^| )PASS\r?$' "$out"

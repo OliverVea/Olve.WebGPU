@@ -30,10 +30,10 @@ An optional struct member is `T?`, except when `T` is itself a `ref struct`, whi
 | Package | What it is |
 |---|---|
 | `Olve.WebGPU` | The binding (net10.0). No implementation: a library can reference it alone, but an app can't. |
-| `Olve.WebGPU.Native` | Desktop and Android: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, osx-arm64, osx-x64, android-arm64 and android-x64. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
+| `Olve.WebGPU.Native` | Desktop, Android and iOS: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, osx-arm64, osx-x64, android-arm64 and android-x64, and its static library for iOS devices and the simulator, which an iOS app's build links in. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
 | `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu, from the same Dawn release, into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
-**An app must reference `Olve.WebGPU.Native` (desktop, Android) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
+**An app must reference `Olve.WebGPU.Native` (desktop, Android, iOS) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
 
 ```csharp
 var instance = Wgpu.CreateInstance();
@@ -58,6 +58,7 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 | Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
 | macOS (arm64, x64) | Metal. A window needs a `CAMetalLayer` for `SurfaceSourceMetalLayer`; the desktop sample makes one through the Objective-C runtime (`samples/Triangle.Desktop/MetalLayer.cs`), and CI runs it in a window on both macOS runners. |
 | Android (arm64, x64) | Vulkan, from Android 8 (API 26), Dawn's minimum. 16 KB pages, as Google Play requires. The surface comes from `SurfaceSourceAndroidNativeWindow` (an `ANativeWindow`). CI runs the checks on an Android 14 emulator. |
+| iOS (devices, simulator) | Metal, from iOS 14. Dawn's static library is linked into the app (force-loaded) and the binding finds its functions in the app's executable. Dawn's xcframework compiles webgpu.h's functions with hidden visibility, so the package ships its libraries with exactly those 279 functions made visible (`scripts/unhide-symbols.py`). CI runs the checks in an iPhone simulator; devices are linked but not run. |
 | Browser | emdawnwebgpu from the Dawn release in `dawn/version.env`. The package ships that release's remote port file; on the first build, Emscripten downloads the port from Dawn's GitHub release and checks its SHA-512. The browser tests check every struct layout and enum value against it. |
 
 On desktop, `Wgpu.CreateInstance(descriptor, dawnDescriptor)` chains Dawn's C++-only `DawnInstanceDescriptor`: extra folders for backend libraries, backend validation, and a logging callback for the instance's log. Dawn prepends each search path to a library's file name, so end folders with a separator. Dawn's instance log carries messages such as a backend that fails to load; Dawn writes its other warnings to stderr itself.
@@ -95,6 +96,14 @@ For Android, the scripts link with the Android NDK r27d that Dawn's own Android 
 for rid in android-arm64 android-x64; do RID=$rid scripts/download-dawn.sh && RID=$rid scripts/build-natives.sh; done
 dotnet build tests/Olve.WebGPU.Tests.Android -c Release
 scripts/run-android-tests.sh tests/Olve.WebGPU.Tests.Android/bin/Release/net11.0-android/dev.olve.webgpu.tests-Signed.apk
+```
+
+For iOS (on a Mac with Xcode and `dotnet workload install ios`), `RID=ios-arm64` and `RID=iossimulator` take Dawn's static libraries from the release's xcframework and build the layout checker; `scripts/run-ios-tests.sh` runs the test runner in an iPhone simulator:
+
+```bash
+for rid in ios-arm64 iossimulator; do RID=$rid scripts/download-dawn.sh && RID=$rid scripts/build-natives.sh; done
+dotnet build tests/Olve.WebGPU.Tests.iOS -c Release
+scripts/run-ios-tests.sh "$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"
 ```
 
 ## Performance

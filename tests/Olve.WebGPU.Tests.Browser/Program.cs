@@ -36,5 +36,9 @@ catch (InvalidOperationException e)
     failures++;
 }
 
+var (waitStatus, waitCompleted) = await FinishedFuture.WaitAsync();
+Console.WriteLine($"WaitAny on a finished request: {waitStatus}, completed {waitCompleted}");
+failures += waitStatus == WaitStatus.Success && waitCompleted ? 0 : 1;
+
 Console.WriteLine(failures == 0 ? "PASS" : $"FAIL ({failures})");
 return failures;

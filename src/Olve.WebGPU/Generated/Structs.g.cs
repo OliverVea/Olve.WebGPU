@@ -316,6 +316,17 @@ public partial record struct TexelCopyTextureInfo()
     public TextureAspect Aspect { get; init; } = TextureAspect.All;
 }
 
+public partial record struct Future()
+{
+    public ulong Id { get; init; }
+}
+
+public partial record struct FutureWaitInfo()
+{
+    public Future Future { get; init; } = new();
+    public bool Completed { get; init; }
+}
+
 public partial record struct InstanceLimits()
 {
     public nuint TimedWaitAnyMaxCount { get; init; }

@@ -125,6 +125,20 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
         return completion.Task;
     }
 
+    public Task<RequestDeviceResult> RequestDeviceAsync(in DeviceDescriptor descriptor, out Future future)
+    {
+        using var arena = Arena.Rent();
+        var completion = new TaskCompletionSource<RequestDeviceResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPURequestDeviceCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.RequestDeviceCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuAdapterRequestDevice(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena)), callbackInfo));
+        return completion.Task;
+    }
+
     public Task<RequestDeviceResult> RequestDeviceAsync()
     {
         var completion = new TaskCompletionSource<RequestDeviceResult>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -210,6 +224,20 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         return completion.Task;
     }
 
+    public Task<CreateComputePipelineResult> CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor, out Future future)
+    {
+        using var arena = Arena.Rent();
+        var completion = new TaskCompletionSource<CreateComputePipelineResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUCreateComputePipelineAsyncCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.CreateComputePipelineAsyncCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuDeviceCreateComputePipelineAsync(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena)), callbackInfo));
+        return completion.Task;
+    }
+
     public PipelineLayout CreatePipelineLayout(in PipelineLayoutDescriptor descriptor)
     {
         using var arena = Arena.Rent();
@@ -235,6 +263,20 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
             Userdata1 = Callbacks.Wrap(completion),
         };
         _ = wgpuDeviceCreateRenderPipelineAsync(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena)), callbackInfo);
+        return completion.Task;
+    }
+
+    public Task<CreateRenderPipelineResult> CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor, out Future future)
+    {
+        using var arena = Arena.Rent();
+        var completion = new TaskCompletionSource<CreateRenderPipelineResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUCreateRenderPipelineAsyncCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.CreateRenderPipelineAsyncCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuDeviceCreateRenderPipelineAsync(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena)), callbackInfo));
         return completion.Task;
     }
 
@@ -292,6 +334,12 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         return result;
     }
 
+    public Future GetLostFuture()
+    {
+        var result = Marshalling.FromNative(wgpuDeviceGetLostFuture(Handle));
+        return result;
+    }
+
     public bool HasFeature(FeatureName feature)
     {
         var result = wgpuDeviceHasFeature(Handle, feature) != 0;
@@ -337,6 +385,19 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
             Userdata1 = Callbacks.Wrap(completion),
         };
         _ = wgpuDevicePopErrorScope(Handle, callbackInfo);
+        return completion.Task;
+    }
+
+    public Task<PopErrorScopeResult> PopErrorScopeAsync(out Future future)
+    {
+        var completion = new TaskCompletionSource<PopErrorScopeResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUPopErrorScopeCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.PopErrorScopeCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuDevicePopErrorScope(Handle, callbackInfo));
         return completion.Task;
     }
 
@@ -396,6 +457,19 @@ public readonly unsafe partial record struct Buffer(nint Handle) : IDisposable
             Userdata1 = Callbacks.Wrap(completion),
         };
         _ = wgpuBufferMapAsync(Handle, mode, offset, size, callbackInfo);
+        return completion.Task;
+    }
+
+    public Task<BufferMapResult> MapAsync(MapMode mode, nuint offset, nuint size, out Future future)
+    {
+        var completion = new TaskCompletionSource<BufferMapResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUBufferMapCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.BufferMapCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuBufferMapAsync(Handle, mode, offset, size, callbackInfo));
         return completion.Task;
     }
 
@@ -897,6 +971,19 @@ public readonly unsafe partial record struct ShaderModule(nint Handle) : IDispos
         return completion.Task;
     }
 
+    public Task<CompilationInfoResult> GetCompilationInfoAsync(out Future future)
+    {
+        var completion = new TaskCompletionSource<CompilationInfoResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUCompilationInfoCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.CompilationInfoCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuShaderModuleGetCompilationInfo(Handle, callbackInfo));
+        return completion.Task;
+    }
+
     public void SetLabel(ReadOnlySpan<byte> label)
     {
         using var arena = Arena.Rent();
@@ -1056,6 +1143,24 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
         wgpuInstanceProcessEvents(Handle);
     }
 
+    public WaitStatus WaitAny(Span<FutureWaitInfo> futures, ulong timeoutNS)
+    {
+        using var arena = Arena.Rent();
+        var p_futures = arena.Alloc<WGPUFutureWaitInfo>(futures.Length);
+        for (var i = 0; i < futures.Length; i++)
+        {
+            p_futures[i] = Marshalling.ToNative(futures[i], arena);
+        }
+
+        var result = wgpuInstanceWaitAny(Handle, (nuint)futures.Length, p_futures, timeoutNS);
+        for (var i = 0; i < futures.Length; i++)
+        {
+            futures[i] = Marshalling.FromNative(p_futures[i]);
+        }
+
+        return result;
+    }
+
     public Task<RequestAdapterResult> RequestAdapterAsync(in RequestAdapterOptions options)
     {
         using var arena = Arena.Rent();
@@ -1067,6 +1172,20 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
             Userdata1 = Callbacks.Wrap(completion),
         };
         _ = wgpuInstanceRequestAdapter(Handle, arena.Alloc(Marshalling.ToNative(options, arena)), callbackInfo);
+        return completion.Task;
+    }
+
+    public Task<RequestAdapterResult> RequestAdapterAsync(in RequestAdapterOptions options, out Future future)
+    {
+        using var arena = Arena.Rent();
+        var completion = new TaskCompletionSource<RequestAdapterResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPURequestAdapterCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.RequestAdapterCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuInstanceRequestAdapter(Handle, arena.Alloc(Marshalling.ToNative(options, arena)), callbackInfo));
         return completion.Task;
     }
 
@@ -1133,6 +1252,19 @@ public readonly unsafe partial record struct Queue(nint Handle) : IDisposable
             Userdata1 = Callbacks.Wrap(completion),
         };
         _ = wgpuQueueOnSubmittedWorkDone(Handle, callbackInfo);
+        return completion.Task;
+    }
+
+    public Task<QueueWorkDoneResult> OnSubmittedWorkDoneAsync(out Future future)
+    {
+        var completion = new TaskCompletionSource<QueueWorkDoneResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackInfo = new WGPUQueueWorkDoneCallbackInfo
+        {
+            Mode = CallbackMode.AllowProcessEvents,
+            Callback = Callbacks.QueueWorkDoneCallbackTask,
+            Userdata1 = Callbacks.Wrap(completion),
+        };
+        future = Marshalling.FromNative(wgpuQueueOnSubmittedWorkDone(Handle, callbackInfo));
         return completion.Task;
     }
 

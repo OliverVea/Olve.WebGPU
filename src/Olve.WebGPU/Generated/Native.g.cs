@@ -824,7 +824,7 @@ internal unsafe struct WGPUChainedStruct
     public SType SType;
 }
 
-internal static unsafe partial class Wgpu
+internal static unsafe partial class Interop
 {
     [LibraryImport(Library)] public static partial Status wgpuAdapterGetLimits(nint adapter, WGPULimits* limits);
     [LibraryImport(Library)] public static partial Status wgpuAdapterGetInfo(nint adapter, WGPUAdapterInfo* info);

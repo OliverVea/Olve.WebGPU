@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Olve.WebGPU.Native;
 
-internal static unsafe partial class Wgpu
+internal static unsafe partial class Interop
 {
     // Desktop loads webgpu_dawn.dll/.so/.dylib; in the browser the wasm P/Invoke table binds this module name
     // to the NativeFileReference webgpu_dawn.c, and the linker resolves the wgpu* symbols from emdawnwebgpu.
@@ -57,7 +57,7 @@ internal sealed unsafe class Arena : IDisposable
 
     /// <summary>An empty span is webgpu.h's "no string" (null, WGPU_STRLEN), never an empty string.</summary>
     public WGPUStringView String(ReadOnlySpan<byte> utf8) =>
-        utf8.IsEmpty ? new WGPUStringView { Data = null, Length = Wgpu.Strlen } : new WGPUStringView { Data = Copy(utf8), Length = (nuint)utf8.Length };
+        utf8.IsEmpty ? new WGPUStringView { Data = null, Length = Interop.Strlen } : new WGPUStringView { Data = Copy(utf8), Length = (nuint)utf8.Length };
 
     public void Dispose()
     {

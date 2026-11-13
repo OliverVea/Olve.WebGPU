@@ -4,7 +4,7 @@
 using System.Runtime.InteropServices;
 using Olve.Results;
 using Olve.WebGPU.Native;
-using static Olve.WebGPU.Native.Wgpu;
+using static Olve.WebGPU.Native.Interop;
 
 namespace Olve.WebGPU.Native;
 

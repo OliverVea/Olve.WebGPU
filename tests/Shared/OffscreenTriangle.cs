@@ -34,7 +34,7 @@ internal static class OffscreenTriangle
 
     public static async Task<Result<Frame>> RenderAsync(Action<string> log)
     {
-        var instance = WebGPU.CreateInstance();
+        var instance = Wgpu.CreateInstance();
         if ((await RequestAdapterAsync(instance, log)).TryPickProblems(out var problems, out var adapter))
         {
             return problems;

@@ -192,7 +192,7 @@ public sealed class Raw
             sb.Append("}\n\n");
         }
 
-        sb.Append("internal static unsafe partial class Wgpu\n{\n");
+        sb.Append("internal static unsafe partial class Interop\n{\n");
         foreach (var f in Functions)
         {
             sb.Append($"    [LibraryImport(Library)] public static partial {f.Return} {f.Name}({string.Join(", ", f.Params.Select(p => $"{p.Type} {Names.Identifier(p.Name)}"))});\n");

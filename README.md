@@ -18,11 +18,13 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 **An app must reference `Olve.WebGPU.Native` (desktop) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
 
 ```csharp
-var instance = WebGPU.CreateInstance();
+var instance = Wgpu.CreateInstance();
 // Requests complete inside ProcessEvents, as promises do in the browser's event loop
 var result = await instance.ProcessEventsUntil(instance.RequestAdapterAsync());
 if (result.TryPickProblems(out var problems, out var adapter)) { /* no adapter */ }
 ```
+
+`Wgpu` holds webgpu.h's free functions and constants (`wgpuCreateInstance` is `Wgpu.CreateInstance`). Handles keep webgpu.h's names, so in a file that imports both `System` and `Olve.WebGPU`, `Buffer` is ambiguous with `System.Buffer`. Add `using Buffer = Olve.WebGPU.Buffer;` to resolve it.
 
 The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree/main/samples)) show the whole path to a frame on a Silk.NET window and on a canvas.
 

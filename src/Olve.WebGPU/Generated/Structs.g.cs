@@ -4,7 +4,7 @@
 using System.Runtime.InteropServices;
 using Olve.Results;
 using Olve.WebGPU.Native;
-using static Olve.WebGPU.Native.Wgpu;
+using static Olve.WebGPU.Native.Interop;
 
 namespace Olve.WebGPU;
 
@@ -49,38 +49,38 @@ public ref partial struct DeviceDescriptor()
 
 public partial record struct Limits()
 {
-    public uint MaxTextureDimension1D { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxTextureDimension2D { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxTextureDimension3D { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxTextureArrayLayers { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxBindGroups { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxBindGroupsPlusVertexBuffers { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxBindingsPerBindGroup { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxDynamicUniformBuffersPerPipelineLayout { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxDynamicStorageBuffersPerPipelineLayout { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxSampledTexturesPerShaderStage { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxSamplersPerShaderStage { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxStorageBuffersPerShaderStage { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxStorageTexturesPerShaderStage { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxUniformBuffersPerShaderStage { get; init; } = WebGPU.LimitU32Undefined;
-    public ulong MaxUniformBufferBindingSize { get; init; } = WebGPU.LimitU64Undefined;
-    public ulong MaxStorageBufferBindingSize { get; init; } = WebGPU.LimitU64Undefined;
-    public uint MinUniformBufferOffsetAlignment { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MinStorageBufferOffsetAlignment { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxVertexBuffers { get; init; } = WebGPU.LimitU32Undefined;
-    public ulong MaxBufferSize { get; init; } = WebGPU.LimitU64Undefined;
-    public uint MaxVertexAttributes { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxVertexBufferArrayStride { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxInterStageShaderVariables { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxColorAttachments { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxColorAttachmentBytesPerSample { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeWorkgroupStorageSize { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeInvocationsPerWorkgroup { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeWorkgroupSizeX { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeWorkgroupSizeY { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeWorkgroupSizeZ { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxComputeWorkgroupsPerDimension { get; init; } = WebGPU.LimitU32Undefined;
-    public uint MaxImmediateSize { get; init; } = WebGPU.LimitU32Undefined;
+    public uint MaxTextureDimension1D { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxTextureDimension2D { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxTextureDimension3D { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxTextureArrayLayers { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxBindGroups { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxBindGroupsPlusVertexBuffers { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxBindingsPerBindGroup { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxDynamicUniformBuffersPerPipelineLayout { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxDynamicStorageBuffersPerPipelineLayout { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxSampledTexturesPerShaderStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxSamplersPerShaderStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxStorageBuffersPerShaderStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxStorageTexturesPerShaderStage { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxUniformBuffersPerShaderStage { get; init; } = Wgpu.LimitU32Undefined;
+    public ulong MaxUniformBufferBindingSize { get; init; } = Wgpu.LimitU64Undefined;
+    public ulong MaxStorageBufferBindingSize { get; init; } = Wgpu.LimitU64Undefined;
+    public uint MinUniformBufferOffsetAlignment { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MinStorageBufferOffsetAlignment { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxVertexBuffers { get; init; } = Wgpu.LimitU32Undefined;
+    public ulong MaxBufferSize { get; init; } = Wgpu.LimitU64Undefined;
+    public uint MaxVertexAttributes { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxVertexBufferArrayStride { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxInterStageShaderVariables { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxColorAttachments { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxColorAttachmentBytesPerSample { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeWorkgroupStorageSize { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeInvocationsPerWorkgroup { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeWorkgroupSizeX { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeWorkgroupSizeY { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeWorkgroupSizeZ { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxComputeWorkgroupsPerDimension { get; init; } = Wgpu.LimitU32Undefined;
+    public uint MaxImmediateSize { get; init; } = Wgpu.LimitU32Undefined;
 }
 
 public ref partial struct QueueDescriptor()
@@ -93,7 +93,7 @@ public partial record struct BindGroupEntry()
     public uint Binding { get; init; }
     public Buffer Buffer { get; init; }
     public ulong Offset { get; init; }
-    public ulong Size { get; init; } = WebGPU.WholeSize;
+    public ulong Size { get; init; } = Wgpu.WholeSize;
     public Sampler Sampler { get; init; }
     public TextureView TextureView { get; init; }
     public ExternalTextureBindingEntry? ExternalTextureBindingEntry { get; init; }
@@ -249,8 +249,8 @@ public ref partial struct ComputePassDescriptor()
 public partial record struct PassTimestampWrites()
 {
     public QuerySet QuerySet { get; init; }
-    public uint BeginningOfPassWriteIndex { get; init; } = WebGPU.QuerySetIndexUndefined;
-    public uint EndOfPassWriteIndex { get; init; } = WebGPU.QuerySetIndexUndefined;
+    public uint BeginningOfPassWriteIndex { get; init; } = Wgpu.QuerySetIndexUndefined;
+    public uint EndOfPassWriteIndex { get; init; } = Wgpu.QuerySetIndexUndefined;
 }
 
 public ref partial struct ComputePipelineDescriptor()
@@ -292,8 +292,8 @@ public partial record struct Extent3D()
 public partial record struct TexelCopyBufferLayout()
 {
     public ulong Offset { get; init; }
-    public uint BytesPerRow { get; init; } = WebGPU.CopyStrideUndefined;
-    public uint RowsPerImage { get; init; } = WebGPU.CopyStrideUndefined;
+    public uint BytesPerRow { get; init; } = Wgpu.CopyStrideUndefined;
+    public uint RowsPerImage { get; init; } = Wgpu.CopyStrideUndefined;
 }
 
 public partial record struct TexelCopyBufferInfo()
@@ -374,7 +374,7 @@ public ref partial struct RenderBundleEncoderDescriptor()
 public partial record struct RenderPassColorAttachment()
 {
     public TextureView View { get; init; }
-    public uint DepthSlice { get; init; } = WebGPU.DepthSliceUndefined;
+    public uint DepthSlice { get; init; } = Wgpu.DepthSliceUndefined;
     public TextureView ResolveTarget { get; init; }
     public LoadOp LoadOp { get; init; }
     public StoreOp StoreOp { get; init; }
@@ -386,7 +386,7 @@ public partial record struct RenderPassDepthStencilAttachment()
     public TextureView View { get; init; }
     public LoadOp DepthLoadOp { get; init; }
     public StoreOp DepthStoreOp { get; init; }
-    public float DepthClearValue { get; init; } = WebGPU.DepthClearValueUndefined;
+    public float DepthClearValue { get; init; } = Wgpu.DepthClearValueUndefined;
     public bool DepthReadOnly { get; init; }
     public LoadOp StencilLoadOp { get; init; }
     public StoreOp StencilStoreOp { get; init; }
@@ -611,9 +611,9 @@ public ref partial struct TextureViewDescriptor()
     public TextureFormat Format { get; init; }
     public TextureViewDimension Dimension { get; init; }
     public uint BaseMipLevel { get; init; }
-    public uint MipLevelCount { get; init; } = WebGPU.MipLevelCountUndefined;
+    public uint MipLevelCount { get; init; } = Wgpu.MipLevelCountUndefined;
     public uint BaseArrayLayer { get; init; }
-    public uint ArrayLayerCount { get; init; } = WebGPU.ArrayLayerCountUndefined;
+    public uint ArrayLayerCount { get; init; } = Wgpu.ArrayLayerCountUndefined;
     public TextureAspect Aspect { get; init; } = TextureAspect.All;
     public TextureUsage Usage { get; init; } = TextureUsage.None;
     public TextureComponentSwizzleDescriptor? TextureComponentSwizzleDescriptor { get; init; }

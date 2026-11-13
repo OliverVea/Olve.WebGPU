@@ -286,7 +286,7 @@ public sealed class Api
         if (_m.Entries.TryGetValue(f.Default, out var constant) && constant.Category == "constant")
         {
             var (_, isConst) = Constant(constant);
-            return constantOnly && !isConst ? null : $"WebGPU.{Pascal(constant.Name)}";
+            return constantOnly && !isConst ? null : $"Wgpu.{Pascal(constant.Name)}";
         }
 
         if (Scalar(type) is { } scalar && e.Category == "native")
@@ -427,7 +427,7 @@ public sealed class Api
             EmitDelegateCallback(cb, callbacks);
         }
 
-        const string usings = "using System.Runtime.InteropServices;\nusing Olve.Results;\nusing Olve.WebGPU.Native;\nusing static Olve.WebGPU.Native.Wgpu;\n";
+        const string usings = "using System.Runtime.InteropServices;\nusing Olve.Results;\nusing Olve.WebGPU.Native;\nusing static Olve.WebGPU.Native.Interop;\n";
         yield return ("Structs.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU;\n\n{structs}");
         yield return ("Objects.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU;\n\n{objects}");
         yield return ("Marshalling.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU.Native;\n\ninternal static unsafe partial class Marshalling\n{{\n{marshal}}}\n");
@@ -795,13 +795,13 @@ public sealed class Api
 
     private void EmitFunctions(StringBuilder sb)
     {
-        sb.Append("/// <summary>webgpu.h's free functions and constants.</summary>\npublic static unsafe partial class WebGPU\n{\n");
+        sb.Append("/// <summary>webgpu.h's free functions and constants.</summary>\npublic static unsafe partial class Wgpu\n{\n");
         foreach (var c in _m.Entries.Values.Where(e => e.Category == "constant" && Availability.BindingType(e.Tags)))
         {
             var (expression, isConst) = Constant(c);
             var type = ConstantType(c);
             sb.Append($"    public {(isConst ? "const" : "static readonly")} {type} {Pascal(c.Name)} = {expression};\n");
-            _manifest.Add((c.Name, $"const WebGPU.{Pascal(c.Name)} : {type} = {expression}"));
+            _manifest.Add((c.Name, $"const Wgpu.{Pascal(c.Name)} : {type} = {expression}"));
         }
 
         sb.Append('\n');
@@ -957,7 +957,7 @@ public sealed class Api
         // QuerySet.GetType() is webgpu.h's, not object's
         var hides = owner is not null && methodCs == "GetType" && parameters.Length == 0 ? "new " : "";
         sb.Append($"    public {hides}{isStatic}{csReturn} {methodCs}{typeParams}({parameters}){constraint}\n    {{\n");
-        _manifest.Add((owner is null ? scope : scope, $"method {(owner is null ? "WebGPU" : Pascal(owner.Name))}.{methodCs}{typeParams}({parameters}) : {csReturn}"));
+        _manifest.Add((owner is null ? scope : scope, $"method {(owner is null ? "Wgpu" : Pascal(owner.Name))}.{methodCs}{typeParams}({parameters}) : {csReturn}"));
 
         var needsArena = args.Any(a => !omitted.Contains(a) && (a.Native.Contains("arena") || a.Kind == "structs"));
         if (needsArena)

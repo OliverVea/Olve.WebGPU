@@ -12,7 +12,7 @@ public static partial class Entry
 
     public static async Task Main()
     {
-        var instance = WebGPU.CreateInstance();
+        var instance = Wgpu.CreateInstance();
         var surface = instance.CreateSurface(new SurfaceDescriptor
         {
             EmscriptenSurfaceSourceCanvasHTMLSelector = new EmscriptenSurfaceSourceCanvasHTMLSelector { Selector = "#canvas"u8 },

@@ -125,6 +125,8 @@ jobs:
   ios:
     name: iOS (simulator)
     runs-on: macos-latest
+    env:
+      MSBUILDDISABLENODEREUSE: 1
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5
@@ -145,6 +147,8 @@ jobs:
             echo "XcodeLocation=/Applications/Xcode_$required.app" >> "$GITHUB_ENV"
           fi
           xcodebuild -version
+          # The trial build above left MSBuild nodes running with the default Xcode's environment; later builds would reuse them
+          dotnet build-server shutdown
       - name: Dawn's iOS libraries, and the layout checker for the simulator
         run: |
           for rid in ios-arm64 iossimulator; do

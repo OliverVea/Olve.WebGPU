@@ -807,6 +807,15 @@ public readonly unsafe partial record struct ComputePassEncoder(nint Handle) : I
         wgpuComputePassEncoderSetLabel(Handle, arena.String(label));
     }
 
+    public void SetImmediates<T>(uint offset, ReadOnlySpan<T> data) where T : unmanaged
+    {
+        fixed (byte* p_data = MemoryMarshal.AsBytes(data))
+        {
+            var p_dataLength = MemoryMarshal.AsBytes(data).Length;
+            wgpuComputePassEncoderSetImmediates(Handle, offset, p_data, (nuint)p_dataLength);
+        }
+    }
+
 }
 
 public readonly unsafe partial record struct ComputePipeline(nint Handle) : IDisposable
@@ -1272,6 +1281,15 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
         wgpuRenderBundleEncoderSetLabel(Handle, arena.String(label));
     }
 
+    public void SetImmediates<T>(uint offset, ReadOnlySpan<T> data) where T : unmanaged
+    {
+        fixed (byte* p_data = MemoryMarshal.AsBytes(data))
+        {
+            var p_dataLength = MemoryMarshal.AsBytes(data).Length;
+            wgpuRenderBundleEncoderSetImmediates(Handle, offset, p_data, (nuint)p_dataLength);
+        }
+    }
+
 }
 
 public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : IDisposable
@@ -1412,6 +1430,15 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
     {
         using var arena = Arena.Rent();
         wgpuRenderPassEncoderSetLabel(Handle, arena.String(label));
+    }
+
+    public void SetImmediates<T>(uint offset, ReadOnlySpan<T> data) where T : unmanaged
+    {
+        fixed (byte* p_data = MemoryMarshal.AsBytes(data))
+        {
+            var p_dataLength = MemoryMarshal.AsBytes(data).Length;
+            wgpuRenderPassEncoderSetImmediates(Handle, offset, p_data, (nuint)p_dataLength);
+        }
     }
 
 }

@@ -76,8 +76,12 @@ public enum FeatureName : uint
     TextureFormatsTier2 = 0x00000014,
     PrimitiveIndex = 0x00000015,
     TextureComponentSwizzle = 0x00000016,
+    SubgroupSizeControl = 0x00000017,
+    TextureCompressionUnaligned = 0x00000018,
+    AtomicVec2uMinMax = 0x00000019,
     Unorm16TextureFormats = 0x0005000C,
     MultiDrawIndirect = 0x00050031,
+    ChromiumExperimentalSubgroupMatrix = 0x00050034,
 }
 
 public enum DeviceLostReason : uint
@@ -448,6 +452,10 @@ public enum WGSLLanguageFeatureName : uint
     SubgroupUniformity = 0x00000008,
     TextureFormatsTier1 = 0x00000009,
     LinearIndexing = 0x0000000A,
+    ImmediateAddressSpace = 0x0000000B,
+    BufferView = 0x0000000C,
+    SwizzleAssignment = 0x0000000D,
+    FragmentDepth = 0x0000000E,
 }
 
 public enum ErrorFilter : uint
@@ -542,6 +550,7 @@ public enum VertexFormat : uint
     Sint32x4 = 0x00000027,
     Unorm10_10_10_2 = 0x00000028,
     Unorm8x4BGRA = 0x00000029,
+    Snorm10_10_10_2 = 0x0000002A,
 }
 
 public enum VertexStepMode : uint
@@ -664,6 +673,7 @@ public enum SType : uint
     CompatibilityModeLimits = 0x0000000F,
     TextureBindingViewDimension = 0x00000010,
     EmscriptenSurfaceSourceCanvasHTMLSelector = 0x00040000,
+    AdapterPropertiesSubgroupMatrixConfigs = 0x0005003B,
     DawnCompilationMessageUtf16 = 0x0005003F,
 }
 
@@ -684,5 +694,15 @@ public enum ComponentSwizzle : uint
     G = 0x00000004,
     B = 0x00000005,
     A = 0x00000006,
+}
+
+public enum SubgroupMatrixComponentType : uint
+{
+    F32 = 0x00000001,
+    F16 = 0x00000002,
+    U32 = 0x00000003,
+    I32 = 0x00000004,
+    U8 = 0x00000005,
+    I8 = 0x00000006,
 }
 

@@ -29,7 +29,7 @@ var frame = 0;
 
 window.Load += () =>
 {
-    var instance = WebGPU.CreateInstance();
+    var instance = Wgpu.CreateInstance();
     var surface = instance.CreateSurface(window.Native! switch
     {
         { Win32: { } win32 } => new SurfaceDescriptor

@@ -4,7 +4,7 @@
 using System.Runtime.InteropServices;
 using Olve.Results;
 using Olve.WebGPU.Native;
-using static Olve.WebGPU.Native.Wgpu;
+using static Olve.WebGPU.Native.Interop;
 
 namespace Olve.WebGPU;
 
@@ -588,7 +588,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
         wgpuCommandEncoderCopyTextureToTexture(Handle, arena.Alloc(Marshalling.ToNative(source, arena)), arena.Alloc(Marshalling.ToNative(destination, arena)), arena.Alloc(Marshalling.ToNative(copySize, arena)));
     }
 
-    public void ClearBuffer(Buffer buffer, ulong offset = 0, ulong size = WebGPU.WholeSize)
+    public void ClearBuffer(Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize)
     {
         wgpuCommandEncoderClearBuffer(Handle, buffer.Handle, offset, size);
     }
@@ -1109,12 +1109,12 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
         wgpuRenderBundleEncoderPushDebugGroup(Handle, arena.String(groupLabel));
     }
 
-    public void SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = WebGPU.WholeSize)
+    public void SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize)
     {
         wgpuRenderBundleEncoderSetVertexBuffer(Handle, slot, buffer.Handle, offset, size);
     }
 
-    public void SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = WebGPU.WholeSize)
+    public void SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = Wgpu.WholeSize)
     {
         wgpuRenderBundleEncoderSetIndexBuffer(Handle, buffer.Handle, format, offset, size);
     }
@@ -1238,12 +1238,12 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
         wgpuRenderPassEncoderSetScissorRect(Handle, x, y, width, height);
     }
 
-    public void SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = WebGPU.WholeSize)
+    public void SetVertexBuffer(uint slot, Buffer buffer, ulong offset = 0, ulong size = Wgpu.WholeSize)
     {
         wgpuRenderPassEncoderSetVertexBuffer(Handle, slot, buffer.Handle, offset, size);
     }
 
-    public void SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = WebGPU.WholeSize)
+    public void SetIndexBuffer(Buffer buffer, IndexFormat format, ulong offset = 0, ulong size = Wgpu.WholeSize)
     {
         wgpuRenderPassEncoderSetIndexBuffer(Handle, buffer.Handle, format, offset, size);
     }
@@ -1277,7 +1277,7 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 }
 
 /// <summary>webgpu.h's free functions and constants.</summary>
-public static unsafe partial class WebGPU
+public static unsafe partial class Wgpu
 {
     public const ulong WholeSize = ulong.MaxValue;
     public static readonly nuint WholeMapSize = nuint.MaxValue;

@@ -39,7 +39,7 @@ jobs:
         shell: bash
     env:
       RID: ${{ matrix.rid }}
-      PYTHON: ${{ runner.os == 'Windows' && 'python' || 'python3' }}
+      PYTHON: ${{ matrix.rid == 'win-x64' && 'python' || 'python3' }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v5

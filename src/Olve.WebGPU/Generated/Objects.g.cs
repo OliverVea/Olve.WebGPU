@@ -19,7 +19,7 @@ public readonly unsafe partial record struct Surface(nint Handle) : IDisposable
 
     public void Configure(in SurfaceConfiguration config)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuSurfaceConfigure(Handle, arena.Alloc(Marshalling.ToNative(config, arena)));
     }
 
@@ -53,7 +53,7 @@ public readonly unsafe partial record struct Surface(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuSurfaceSetLabel(Handle, arena.String(label));
     }
 
@@ -102,7 +102,7 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
 
     public Task<Result<Device>> RequestDeviceAsync(in DeviceDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var completion = new TaskCompletionSource<Result<Device>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestDeviceCallbackInfo
         {
@@ -140,28 +140,28 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public BindGroup CreateBindGroup(in BindGroupDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new BindGroup(wgpuDeviceCreateBindGroup(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public BindGroupLayout CreateBindGroupLayout(in BindGroupLayoutDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new BindGroupLayout(wgpuDeviceCreateBindGroupLayout(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public Buffer CreateBuffer(in BufferDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new Buffer(wgpuDeviceCreateBuffer(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public CommandEncoder CreateCommandEncoder(in CommandEncoderDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new CommandEncoder(wgpuDeviceCreateCommandEncoder(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -174,14 +174,14 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public ComputePipeline CreateComputePipeline(in ComputePipelineDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new ComputePipeline(wgpuDeviceCreateComputePipeline(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public Task<Result<ComputePipeline>> CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var completion = new TaskCompletionSource<Result<ComputePipeline>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUCreateComputePipelineAsyncCallbackInfo
         {
@@ -195,21 +195,21 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public PipelineLayout CreatePipelineLayout(in PipelineLayoutDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new PipelineLayout(wgpuDeviceCreatePipelineLayout(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public QuerySet CreateQuerySet(in QuerySetDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new QuerySet(wgpuDeviceCreateQuerySet(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public Task<Result<RenderPipeline>> CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var completion = new TaskCompletionSource<Result<RenderPipeline>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUCreateRenderPipelineAsyncCallbackInfo
         {
@@ -223,21 +223,21 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public RenderBundleEncoder CreateRenderBundleEncoder(in RenderBundleEncoderDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new RenderBundleEncoder(wgpuDeviceCreateRenderBundleEncoder(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public RenderPipeline CreateRenderPipeline(in RenderPipelineDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new RenderPipeline(wgpuDeviceCreateRenderPipeline(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public Sampler CreateSampler(in SamplerDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new Sampler(wgpuDeviceCreateSampler(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -250,14 +250,14 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public ShaderModule CreateShaderModule(in ShaderModuleDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new ShaderModule(wgpuDeviceCreateShaderModule(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
 
     public Texture CreateTexture(in TextureDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new Texture(wgpuDeviceCreateTexture(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -325,7 +325,7 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuDeviceSetLabel(Handle, arena.String(label));
     }
 
@@ -342,7 +342,7 @@ public readonly unsafe partial record struct BindGroup(nint Handle) : IDisposabl
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuBindGroupSetLabel(Handle, arena.String(label));
     }
 
@@ -404,7 +404,7 @@ public readonly unsafe partial record struct Buffer(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuBufferSetLabel(Handle, arena.String(label));
     }
 
@@ -449,7 +449,7 @@ public readonly unsafe partial record struct Sampler(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuSamplerSetLabel(Handle, arena.String(label));
     }
 
@@ -466,7 +466,7 @@ public readonly unsafe partial record struct TextureView(nint Handle) : IDisposa
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuTextureViewSetLabel(Handle, arena.String(label));
     }
 
@@ -483,7 +483,7 @@ public readonly unsafe partial record struct BindGroupLayout(nint Handle) : IDis
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuBindGroupLayoutSetLabel(Handle, arena.String(label));
     }
 
@@ -500,7 +500,7 @@ public readonly unsafe partial record struct ExternalTexture(nint Handle) : IDis
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuExternalTextureSetLabel(Handle, arena.String(label));
     }
 
@@ -517,7 +517,7 @@ public readonly unsafe partial record struct CommandBuffer(nint Handle) : IDispo
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandBufferSetLabel(Handle, arena.String(label));
     }
 
@@ -534,7 +534,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public CommandBuffer Finish(in CommandBufferDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new CommandBuffer(wgpuCommandEncoderFinish(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -547,7 +547,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public ComputePassEncoder BeginComputePass(in ComputePassDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new ComputePassEncoder(wgpuCommandEncoderBeginComputePass(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -560,7 +560,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public RenderPassEncoder BeginRenderPass(in RenderPassDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new RenderPassEncoder(wgpuCommandEncoderBeginRenderPass(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -572,19 +572,19 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public void CopyBufferToTexture(in TexelCopyBufferInfo source, in TexelCopyTextureInfo destination, in Extent3D copySize)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderCopyBufferToTexture(Handle, arena.Alloc(Marshalling.ToNative(source, arena)), arena.Alloc(Marshalling.ToNative(destination, arena)), arena.Alloc(Marshalling.ToNative(copySize, arena)));
     }
 
     public void CopyTextureToBuffer(in TexelCopyTextureInfo source, in TexelCopyBufferInfo destination, in Extent3D copySize)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderCopyTextureToBuffer(Handle, arena.Alloc(Marshalling.ToNative(source, arena)), arena.Alloc(Marshalling.ToNative(destination, arena)), arena.Alloc(Marshalling.ToNative(copySize, arena)));
     }
 
     public void CopyTextureToTexture(in TexelCopyTextureInfo source, in TexelCopyTextureInfo destination, in Extent3D copySize)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderCopyTextureToTexture(Handle, arena.Alloc(Marshalling.ToNative(source, arena)), arena.Alloc(Marshalling.ToNative(destination, arena)), arena.Alloc(Marshalling.ToNative(copySize, arena)));
     }
 
@@ -595,7 +595,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public void InsertDebugMarker(ReadOnlySpan<byte> markerLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderInsertDebugMarker(Handle, arena.String(markerLabel));
     }
 
@@ -606,7 +606,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public void PushDebugGroup(ReadOnlySpan<byte> groupLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderPushDebugGroup(Handle, arena.String(groupLabel));
     }
 
@@ -622,7 +622,7 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuCommandEncoderSetLabel(Handle, arena.String(label));
     }
 
@@ -639,7 +639,7 @@ public readonly unsafe partial record struct QuerySet(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuQuerySetSetLabel(Handle, arena.String(label));
     }
 
@@ -673,7 +673,7 @@ public readonly unsafe partial record struct ComputePassEncoder(nint Handle) : I
 
     public void InsertDebugMarker(ReadOnlySpan<byte> markerLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuComputePassEncoderInsertDebugMarker(Handle, arena.String(markerLabel));
     }
 
@@ -684,7 +684,7 @@ public readonly unsafe partial record struct ComputePassEncoder(nint Handle) : I
 
     public void PushDebugGroup(ReadOnlySpan<byte> groupLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuComputePassEncoderPushDebugGroup(Handle, arena.String(groupLabel));
     }
 
@@ -723,7 +723,7 @@ public readonly unsafe partial record struct ComputePassEncoder(nint Handle) : I
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuComputePassEncoderSetLabel(Handle, arena.String(label));
     }
 
@@ -746,7 +746,7 @@ public readonly unsafe partial record struct ComputePipeline(nint Handle) : IDis
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuComputePipelineSetLabel(Handle, arena.String(label));
     }
 
@@ -763,7 +763,7 @@ public readonly unsafe partial record struct PipelineLayout(nint Handle) : IDisp
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuPipelineLayoutSetLabel(Handle, arena.String(label));
     }
 
@@ -793,7 +793,7 @@ public readonly unsafe partial record struct ShaderModule(nint Handle) : IDispos
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuShaderModuleSetLabel(Handle, arena.String(label));
     }
 
@@ -816,7 +816,7 @@ public readonly unsafe partial record struct RenderPipeline(nint Handle) : IDisp
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderPipelineSetLabel(Handle, arena.String(label));
     }
 
@@ -833,7 +833,7 @@ public readonly unsafe partial record struct Texture(nint Handle) : IDisposable
 
     public TextureView CreateView(in TextureViewDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new TextureView(wgpuTextureCreateView(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -846,7 +846,7 @@ public readonly unsafe partial record struct Texture(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuTextureSetLabel(Handle, arena.String(label));
     }
 
@@ -922,7 +922,7 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
 
     public Surface CreateSurface(in SurfaceDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new Surface(wgpuInstanceCreateSurface(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -934,7 +934,7 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
 
     public Task<Result<Adapter>> RequestAdapterAsync(in RequestAdapterOptions options)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var completion = new TaskCompletionSource<Result<Adapter>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestAdapterCallbackInfo
         {
@@ -1017,7 +1017,7 @@ public readonly unsafe partial record struct Queue(nint Handle) : IDisposable
 
     public void WriteTexture<T>(in TexelCopyTextureInfo destination, ReadOnlySpan<T> data, in TexelCopyBufferLayout dataLayout, in Extent3D writeSize) where T : unmanaged
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         fixed (byte* p_data = MemoryMarshal.AsBytes(data))
         {
             var p_dataLength = MemoryMarshal.AsBytes(data).Length;
@@ -1027,7 +1027,7 @@ public readonly unsafe partial record struct Queue(nint Handle) : IDisposable
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuQueueSetLabel(Handle, arena.String(label));
     }
 
@@ -1044,7 +1044,7 @@ public readonly unsafe partial record struct RenderBundle(nint Handle) : IDispos
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderBundleSetLabel(Handle, arena.String(label));
     }
 
@@ -1094,7 +1094,7 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
 
     public void InsertDebugMarker(ReadOnlySpan<byte> markerLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderBundleEncoderInsertDebugMarker(Handle, arena.String(markerLabel));
     }
 
@@ -1105,7 +1105,7 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
 
     public void PushDebugGroup(ReadOnlySpan<byte> groupLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderBundleEncoderPushDebugGroup(Handle, arena.String(groupLabel));
     }
 
@@ -1121,7 +1121,7 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
 
     public RenderBundle Finish(in RenderBundleDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new RenderBundle(wgpuRenderBundleEncoderFinish(Handle, arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }
@@ -1134,7 +1134,7 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderBundleEncoderSetLabel(Handle, arena.String(label));
     }
 
@@ -1202,7 +1202,7 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 
     public void InsertDebugMarker(ReadOnlySpan<byte> markerLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderPassEncoderInsertDebugMarker(Handle, arena.String(markerLabel));
     }
 
@@ -1213,7 +1213,7 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 
     public void PushDebugGroup(ReadOnlySpan<byte> groupLabel)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderPassEncoderPushDebugGroup(Handle, arena.String(groupLabel));
     }
 
@@ -1224,7 +1224,7 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 
     public void SetBlendConstant(in Color color)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderPassEncoderSetBlendConstant(Handle, arena.Alloc(Marshalling.ToNative(color, arena)));
     }
 
@@ -1270,7 +1270,7 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         wgpuRenderPassEncoderSetLabel(Handle, arena.String(label));
     }
 
@@ -1293,7 +1293,7 @@ public static unsafe partial class Wgpu
 
     public static Instance CreateInstance(in InstanceDescriptor descriptor)
     {
-        using var arena = new Arena();
+        using var arena = Arena.Rent();
         var result = new Instance(wgpuCreateInstance(arena.Alloc(Marshalling.ToNative(descriptor, arena))));
         return result;
     }

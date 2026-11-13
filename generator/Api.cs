@@ -962,7 +962,7 @@ public sealed class Api
         var needsArena = args.Any(a => !omitted.Contains(a) && (a.Native.Contains("arena") || a.Kind == "structs"));
         if (needsArena)
         {
-            sb.Append("        using var arena = new Arena();\n");
+            sb.Append("        using var arena = Arena.Rent();\n");
         }
 
         foreach (var a in args.Where(a => a.Kind == "structs"))

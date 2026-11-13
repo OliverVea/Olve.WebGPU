@@ -205,7 +205,7 @@ public sealed class Raw
     /// <summary>Every size and field offset of the structs both headers have, computed by C# and by the C compiler.</summary>
     public (string CSharp, string C, int Count) EmitLayoutCheck(Func<Entry, bool> inBothHeaders)
     {
-        var cs = new StringBuilder($"{CsBanner}\n\nusing System.Runtime.InteropServices;\nusing Olve.WebGPU.Native;\n\nnamespace Olve.WebGPU.Tests;\n\n/// <summary>Every struct size, field offset and enum value as C# sees them, in layout_check.g.c's order.</summary>\ninternal static class LayoutCheck\n{{\n    public static (string Name, long Value)[] Values() =>\n    [\n");
+        var cs = new StringBuilder($"{CsBanner}\n\nusing System.Runtime.CompilerServices;\nusing System.Runtime.InteropServices;\nusing Olve.WebGPU.Native;\n\nnamespace Olve.WebGPU.Tests;\n\n/// <summary>Every struct size, field offset and enum value as C# sees them, in layout_check.g.c's order.</summary>\ninternal static class LayoutCheck\n{{\n    public static (string Name, long Value)[] Values() =>\n    [\n");
         var c = new StringBuilder($"/* {Banner[3..]} */\n#include <stddef.h>\n#include <stdint.h>\n#include <webgpu/webgpu.h>\n\nint wgpu_layout_values(int64_t* out) {{\n    int i = 0;\n");
         var count = 0;
         foreach (var (name, fields) in Structs)
@@ -216,7 +216,7 @@ public sealed class Raw
             }
 
             var raw = Names.RawStruct(name);
-            cs.Append($"        (\"{raw}\", Marshal.SizeOf<{raw}>()),\n");
+            cs.Append($"        (\"{raw}\", Unsafe.SizeOf<{raw}>()),\n");
             c.Append($"    if (out) out[i] = sizeof({raw}); i++;\n");
             count++;
             foreach (var (_, field) in fields)

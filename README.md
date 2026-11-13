@@ -15,7 +15,7 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 | `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64. |
 | `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
-Reference `Olve.WebGPU.Native` from a desktop app, or `Olve.WebGPU.Browser` from a `browser-wasm` app. Both bring in `Olve.WebGPU`. All three always ship at the same version. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](dawn/version.env).
+Reference `Olve.WebGPU.Native` from a desktop app, or `Olve.WebGPU.Browser` from a `browser-wasm` app. Both bring in `Olve.WebGPU`. All three always ship at the same version. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
 
 ```csharp
 var instance = WebGPU.CreateInstance();
@@ -24,7 +24,7 @@ var result = await instance.ProcessEventsUntil(instance.RequestAdapterAsync());
 if (result.TryPickProblems(out var problems, out var adapter)) { /* no adapter */ }
 ```
 
-The triangle samples ([`samples/`](samples/)) show the whole path to a frame on a Silk.NET window and on a canvas.
+The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree/main/samples)) show the whole path to a frame on a Silk.NET window and on a canvas.
 
 ## Platforms and known gaps
 
@@ -71,4 +71,4 @@ To move to a new Dawn release:
 
 ## License
 
-MIT. `Olve.WebGPU.Native` also ships Dawn (BSD-3-Clause) and DirectXShaderCompiler; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+MIT. `Olve.WebGPU.Native` also ships Dawn (BSD-3-Clause) and DirectXShaderCompiler; see [THIRD_PARTY_NOTICES.md](https://github.com/OliverVea/Olve.WebGPU/blob/main/THIRD_PARTY_NOTICES.md).

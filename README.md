@@ -39,10 +39,20 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 
 | Platform | Status |
 |---|---|
-| Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
+| Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn's own search doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32; for the Vulkan backend, pass `Environment.SystemDirectory` in `DawnInstanceDescriptor.AdditionalRuntimeSearchPaths` (below). |
 | Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
 | macOS (arm64, x64) | Metal. The binding maps `SurfaceSourceMetalLayer`, but there's no sample host; you create the `CAMetalLayer`. |
 | Browser | emdawnwebgpu from the Dawn release in `dawn/version.env`. The package ships that release's remote port file; on the first build, Emscripten downloads the port from Dawn's GitHub release and checks its SHA-512. The browser tests check every struct layout and enum value against it. |
+
+On desktop, `Wgpu.CreateInstance(descriptor, dawnDescriptor)` chains Dawn's C++-only `DawnInstanceDescriptor`: extra folders for backend libraries, backend validation, and a logging callback for the instance's log. Dawn's instance log carries errors such as a backend that fails to load; Dawn writes its other warnings to stderr itself.
+
+```csharp
+using var instance = Wgpu.CreateInstance(new InstanceDescriptor(), new DawnInstanceDescriptor
+{
+    AdditionalRuntimeSearchPaths = [Environment.SystemDirectory],   // Windows: vulkan-1.dll and d3dcompiler_47.dll
+    LoggingCallback = (type, message) => logger.Log(type, message),
+});
+```
 
 In the browser, emdawnwebgpu aborts on `Surface.Present()`: the browser presents when the frame callback returns.
 

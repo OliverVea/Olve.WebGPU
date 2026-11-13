@@ -9,46 +9,81 @@ namespace Olve.WebGPU.Native;
 
 internal static unsafe partial class Callbacks
 {
-    public static nint RequestDeviceCallbackTask => (nint)(delegate* unmanaged<RequestDeviceStatus, nint, WGPUStringView, void*, void*, void>)&OnRequestDeviceCallbackTask;
+    public static nint RequestDeviceCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<RequestDeviceStatus, nint, WGPUStringView*, void*, void*, void>)&OnRequestDeviceCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<RequestDeviceStatus, nint, WGPUStringView, void*, void*, void>)&OnRequestDeviceCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnRequestDeviceCallbackTask(RequestDeviceStatus status, nint device, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnRequestDeviceCallbackTask(RequestDeviceStatus status, nint device, WGPUStringView message, void* userdata1, void* userdata2) => HandleRequestDeviceCallbackTask(status, device, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnRequestDeviceCallbackTaskBrowser(RequestDeviceStatus status, nint device, WGPUStringView* message, void* userdata1, void* userdata2) => HandleRequestDeviceCallbackTask(status, device, *message, userdata1, userdata2);
+
+    private static void HandleRequestDeviceCallbackTask(RequestDeviceStatus status, nint device, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<RequestDeviceResult>>(userdata1);
         completion.SetResult(new RequestDeviceResult(status, new Device(device), ToManaged(message)));
     }
 
-    public static nint CreateComputePipelineAsyncCallbackTask => (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateComputePipelineAsyncCallbackTask;
+    public static nint CreateComputePipelineAsyncCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView*, void*, void*, void>)&OnCreateComputePipelineAsyncCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateComputePipelineAsyncCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnCreateComputePipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnCreateComputePipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2) => HandleCreateComputePipelineAsyncCallbackTask(status, pipeline, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnCreateComputePipelineAsyncCallbackTaskBrowser(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView* message, void* userdata1, void* userdata2) => HandleCreateComputePipelineAsyncCallbackTask(status, pipeline, *message, userdata1, userdata2);
+
+    private static void HandleCreateComputePipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<CreateComputePipelineResult>>(userdata1);
         completion.SetResult(new CreateComputePipelineResult(status, new ComputePipeline(pipeline), ToManaged(message)));
     }
 
-    public static nint CreateRenderPipelineAsyncCallbackTask => (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateRenderPipelineAsyncCallbackTask;
+    public static nint CreateRenderPipelineAsyncCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView*, void*, void*, void>)&OnCreateRenderPipelineAsyncCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateRenderPipelineAsyncCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnCreateRenderPipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnCreateRenderPipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2) => HandleCreateRenderPipelineAsyncCallbackTask(status, pipeline, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnCreateRenderPipelineAsyncCallbackTaskBrowser(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView* message, void* userdata1, void* userdata2) => HandleCreateRenderPipelineAsyncCallbackTask(status, pipeline, *message, userdata1, userdata2);
+
+    private static void HandleCreateRenderPipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<CreateRenderPipelineResult>>(userdata1);
         completion.SetResult(new CreateRenderPipelineResult(status, new RenderPipeline(pipeline), ToManaged(message)));
     }
 
-    public static nint PopErrorScopeCallbackTask => (nint)(delegate* unmanaged<PopErrorScopeStatus, ErrorType, WGPUStringView, void*, void*, void>)&OnPopErrorScopeCallbackTask;
+    public static nint PopErrorScopeCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<PopErrorScopeStatus, ErrorType, WGPUStringView*, void*, void*, void>)&OnPopErrorScopeCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<PopErrorScopeStatus, ErrorType, WGPUStringView, void*, void*, void>)&OnPopErrorScopeCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnPopErrorScopeCallbackTask(PopErrorScopeStatus status, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnPopErrorScopeCallbackTask(PopErrorScopeStatus status, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2) => HandlePopErrorScopeCallbackTask(status, type, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnPopErrorScopeCallbackTaskBrowser(PopErrorScopeStatus status, ErrorType type, WGPUStringView* message, void* userdata1, void* userdata2) => HandlePopErrorScopeCallbackTask(status, type, *message, userdata1, userdata2);
+
+    private static void HandlePopErrorScopeCallbackTask(PopErrorScopeStatus status, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<PopErrorScopeResult>>(userdata1);
         completion.SetResult(new PopErrorScopeResult(status, type, ToManaged(message)));
     }
 
-    public static nint BufferMapCallbackTask => (nint)(delegate* unmanaged<MapAsyncStatus, WGPUStringView, void*, void*, void>)&OnBufferMapCallbackTask;
+    public static nint BufferMapCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<MapAsyncStatus, WGPUStringView*, void*, void*, void>)&OnBufferMapCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<MapAsyncStatus, WGPUStringView, void*, void*, void>)&OnBufferMapCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnBufferMapCallbackTask(MapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnBufferMapCallbackTask(MapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2) => HandleBufferMapCallbackTask(status, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnBufferMapCallbackTaskBrowser(MapAsyncStatus status, WGPUStringView* message, void* userdata1, void* userdata2) => HandleBufferMapCallbackTask(status, *message, userdata1, userdata2);
+
+    private static void HandleBufferMapCallbackTask(MapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<BufferMapResult>>(userdata1);
         completion.SetResult(new BufferMapResult(status, ToManaged(message)));
@@ -63,38 +98,68 @@ internal static unsafe partial class Callbacks
         completion.SetResult(new CompilationInfoResult(status, compilationInfo == null ? default : Marshalling.FromNative(*compilationInfo)));
     }
 
-    public static nint RequestAdapterCallbackTask => (nint)(delegate* unmanaged<RequestAdapterStatus, nint, WGPUStringView, void*, void*, void>)&OnRequestAdapterCallbackTask;
+    public static nint RequestAdapterCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<RequestAdapterStatus, nint, WGPUStringView*, void*, void*, void>)&OnRequestAdapterCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<RequestAdapterStatus, nint, WGPUStringView, void*, void*, void>)&OnRequestAdapterCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnRequestAdapterCallbackTask(RequestAdapterStatus status, nint adapter, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnRequestAdapterCallbackTask(RequestAdapterStatus status, nint adapter, WGPUStringView message, void* userdata1, void* userdata2) => HandleRequestAdapterCallbackTask(status, adapter, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnRequestAdapterCallbackTaskBrowser(RequestAdapterStatus status, nint adapter, WGPUStringView* message, void* userdata1, void* userdata2) => HandleRequestAdapterCallbackTask(status, adapter, *message, userdata1, userdata2);
+
+    private static void HandleRequestAdapterCallbackTask(RequestAdapterStatus status, nint adapter, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<RequestAdapterResult>>(userdata1);
         completion.SetResult(new RequestAdapterResult(status, new Adapter(adapter), ToManaged(message)));
     }
 
-    public static nint QueueWorkDoneCallbackTask => (nint)(delegate* unmanaged<QueueWorkDoneStatus, WGPUStringView, void*, void*, void>)&OnQueueWorkDoneCallbackTask;
+    public static nint QueueWorkDoneCallbackTask => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<QueueWorkDoneStatus, WGPUStringView*, void*, void*, void>)&OnQueueWorkDoneCallbackTaskBrowser
+        : (nint)(delegate* unmanaged<QueueWorkDoneStatus, WGPUStringView, void*, void*, void>)&OnQueueWorkDoneCallbackTask;
 
     [UnmanagedCallersOnly]
-    private static void OnQueueWorkDoneCallbackTask(QueueWorkDoneStatus status, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnQueueWorkDoneCallbackTask(QueueWorkDoneStatus status, WGPUStringView message, void* userdata1, void* userdata2) => HandleQueueWorkDoneCallbackTask(status, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnQueueWorkDoneCallbackTaskBrowser(QueueWorkDoneStatus status, WGPUStringView* message, void* userdata1, void* userdata2) => HandleQueueWorkDoneCallbackTask(status, *message, userdata1, userdata2);
+
+    private static void HandleQueueWorkDoneCallbackTask(QueueWorkDoneStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
         var completion = Take<TaskCompletionSource<QueueWorkDoneResult>>(userdata1);
         completion.SetResult(new QueueWorkDoneResult(status, ToManaged(message)));
     }
 
-    public static nint DeviceLostCallbackDelegate => (nint)(delegate* unmanaged<nint*, DeviceLostReason, WGPUStringView, void*, void*, void>)&OnDeviceLostCallbackDelegate;
+    public static nint DeviceLostCallbackDelegate => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<nint*, DeviceLostReason, WGPUStringView*, void*, void*, void>)&OnDeviceLostCallbackDelegateBrowser
+        : (nint)(delegate* unmanaged<nint*, DeviceLostReason, WGPUStringView, void*, void*, void>)&OnDeviceLostCallbackDelegate;
 
     [UnmanagedCallersOnly]
-    private static void OnDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2)
+    private static void OnDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2) => HandleDeviceLostCallbackDelegate(device, reason, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnDeviceLostCallbackDelegateBrowser(nint* device, DeviceLostReason reason, WGPUStringView* message, void* userdata1, void* userdata2) => HandleDeviceLostCallbackDelegate(device, reason, *message, userdata1, userdata2);
+
+    private static void HandleDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2)
     {
         Find<DeviceLostCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), reason, ToManaged(message));
         Unregister(userdata1);
         Unregister(userdata2);
     }
 
-    public static nint UncapturedErrorCallbackDelegate => (nint)(delegate* unmanaged<nint*, ErrorType, WGPUStringView, void*, void*, void>)&OnUncapturedErrorCallbackDelegate;
+    public static nint UncapturedErrorCallbackDelegate => OperatingSystem.IsBrowser()
+        ? (nint)(delegate* unmanaged<nint*, ErrorType, WGPUStringView*, void*, void*, void>)&OnUncapturedErrorCallbackDelegateBrowser
+        : (nint)(delegate* unmanaged<nint*, ErrorType, WGPUStringView, void*, void*, void>)&OnUncapturedErrorCallbackDelegate;
 
     [UnmanagedCallersOnly]
-    private static void OnUncapturedErrorCallbackDelegate(nint* device, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2) =>
+    private static void OnUncapturedErrorCallbackDelegate(nint* device, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2) => HandleUncapturedErrorCallbackDelegate(device, type, message, userdata1, userdata2);
+
+    [UnmanagedCallersOnly]
+    private static void OnUncapturedErrorCallbackDelegateBrowser(nint* device, ErrorType type, WGPUStringView* message, void* userdata1, void* userdata2) => HandleUncapturedErrorCallbackDelegate(device, type, *message, userdata1, userdata2);
+
+    private static void HandleUncapturedErrorCallbackDelegate(nint* device, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
+    {
         Find<UncapturedErrorCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), type, ToManaged(message));
+    }
 
 }

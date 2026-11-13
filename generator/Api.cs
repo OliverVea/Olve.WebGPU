@@ -754,11 +754,11 @@ public sealed class Api
     {
         var cb = E(callback);
         var (_, args, result) = TaskShape(callback)!.Value;
-        var name = Pascal(callback);
-        sb.Append($"    public static nint {name}Task => (nint)(delegate* unmanaged<{RawCallbackSignature(cb)}, void>)&On{name}Task;\n\n");
-        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Task({RawCallbackParams(cb)})\n    {{\n");
-        sb.Append($"        var completion = Take<TaskCompletionSource<{result}>>(userdata1);\n");
-        sb.Append($"        completion.SetResult(new {result}({string.Join(", ", args.Select(a => a.Convert))}));\n    }}\n\n");
+        EmitEntries(cb, Pascal(callback) + "Task",
+        [
+            $"var completion = Take<TaskCompletionSource<{result}>>(userdata1);",
+            $"completion.SetResult(new {result}({string.Join(", ", args.Select(a => a.Convert))}));",
+        ], sb);
     }
 
     private void EmitDelegateCallback(string callback, StringBuilder sb)
@@ -767,16 +767,41 @@ public sealed class Api
         var args = cb.Args.Select(Callback).ToList();
         var name = Pascal(callback);
         var invoke = $"Find<{name}>(userdata1)?.Invoke({string.Join(", ", args.Select(a => a!.Convert))});";
-        sb.Append($"    public static nint {name}Delegate => (nint)(delegate* unmanaged<{RawCallbackSignature(cb)}, void>)&On{name}Delegate;\n\n");
-        if (LastCallbacks.Contains(callback))
+
+        // A device's last callback: userdata2 is the device's other callback, which can't be called after this one
+        List<string> body = LastCallbacks.Contains(callback) ? [invoke, "Unregister(userdata1);", "Unregister(userdata2);"] : [invoke];
+        EmitEntries(cb, name + "Delegate", body, sb);
+    }
+
+    /// <summary>
+    /// The native entry point of a callback: a function pointer property <paramref name="entry"/> and the body that runs when it's called.
+    /// A struct argument (a message's string view) is a value on desktop, but in the browser wasm's C ABI passes it as a pointer to a copy,
+    /// and the runtime's entry hands that pointer over as the struct's first field. Such callbacks get a second entry for the browser
+    /// that takes the pointer, and the property picks one at run time, since one assembly serves both.
+    /// </summary>
+    private void EmitEntries(Entry cb, string entry, List<string> body, StringBuilder sb)
+    {
+        var byValue = cb.Args.Where(a => a.Annotation == "value" && _m.Entries.TryGetValue(_m.Resolve(a.Type), out var t) && t.Category == "structure").ToList();
+        var signature = RawCallbackSignature(cb);
+        var parameters = RawCallbackParams(cb);
+        var block = string.Concat(body.Select(line => $"        {line}\n"));
+        if (byValue.Count == 0)
         {
-            // userdata2 is the device's other callback, which can't be called after this one
-            sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)})\n    {{\n");
-            sb.Append($"        {invoke}\n        Unregister(userdata1);\n        Unregister(userdata2);\n    }}\n\n");
+            sb.Append($"    public static nint {entry} => (nint)(delegate* unmanaged<{signature}, void>)&On{entry};\n\n");
+            sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}({parameters})\n    {{\n{block}    }}\n\n");
             return;
         }
 
-        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)}) =>\n        {invoke}\n\n");
+        var browserSignature = string.Join(", ", cb.Args.Select(a => byValue.Contains(a) ? _raw.Type(a) + "*" : _raw.Type(a)).Append("void*").Append("void*"));
+        var browserParameters = string.Join(", ", cb.Args.Select(a => $"{(byValue.Contains(a) ? _raw.Type(a) + "*" : _raw.Type(a))} {Names.Identifier(Names.LowerCamel(a.Name))}").Append("void* userdata1").Append("void* userdata2"));
+        var names = cb.Args.Select(a => Names.Identifier(Names.LowerCamel(a.Name))).Append("userdata1").Append("userdata2").ToList();
+        var browserNames = cb.Args.Select(a => (byValue.Contains(a) ? "*" : "") + Names.Identifier(Names.LowerCamel(a.Name))).Append("userdata1").Append("userdata2");
+        sb.Append($"    public static nint {entry} => OperatingSystem.IsBrowser()\n");
+        sb.Append($"        ? (nint)(delegate* unmanaged<{browserSignature}, void>)&On{entry}Browser\n");
+        sb.Append($"        : (nint)(delegate* unmanaged<{signature}, void>)&On{entry};\n\n");
+        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}({parameters}) => Handle{entry}({string.Join(", ", names)});\n\n");
+        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}Browser({browserParameters}) => Handle{entry}({string.Join(", ", browserNames)});\n\n");
+        sb.Append($"    private static void Handle{entry}({parameters})\n    {{\n{block}    }}\n\n");
     }
 
     private string CallbackOf(string callbackInfo) => E(callbackInfo).Members.First(m => m.Name == "callback").Type;

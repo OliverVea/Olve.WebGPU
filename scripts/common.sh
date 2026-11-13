@@ -2,8 +2,8 @@
 # RID overrides the detected runtime identifier (e.g. RID=osx-x64 on an Intel Mac).
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# shellcheck source=/dev/null
-source <(tr -d '\r' < "$ROOT/dawn/version.env")
+# Plain KEY=value lines; eval rather than "source <(...)", which bash 3.2 (macOS) reads as empty
+eval "$(tr -d '\r' < "$ROOT/dawn/version.env" | grep -E '^[A-Z_]+=')"
 if [[ -z "${RID:-}" ]]; then
     case "$(uname -s)-$(uname -m)" in
         Linux-x86_64) RID=linux-x64 ;;

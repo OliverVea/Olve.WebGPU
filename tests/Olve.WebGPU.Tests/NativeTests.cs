@@ -12,6 +12,15 @@ public class NativeTests
     }
 
     [Test]
+    public async Task DescriptorsMarshalEveryFieldAndWebgpuHsDefaults()
+    {
+        var results = MarshalCheck.Run();
+
+        await Assert.That(results.Mismatches).IsEmpty();
+        await Assert.That(results.Checked).IsGreaterThan(0);
+    }
+
+    [Test]
     public async Task DisposingADefaultHandleDoesNothing()
     {
         // wgpu*Release(NULL) crashes Dawn, so the test host only survives this if Dispose skips the call

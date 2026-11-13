@@ -8,7 +8,7 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 - **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions and out-chains aren't mapped yet; see the issues.
 - **Futures:** each request has an overload that also gives webgpu.h's future (`RequestAdapterAsync(options, out var future)`), for `Instance.WaitAny`. `WaitAny` with a timeout needs the instance feature `InstanceFeatureName.TimedWaitAny`; without it, only a zero timeout works. In the browser, use a zero timeout.
 
-Descriptors get webgpu.h's defaults from `new()` and object initialisers, like webgpu.h's `*_INIT` macros. `default(T)` and `new T[n]` skip them, like `= {0}` in C: the elements of `new ColorTargetState[n]` have `WriteMask = None` and draw nothing. Build arrays from `new()` values, for example with collection expressions.
+Descriptors get webgpu.h's defaults from `new()` and object initialisers: the same values as webgpu.h's `*_INIT` macros, which a test compares field by field. Like those macros, an enum member that has an `Undefined` value defaults to it, which means "use the default": `new BlendComponent().Operation` is `BlendOperation.Undefined`, which the implementation treats as `Add`. `default(T)` and `new T[n]` skip them, like `= {0}` in C: the elements of `new ColorTargetState[n]` have `WriteMask = None` and draw nothing. Build arrays from `new()` values, for example with collection expressions.
 
 ## Packages
 

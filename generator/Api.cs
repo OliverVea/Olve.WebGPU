@@ -20,7 +20,7 @@ public enum Rep
 /// The C#-friendly layer: handle record structs with methods, descriptor structs with defaults, async requests as tasks,
 /// and the marshalling between them and the raw layer.
 /// </summary>
-public sealed class Api
+public sealed partial class Api
 {
     private static readonly HashSet<string> NotFriendly = ["string view", "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER"];
 
@@ -260,15 +260,27 @@ public sealed class Api
 
     private string? DefaultExpression(Field f, bool constantOnly)
     {
+        var type = _m.Resolve(f.Type);
+        var e = E(type);
+
+        // webgpu.h's *_INIT gives a member Undefined, "use the default", whenever its enum has that value, with or without a default
+        // in dawn.json: so does new(). MarshalCheck.Defaults compares them. A method's parameter keeps dawn.json's default, since C has
+        // no default arguments. Without a default, an Undefined of 0 needs no initializer.
+        if (!constantOnly && e.Category == "enum" && f.Annotation == "value"
+            && e.Values.FirstOrDefault(v => v.Name == "undefined" && _raw.Values(e).Contains(v)) is { } undefined
+            && (f.Default is not null || undefined.Value != 0))
+        {
+            return $"{Pascal(type)}.{Names.EnumMember(undefined.Name)}";
+        }
+
         if (f.Default is null or "nullptr" or "strlen")
         {
             return null;
         }
 
-        var type = _m.Resolve(f.Type);
-        var e = E(type);
         if (e.Category is "enum" or "bitmask")
         {
+
             var value = e.Values.FirstOrDefault(v => v.Name == f.Default && _raw.Values(e).Contains(v));
             return value is null ? null : $"{Pascal(type)}.{Names.EnumMember(value.Name)}";
         }

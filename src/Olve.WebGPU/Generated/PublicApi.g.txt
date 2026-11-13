@@ -766,16 +766,16 @@ struct BindGroupLayoutEntry.StorageTexture : StorageTextureBindingLayout
 struct BindGroupLayoutEntry.Texture : TextureBindingLayout
 struct BindGroupLayoutEntry.Visibility : ShaderStage
 struct BlendComponent : Plain
-struct BlendComponent.DstFactor : BlendFactor = BlendFactor.Zero
-struct BlendComponent.Operation : BlendOperation = BlendOperation.Add
-struct BlendComponent.SrcFactor : BlendFactor = BlendFactor.One
+struct BlendComponent.DstFactor : BlendFactor = BlendFactor.Undefined
+struct BlendComponent.Operation : BlendOperation = BlendOperation.Undefined
+struct BlendComponent.SrcFactor : BlendFactor = BlendFactor.Undefined
 struct BlendState : Plain
 struct BlendState.Alpha : BlendComponent = new()
 struct BlendState.Color : BlendComponent = new()
 struct BufferBindingLayout : Plain
 struct BufferBindingLayout.HasDynamicOffset : bool
 struct BufferBindingLayout.MinBindingSize : ulong
-struct BufferBindingLayout.Type : BufferBindingType = BufferBindingType.Uniform
+struct BufferBindingLayout.Type : BufferBindingType = BufferBindingType.Undefined
 struct BufferDescriptor : Ref
 struct BufferDescriptor.Label : ReadOnlySpan<byte>
 struct BufferDescriptor.MappedAtCreation : bool
@@ -830,7 +830,7 @@ struct DepthStencilState.DepthBias : int
 struct DepthStencilState.DepthBiasClamp : float
 struct DepthStencilState.DepthBiasSlopeScale : float
 struct DepthStencilState.DepthCompare : CompareFunction
-struct DepthStencilState.DepthWriteEnabled : OptionalBool
+struct DepthStencilState.DepthWriteEnabled : OptionalBool = OptionalBool.Undefined
 struct DepthStencilState.Format : TextureFormat
 struct DepthStencilState.StencilBack : StencilFaceState = new()
 struct DepthStencilState.StencilFront : StencilFaceState = new()
@@ -920,10 +920,10 @@ struct PipelineLayoutDescriptor.ImmediateSize : uint
 struct PipelineLayoutDescriptor.Label : ReadOnlySpan<byte>
 struct PopErrorScopeResult(PopErrorScopeStatus Status, ErrorType Type, string Message)
 struct PrimitiveState : Plain
-struct PrimitiveState.CullMode : CullMode = CullMode.None
-struct PrimitiveState.FrontFace : FrontFace = FrontFace.CCW
+struct PrimitiveState.CullMode : CullMode = CullMode.Undefined
+struct PrimitiveState.FrontFace : FrontFace = FrontFace.Undefined
 struct PrimitiveState.StripIndexFormat : IndexFormat
-struct PrimitiveState.Topology : PrimitiveTopology = PrimitiveTopology.TriangleList
+struct PrimitiveState.Topology : PrimitiveTopology = PrimitiveTopology.Undefined
 struct PrimitiveState.UnclippedDepth : bool
 struct QuerySetDescriptor : Ref
 struct QuerySetDescriptor.Count : uint
@@ -978,7 +978,7 @@ struct RenderPipelineDescriptor.Vertex : VertexState = new()
 struct RequestAdapterOptions : Plain
 struct RequestAdapterOptions.BackendType : BackendType
 struct RequestAdapterOptions.CompatibleSurface : Surface
-struct RequestAdapterOptions.FeatureLevel : FeatureLevel = FeatureLevel.Core
+struct RequestAdapterOptions.FeatureLevel : FeatureLevel = FeatureLevel.Undefined
 struct RequestAdapterOptions.ForceFallbackAdapter : bool
 struct RequestAdapterOptions.PowerPreference : PowerPreference
 struct RequestAdapterOptions.RequestAdapterWebXROptions : RequestAdapterWebXROptions?
@@ -987,19 +987,19 @@ struct RequestAdapterWebXROptions : Plain
 struct RequestAdapterWebXROptions.XrCompatible : bool
 struct RequestDeviceResult(RequestDeviceStatus Status, Device Device, string Message)
 struct SamplerBindingLayout : Plain
-struct SamplerBindingLayout.Type : SamplerBindingType = SamplerBindingType.Filtering
+struct SamplerBindingLayout.Type : SamplerBindingType = SamplerBindingType.Undefined
 struct SamplerDescriptor : Ref
-struct SamplerDescriptor.AddressModeU : AddressMode = AddressMode.ClampToEdge
-struct SamplerDescriptor.AddressModeV : AddressMode = AddressMode.ClampToEdge
-struct SamplerDescriptor.AddressModeW : AddressMode = AddressMode.ClampToEdge
+struct SamplerDescriptor.AddressModeU : AddressMode = AddressMode.Undefined
+struct SamplerDescriptor.AddressModeV : AddressMode = AddressMode.Undefined
+struct SamplerDescriptor.AddressModeW : AddressMode = AddressMode.Undefined
 struct SamplerDescriptor.Compare : CompareFunction
 struct SamplerDescriptor.Label : ReadOnlySpan<byte>
 struct SamplerDescriptor.LodMaxClamp : float = 32f
 struct SamplerDescriptor.LodMinClamp : float
-struct SamplerDescriptor.MagFilter : FilterMode = FilterMode.Nearest
+struct SamplerDescriptor.MagFilter : FilterMode = FilterMode.Undefined
 struct SamplerDescriptor.MaxAnisotropy : ushort = 1
-struct SamplerDescriptor.MinFilter : FilterMode = FilterMode.Nearest
-struct SamplerDescriptor.MipmapFilter : MipmapFilterMode = MipmapFilterMode.Nearest
+struct SamplerDescriptor.MinFilter : FilterMode = FilterMode.Undefined
+struct SamplerDescriptor.MipmapFilter : MipmapFilterMode = MipmapFilterMode.Undefined
 struct ShaderModuleDescriptor : Ref
 struct ShaderModuleDescriptor.Label : ReadOnlySpan<byte>
 struct ShaderModuleDescriptor.ShaderSourceSPIRV : optional ShaderSourceSPIRV
@@ -1009,14 +1009,14 @@ struct ShaderSourceSPIRV.Code : ReadOnlySpan<uint>
 struct ShaderSourceWGSL : Ref
 struct ShaderSourceWGSL.Code : ReadOnlySpan<byte>
 struct StencilFaceState : Plain
-struct StencilFaceState.Compare : CompareFunction = CompareFunction.Always
-struct StencilFaceState.DepthFailOp : StencilOperation = StencilOperation.Keep
-struct StencilFaceState.FailOp : StencilOperation = StencilOperation.Keep
-struct StencilFaceState.PassOp : StencilOperation = StencilOperation.Keep
+struct StencilFaceState.Compare : CompareFunction = CompareFunction.Undefined
+struct StencilFaceState.DepthFailOp : StencilOperation = StencilOperation.Undefined
+struct StencilFaceState.FailOp : StencilOperation = StencilOperation.Undefined
+struct StencilFaceState.PassOp : StencilOperation = StencilOperation.Undefined
 struct StorageTextureBindingLayout : Plain
-struct StorageTextureBindingLayout.Access : StorageTextureAccess = StorageTextureAccess.WriteOnly
+struct StorageTextureBindingLayout.Access : StorageTextureAccess = StorageTextureAccess.Undefined
 struct StorageTextureBindingLayout.Format : TextureFormat
-struct StorageTextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension._2D
+struct StorageTextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension.Undefined
 struct SubgroupMatrixConfig : Plain
 struct SubgroupMatrixConfig.ComponentType : SubgroupMatrixComponentType
 struct SubgroupMatrixConfig.K : uint
@@ -1044,7 +1044,7 @@ struct SurfaceConfiguration.AlphaMode : CompositeAlphaMode = CompositeAlphaMode.
 struct SurfaceConfiguration.Device : Device
 struct SurfaceConfiguration.Format : TextureFormat
 struct SurfaceConfiguration.Height : uint
-struct SurfaceConfiguration.PresentMode : PresentMode = PresentMode.Fifo
+struct SurfaceConfiguration.PresentMode : PresentMode = PresentMode.Undefined
 struct SurfaceConfiguration.Usage : TextureUsage = TextureUsage.RenderAttachment
 struct SurfaceConfiguration.ViewFormats : ReadOnlySpan<TextureFormat>
 struct SurfaceConfiguration.Width : uint
@@ -1085,25 +1085,25 @@ struct TexelCopyBufferLayout.BytesPerRow : uint = Wgpu.CopyStrideUndefined
 struct TexelCopyBufferLayout.Offset : ulong
 struct TexelCopyBufferLayout.RowsPerImage : uint = Wgpu.CopyStrideUndefined
 struct TexelCopyTextureInfo : Plain
-struct TexelCopyTextureInfo.Aspect : TextureAspect = TextureAspect.All
+struct TexelCopyTextureInfo.Aspect : TextureAspect = TextureAspect.Undefined
 struct TexelCopyTextureInfo.MipLevel : uint
 struct TexelCopyTextureInfo.Origin : Origin3D = new()
 struct TexelCopyTextureInfo.Texture : Texture
 struct TextureBindingLayout : Plain
 struct TextureBindingLayout.Multisampled : bool
-struct TextureBindingLayout.SampleType : TextureSampleType = TextureSampleType.Float
-struct TextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension._2D
+struct TextureBindingLayout.SampleType : TextureSampleType = TextureSampleType.Undefined
+struct TextureBindingLayout.ViewDimension : TextureViewDimension = TextureViewDimension.Undefined
 struct TextureBindingViewDimension : Plain
 struct TextureBindingViewDimension.TextureBindingViewDimensionValue : TextureViewDimension
 struct TextureComponentSwizzle : Plain
-struct TextureComponentSwizzle.A : ComponentSwizzle = ComponentSwizzle.A
-struct TextureComponentSwizzle.B : ComponentSwizzle = ComponentSwizzle.B
-struct TextureComponentSwizzle.G : ComponentSwizzle = ComponentSwizzle.G
-struct TextureComponentSwizzle.R : ComponentSwizzle = ComponentSwizzle.R
+struct TextureComponentSwizzle.A : ComponentSwizzle = ComponentSwizzle.Undefined
+struct TextureComponentSwizzle.B : ComponentSwizzle = ComponentSwizzle.Undefined
+struct TextureComponentSwizzle.G : ComponentSwizzle = ComponentSwizzle.Undefined
+struct TextureComponentSwizzle.R : ComponentSwizzle = ComponentSwizzle.Undefined
 struct TextureComponentSwizzleDescriptor : Plain
 struct TextureComponentSwizzleDescriptor.Swizzle : TextureComponentSwizzle = new()
 struct TextureDescriptor : Ref
-struct TextureDescriptor.Dimension : TextureDimension = TextureDimension._2D
+struct TextureDescriptor.Dimension : TextureDimension = TextureDimension.Undefined
 struct TextureDescriptor.Format : TextureFormat
 struct TextureDescriptor.Label : ReadOnlySpan<byte>
 struct TextureDescriptor.MipLevelCount : uint = 1
@@ -1114,7 +1114,7 @@ struct TextureDescriptor.Usage : TextureUsage
 struct TextureDescriptor.ViewFormats : ReadOnlySpan<TextureFormat>
 struct TextureViewDescriptor : Ref
 struct TextureViewDescriptor.ArrayLayerCount : uint = Wgpu.ArrayLayerCountUndefined
-struct TextureViewDescriptor.Aspect : TextureAspect = TextureAspect.All
+struct TextureViewDescriptor.Aspect : TextureAspect = TextureAspect.Undefined
 struct TextureViewDescriptor.BaseArrayLayer : uint
 struct TextureViewDescriptor.BaseMipLevel : uint
 struct TextureViewDescriptor.Dimension : TextureViewDimension

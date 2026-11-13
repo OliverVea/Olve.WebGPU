@@ -9,6 +9,11 @@ Console.WriteLine($"layout values checked: {count}, mismatches: {mismatches.Coun
 mismatches.ForEach(Console.WriteLine);
 failures += mismatches.Count > 0 || count == 0 ? 1 : 0;
 
+var marshal = MarshalCheck.Run();
+Console.WriteLine($"marshalled values checked: {marshal.Checked}, mismatches: {marshal.Mismatches.Count}");
+marshal.Mismatches.ForEach(Console.WriteLine);
+failures += marshal.Mismatches.Count > 0 || marshal.Checked == 0 ? 1 : 0;
+
 try
 {
     var frame = await OffscreenTriangle.RenderAsync(Console.WriteLine);

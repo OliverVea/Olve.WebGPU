@@ -35,8 +35,10 @@ public delegate void LoggingCallback(LoggingType type, string message);
 public ref struct DawnInstanceDescriptor()
 {
     /// <summary>
-    /// Folders Dawn also loads backend libraries from (vulkan-1.dll, d3dcompiler_47.dll, libvulkan.so.1), before its defaults.
-    /// On Windows, Dawn's own search can't find System32: pass <c>Environment.SystemDirectory</c> for the Vulkan backend.
+    /// Where Dawn also loads backend libraries from (vulkan-1.dll, d3dcompiler_47.dll, libvulkan.so.1), before its defaults.
+    /// Dawn prepends each one to the library's file name, so end a folder with a separator.
+    /// On Windows, Dawn's own search can't find System32: pass <c>Environment.SystemDirectory + Path.DirectorySeparatorChar</c>
+    /// for the Vulkan backend.
     /// </summary>
     public ReadOnlySpan<string> AdditionalRuntimeSearchPaths { get; init; }
 
@@ -46,7 +48,7 @@ public ref struct DawnInstanceDescriptor()
     public bool BeginCaptureOnStartup { get; init; }
 
     /// <summary>
-    /// Receives the instance's messages (backend discovery, adapter warnings) instead of stderr.
+    /// Receives Dawn's instance log, such as a backend that fails to load, instead of stderr.
     /// The callback stays registered for the rest of the process: Dawn gives no signal when the instance stops using it.
     /// </summary>
     public LoggingCallback? LoggingCallback { get; init; }

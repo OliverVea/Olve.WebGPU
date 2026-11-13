@@ -7,8 +7,12 @@
            any other RuntimeIdentifier:     nothing, there's no webgpu_dawn.dll for D3D12 to load them for
            Android and iOS apps:            nothing, whatever the RuntimeIdentifier (their outer build has none)
          OlveWebGPUCopyDxc=false turns it off; OlveWebGPUDxcDestination overrides the folder. -->
+    <!-- The platform from the target framework: TargetPlatformIdentifier isn't set yet where a project imports this file itself -->
+    <PropertyGroup>
+        <_OlveWebGPUPlatform>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_OlveWebGPUPlatform>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == ''">
-        <OlveWebGPUCopyDxc Condition="('$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64') and '$(TargetPlatformIdentifier)' != 'android' and '$(TargetPlatformIdentifier)' != 'ios'">true</OlveWebGPUCopyDxc>
+        <OlveWebGPUCopyDxc Condition="('$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64') and '$(_OlveWebGPUPlatform)' != 'android' and '$(_OlveWebGPUPlatform)' != 'ios'">true</OlveWebGPUCopyDxc>
     </PropertyGroup>
     <PropertyGroup Condition="'$(OlveWebGPUCopyDxc)' == 'true'">
         <OlveWebGPUDxcDestination Condition="'$(OlveWebGPUDxcDestination)' == '' and '$(RuntimeIdentifier)' == ''">runtimes/win-x64/native/</OlveWebGPUDxcDestination>
@@ -30,14 +34,14 @@
     <!-- iOS: Dawn's static library linked into the app. Force-loaded, because nothing in the app references Dawn's symbols at link
          time: the binding resolves its P/Invokes in the app's own executable at run time. OlveWebGPUIosLibraries overrides the folder
          holding ios-arm64/ and iossimulator/ (this repo's tests use artifacts/native/). -->
-    <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'ios'">
+    <PropertyGroup Condition="'$(_OlveWebGPUPlatform)' == 'ios'">
         <OlveWebGPUIosLibraries Condition="'$(OlveWebGPUIosLibraries)' == ''">$(MSBuildThisFileDirectory)../ios/</OlveWebGPUIosLibraries>
         <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('iossimulator-'))">iossimulator</_OlveWebGPUIosSlice>
         <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('ios-'))">ios-arm64</_OlveWebGPUIosSlice>
     </PropertyGroup>
     <!-- Keeps every webgpu.h function the binding imports through the native link (generated) -->
-    <Import Project="$(MSBuildThisFileDirectory)Olve.WebGPU.Native.iOS.g.targets" Condition="'$(TargetPlatformIdentifier)' == 'ios'" />
-    <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'ios' and '$(_OlveWebGPUIosSlice)' != ''">
+    <Import Project="$(MSBuildThisFileDirectory)Olve.WebGPU.Native.iOS.g.targets" Condition="'$(_OlveWebGPUPlatform)' == 'ios'" />
+    <ItemGroup Condition="'$(_OlveWebGPUPlatform)' == 'ios' and '$(_OlveWebGPUIosSlice)' != ''">
         <NativeReference Include="$(OlveWebGPUIosLibraries)$(_OlveWebGPUIosSlice)/libwebgpu_dawn.a" Kind="Static" ForceLoad="true" IsCxx="true"
                          Frameworks="Metal QuartzCore IOSurface Foundation CoreFoundation UIKit" />
     </ItemGroup>

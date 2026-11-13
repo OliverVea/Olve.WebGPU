@@ -473,6 +473,26 @@ internal static unsafe partial class Marshalling
         };
     }
 
+    public static CompatibilityModeLimits FromNative(in WGPUCompatibilityModeLimits n) => new()
+    {
+        MaxStorageBuffersInVertexStage = n.MaxStorageBuffersInVertexStage,
+        MaxStorageTexturesInVertexStage = n.MaxStorageTexturesInVertexStage,
+        MaxStorageBuffersInFragmentStage = n.MaxStorageBuffersInFragmentStage,
+        MaxStorageTexturesInFragmentStage = n.MaxStorageTexturesInFragmentStage,
+    };
+
+    public static WGPUCompatibilityModeLimits ToNative(in CompatibilityModeLimits v, Arena arena)
+    {
+        return new WGPUCompatibilityModeLimits
+        {
+            Chain = new WGPUChainedStruct { SType = SType.CompatibilityModeLimits },
+            MaxStorageBuffersInVertexStage = v.MaxStorageBuffersInVertexStage,
+            MaxStorageTexturesInVertexStage = v.MaxStorageTexturesInVertexStage,
+            MaxStorageBuffersInFragmentStage = v.MaxStorageBuffersInFragmentStage,
+            MaxStorageTexturesInFragmentStage = v.MaxStorageTexturesInFragmentStage,
+        };
+    }
+
     public static SupportedFeatures FromNative(in WGPUSupportedFeatures n) => new()
     {
         Features = n.Features == null ? [] : new ReadOnlySpan<FeatureName>(n.Features, (int)n.FeatureCount).ToArray(),
@@ -1234,6 +1254,17 @@ internal static unsafe partial class Marshalling
         Swizzle = FromNative(n.Swizzle),
     };
 
+    public static SubgroupMatrixConfig FromNative(in WGPUSubgroupMatrixConfig n) => new()
+    {
+        ComponentType = n.ComponentType,
+        ResultComponentType = n.ResultComponentType,
+        M = n.M,
+        N = n.N,
+        K = n.K,
+        MinSubgroupSize = n.MinSubgroupSize,
+        MaxSubgroupSize = n.MaxSubgroupSize,
+    };
+
     public static WGPUSubgroupMatrixConfig ToNative(in SubgroupMatrixConfig v, Arena arena)
     {
         return new WGPUSubgroupMatrixConfig
@@ -1248,15 +1279,9 @@ internal static unsafe partial class Marshalling
         };
     }
 
-    public static SubgroupMatrixConfig FromNative(in WGPUSubgroupMatrixConfig n) => new()
+    public static AdapterPropertiesSubgroupMatrixConfigs FromNative(in WGPUAdapterPropertiesSubgroupMatrixConfigs n) => new()
     {
-        ComponentType = n.ComponentType,
-        ResultComponentType = n.ResultComponentType,
-        M = n.M,
-        N = n.N,
-        K = n.K,
-        MinSubgroupSize = n.MinSubgroupSize,
-        MaxSubgroupSize = n.MaxSubgroupSize,
+        Configs = n.Configs == null ? [] : Array(new ReadOnlySpan<WGPUSubgroupMatrixConfig>(n.Configs, (int)n.ConfigCount), static x => FromNative(x)),
     };
 
     public static WGPUDeviceLostCallbackInfo ToNative(in DeviceLostCallbackInfo v, void* other) => v.Callback is null && other == null ? default : new WGPUDeviceLostCallbackInfo

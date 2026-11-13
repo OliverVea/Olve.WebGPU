@@ -110,6 +110,14 @@ internal static partial class MarshalCheck
         }
         {
             var n = new Counter();
+            var v = MakeCompatibilityModeLimits(n);
+            using var arena = Arena.Rent();
+            var raw = Marshalling.ToNative(v, arena);
+            n = new Counter();
+            VerifyCompatibilityModeLimits(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUCompatibilityModeLimits>(in raw)), n, "CompatibilityModeLimits", r);
+        }
+        {
+            var n = new Counter();
             var v = MakeComputePassDescriptor(n);
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(v, arena);
@@ -628,6 +636,15 @@ internal static partial class MarshalCheck
         {
             using var memory = new Allocations();
             var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUAdapterPropertiesSubgroupMatrixConfigs>()];
+            WriteAdapterPropertiesSubgroupMatrixConfigs(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUAdapterPropertiesSubgroupMatrixConfigs>(b));
+            n = new Counter();
+            ReadAdapterPropertiesSubgroupMatrixConfigs(v, n, "AdapterPropertiesSubgroupMatrixConfigs", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
             var b = new byte[Unsafe.SizeOf<WGPUBlendComponent>()];
             WriteBlendComponent(b, n, memory);
             var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUBlendComponent>(b));
@@ -651,6 +668,15 @@ internal static partial class MarshalCheck
             var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUColor>(b));
             n = new Counter();
             ReadColor(v, n, "Color", r);
+        }
+        {
+            using var memory = new Allocations();
+            var n = new Counter();
+            var b = new byte[Unsafe.SizeOf<WGPUCompatibilityModeLimits>()];
+            WriteCompatibilityModeLimits(b, n, memory);
+            var v = Marshalling.FromNative(MemoryMarshal.Read<WGPUCompatibilityModeLimits>(b));
+            n = new Counter();
+            ReadCompatibilityModeLimits(v, n, "CompatibilityModeLimits", r);
         }
         {
             using var memory = new Allocations();
@@ -1009,8 +1035,17 @@ internal static partial class MarshalCheck
         }
         {
             using var arena = Arena.Rent();
+            var raw = Marshalling.ToNative(new CompatibilityModeLimits(), arena);
+            var init = Init(12, Unsafe.SizeOf<WGPUCompatibilityModeLimits>(), "CompatibilityModeLimits", r);
+            if (init is not null)
+            {
+                DefaultsCompatibilityModeLimits(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUCompatibilityModeLimits>(in raw)), init, "CompatibilityModeLimits", r);
+            }
+        }
+        {
+            using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ComputePassDescriptor(), arena);
-            var init = Init(12, Unsafe.SizeOf<WGPUComputePassDescriptor>(), "ComputePassDescriptor", r);
+            var init = Init(13, Unsafe.SizeOf<WGPUComputePassDescriptor>(), "ComputePassDescriptor", r);
             if (init is not null)
             {
                 DefaultsComputePassDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUComputePassDescriptor>(in raw)), init, "ComputePassDescriptor", r);
@@ -1019,7 +1054,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ComputePipelineDescriptor(), arena);
-            var init = Init(13, Unsafe.SizeOf<WGPUComputePipelineDescriptor>(), "ComputePipelineDescriptor", r);
+            var init = Init(14, Unsafe.SizeOf<WGPUComputePipelineDescriptor>(), "ComputePipelineDescriptor", r);
             if (init is not null)
             {
                 DefaultsComputePipelineDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUComputePipelineDescriptor>(in raw)), init, "ComputePipelineDescriptor", r);
@@ -1028,7 +1063,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ComputeState(), arena);
-            var init = Init(14, Unsafe.SizeOf<WGPUComputeState>(), "ComputeState", r);
+            var init = Init(15, Unsafe.SizeOf<WGPUComputeState>(), "ComputeState", r);
             if (init is not null)
             {
                 DefaultsComputeState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUComputeState>(in raw)), init, "ComputeState", r);
@@ -1037,7 +1072,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ConstantEntry(), arena);
-            var init = Init(15, Unsafe.SizeOf<WGPUConstantEntry>(), "ConstantEntry", r);
+            var init = Init(16, Unsafe.SizeOf<WGPUConstantEntry>(), "ConstantEntry", r);
             if (init is not null)
             {
                 DefaultsConstantEntry(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUConstantEntry>(in raw)), init, "ConstantEntry", r);
@@ -1046,7 +1081,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new DawnCompilationMessageUtf16(), arena);
-            var init = Init(16, Unsafe.SizeOf<WGPUDawnCompilationMessageUtf16>(), "DawnCompilationMessageUtf16", r);
+            var init = Init(17, Unsafe.SizeOf<WGPUDawnCompilationMessageUtf16>(), "DawnCompilationMessageUtf16", r);
             if (init is not null)
             {
                 DefaultsDawnCompilationMessageUtf16(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUDawnCompilationMessageUtf16>(in raw)), init, "DawnCompilationMessageUtf16", r);
@@ -1055,7 +1090,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new DepthStencilState(), arena);
-            var init = Init(17, Unsafe.SizeOf<WGPUDepthStencilState>(), "DepthStencilState", r);
+            var init = Init(18, Unsafe.SizeOf<WGPUDepthStencilState>(), "DepthStencilState", r);
             if (init is not null)
             {
                 DefaultsDepthStencilState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUDepthStencilState>(in raw)), init, "DepthStencilState", r);
@@ -1064,7 +1099,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new DeviceDescriptor(), arena);
-            var init = Init(18, Unsafe.SizeOf<WGPUDeviceDescriptor>(), "DeviceDescriptor", r);
+            var init = Init(19, Unsafe.SizeOf<WGPUDeviceDescriptor>(), "DeviceDescriptor", r);
             if (init is not null)
             {
                 DefaultsDeviceDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUDeviceDescriptor>(in raw)), init, "DeviceDescriptor", r);
@@ -1073,7 +1108,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new EmscriptenSurfaceSourceCanvasHTMLSelector(), arena);
-            var init = Init(19, Unsafe.SizeOf<WGPUEmscriptenSurfaceSourceCanvasHTMLSelector>(), "EmscriptenSurfaceSourceCanvasHTMLSelector", r);
+            var init = Init(20, Unsafe.SizeOf<WGPUEmscriptenSurfaceSourceCanvasHTMLSelector>(), "EmscriptenSurfaceSourceCanvasHTMLSelector", r);
             if (init is not null)
             {
                 DefaultsEmscriptenSurfaceSourceCanvasHTMLSelector(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUEmscriptenSurfaceSourceCanvasHTMLSelector>(in raw)), init, "EmscriptenSurfaceSourceCanvasHTMLSelector", r);
@@ -1082,7 +1117,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new Extent3D(), arena);
-            var init = Init(20, Unsafe.SizeOf<WGPUExtent3D>(), "Extent3D", r);
+            var init = Init(21, Unsafe.SizeOf<WGPUExtent3D>(), "Extent3D", r);
             if (init is not null)
             {
                 DefaultsExtent3D(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUExtent3D>(in raw)), init, "Extent3D", r);
@@ -1091,7 +1126,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ExternalTextureBindingEntry(), arena);
-            var init = Init(21, Unsafe.SizeOf<WGPUExternalTextureBindingEntry>(), "ExternalTextureBindingEntry", r);
+            var init = Init(22, Unsafe.SizeOf<WGPUExternalTextureBindingEntry>(), "ExternalTextureBindingEntry", r);
             if (init is not null)
             {
                 DefaultsExternalTextureBindingEntry(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUExternalTextureBindingEntry>(in raw)), init, "ExternalTextureBindingEntry", r);
@@ -1100,7 +1135,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ExternalTextureBindingLayout(), arena);
-            var init = Init(22, Unsafe.SizeOf<WGPUExternalTextureBindingLayout>(), "ExternalTextureBindingLayout", r);
+            var init = Init(23, Unsafe.SizeOf<WGPUExternalTextureBindingLayout>(), "ExternalTextureBindingLayout", r);
             if (init is not null)
             {
                 DefaultsExternalTextureBindingLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUExternalTextureBindingLayout>(in raw)), init, "ExternalTextureBindingLayout", r);
@@ -1109,7 +1144,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new FragmentState(), arena);
-            var init = Init(23, Unsafe.SizeOf<WGPUFragmentState>(), "FragmentState", r);
+            var init = Init(24, Unsafe.SizeOf<WGPUFragmentState>(), "FragmentState", r);
             if (init is not null)
             {
                 DefaultsFragmentState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUFragmentState>(in raw)), init, "FragmentState", r);
@@ -1118,7 +1153,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new Future(), arena);
-            var init = Init(24, Unsafe.SizeOf<WGPUFuture>(), "Future", r);
+            var init = Init(25, Unsafe.SizeOf<WGPUFuture>(), "Future", r);
             if (init is not null)
             {
                 DefaultsFuture(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUFuture>(in raw)), init, "Future", r);
@@ -1127,7 +1162,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new FutureWaitInfo(), arena);
-            var init = Init(25, Unsafe.SizeOf<WGPUFutureWaitInfo>(), "FutureWaitInfo", r);
+            var init = Init(26, Unsafe.SizeOf<WGPUFutureWaitInfo>(), "FutureWaitInfo", r);
             if (init is not null)
             {
                 DefaultsFutureWaitInfo(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUFutureWaitInfo>(in raw)), init, "FutureWaitInfo", r);
@@ -1136,7 +1171,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new InstanceDescriptor(), arena);
-            var init = Init(26, Unsafe.SizeOf<WGPUInstanceDescriptor>(), "InstanceDescriptor", r);
+            var init = Init(27, Unsafe.SizeOf<WGPUInstanceDescriptor>(), "InstanceDescriptor", r);
             if (init is not null)
             {
                 DefaultsInstanceDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUInstanceDescriptor>(in raw)), init, "InstanceDescriptor", r);
@@ -1145,7 +1180,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new InstanceLimits(), arena);
-            var init = Init(27, Unsafe.SizeOf<WGPUInstanceLimits>(), "InstanceLimits", r);
+            var init = Init(28, Unsafe.SizeOf<WGPUInstanceLimits>(), "InstanceLimits", r);
             if (init is not null)
             {
                 DefaultsInstanceLimits(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUInstanceLimits>(in raw)), init, "InstanceLimits", r);
@@ -1154,7 +1189,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new Limits(), arena);
-            var init = Init(28, Unsafe.SizeOf<WGPULimits>(), "Limits", r);
+            var init = Init(29, Unsafe.SizeOf<WGPULimits>(), "Limits", r);
             if (init is not null)
             {
                 DefaultsLimits(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPULimits>(in raw)), init, "Limits", r);
@@ -1163,7 +1198,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new MultisampleState(), arena);
-            var init = Init(29, Unsafe.SizeOf<WGPUMultisampleState>(), "MultisampleState", r);
+            var init = Init(30, Unsafe.SizeOf<WGPUMultisampleState>(), "MultisampleState", r);
             if (init is not null)
             {
                 DefaultsMultisampleState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUMultisampleState>(in raw)), init, "MultisampleState", r);
@@ -1172,7 +1207,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new Origin3D(), arena);
-            var init = Init(30, Unsafe.SizeOf<WGPUOrigin3D>(), "Origin3D", r);
+            var init = Init(31, Unsafe.SizeOf<WGPUOrigin3D>(), "Origin3D", r);
             if (init is not null)
             {
                 DefaultsOrigin3D(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUOrigin3D>(in raw)), init, "Origin3D", r);
@@ -1181,7 +1216,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new PassTimestampWrites(), arena);
-            var init = Init(31, Unsafe.SizeOf<WGPUPassTimestampWrites>(), "PassTimestampWrites", r);
+            var init = Init(32, Unsafe.SizeOf<WGPUPassTimestampWrites>(), "PassTimestampWrites", r);
             if (init is not null)
             {
                 DefaultsPassTimestampWrites(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUPassTimestampWrites>(in raw)), init, "PassTimestampWrites", r);
@@ -1190,7 +1225,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new PipelineLayoutDescriptor(), arena);
-            var init = Init(32, Unsafe.SizeOf<WGPUPipelineLayoutDescriptor>(), "PipelineLayoutDescriptor", r);
+            var init = Init(33, Unsafe.SizeOf<WGPUPipelineLayoutDescriptor>(), "PipelineLayoutDescriptor", r);
             if (init is not null)
             {
                 DefaultsPipelineLayoutDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUPipelineLayoutDescriptor>(in raw)), init, "PipelineLayoutDescriptor", r);
@@ -1199,7 +1234,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new PrimitiveState(), arena);
-            var init = Init(33, Unsafe.SizeOf<WGPUPrimitiveState>(), "PrimitiveState", r);
+            var init = Init(34, Unsafe.SizeOf<WGPUPrimitiveState>(), "PrimitiveState", r);
             if (init is not null)
             {
                 DefaultsPrimitiveState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUPrimitiveState>(in raw)), init, "PrimitiveState", r);
@@ -1208,7 +1243,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new QuerySetDescriptor(), arena);
-            var init = Init(34, Unsafe.SizeOf<WGPUQuerySetDescriptor>(), "QuerySetDescriptor", r);
+            var init = Init(35, Unsafe.SizeOf<WGPUQuerySetDescriptor>(), "QuerySetDescriptor", r);
             if (init is not null)
             {
                 DefaultsQuerySetDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUQuerySetDescriptor>(in raw)), init, "QuerySetDescriptor", r);
@@ -1217,7 +1252,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new QueueDescriptor(), arena);
-            var init = Init(35, Unsafe.SizeOf<WGPUQueueDescriptor>(), "QueueDescriptor", r);
+            var init = Init(36, Unsafe.SizeOf<WGPUQueueDescriptor>(), "QueueDescriptor", r);
             if (init is not null)
             {
                 DefaultsQueueDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUQueueDescriptor>(in raw)), init, "QueueDescriptor", r);
@@ -1226,7 +1261,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderBundleDescriptor(), arena);
-            var init = Init(36, Unsafe.SizeOf<WGPURenderBundleDescriptor>(), "RenderBundleDescriptor", r);
+            var init = Init(37, Unsafe.SizeOf<WGPURenderBundleDescriptor>(), "RenderBundleDescriptor", r);
             if (init is not null)
             {
                 DefaultsRenderBundleDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderBundleDescriptor>(in raw)), init, "RenderBundleDescriptor", r);
@@ -1235,7 +1270,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderBundleEncoderDescriptor(), arena);
-            var init = Init(37, Unsafe.SizeOf<WGPURenderBundleEncoderDescriptor>(), "RenderBundleEncoderDescriptor", r);
+            var init = Init(38, Unsafe.SizeOf<WGPURenderBundleEncoderDescriptor>(), "RenderBundleEncoderDescriptor", r);
             if (init is not null)
             {
                 DefaultsRenderBundleEncoderDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderBundleEncoderDescriptor>(in raw)), init, "RenderBundleEncoderDescriptor", r);
@@ -1244,7 +1279,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderPassColorAttachment(), arena);
-            var init = Init(38, Unsafe.SizeOf<WGPURenderPassColorAttachment>(), "RenderPassColorAttachment", r);
+            var init = Init(39, Unsafe.SizeOf<WGPURenderPassColorAttachment>(), "RenderPassColorAttachment", r);
             if (init is not null)
             {
                 DefaultsRenderPassColorAttachment(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderPassColorAttachment>(in raw)), init, "RenderPassColorAttachment", r);
@@ -1253,7 +1288,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderPassDepthStencilAttachment(), arena);
-            var init = Init(39, Unsafe.SizeOf<WGPURenderPassDepthStencilAttachment>(), "RenderPassDepthStencilAttachment", r);
+            var init = Init(40, Unsafe.SizeOf<WGPURenderPassDepthStencilAttachment>(), "RenderPassDepthStencilAttachment", r);
             if (init is not null)
             {
                 DefaultsRenderPassDepthStencilAttachment(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderPassDepthStencilAttachment>(in raw)), init, "RenderPassDepthStencilAttachment", r);
@@ -1262,7 +1297,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderPassDescriptor(), arena);
-            var init = Init(40, Unsafe.SizeOf<WGPURenderPassDescriptor>(), "RenderPassDescriptor", r);
+            var init = Init(41, Unsafe.SizeOf<WGPURenderPassDescriptor>(), "RenderPassDescriptor", r);
             if (init is not null)
             {
                 DefaultsRenderPassDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderPassDescriptor>(in raw)), init, "RenderPassDescriptor", r);
@@ -1271,7 +1306,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderPassMaxDrawCount(), arena);
-            var init = Init(41, Unsafe.SizeOf<WGPURenderPassMaxDrawCount>(), "RenderPassMaxDrawCount", r);
+            var init = Init(42, Unsafe.SizeOf<WGPURenderPassMaxDrawCount>(), "RenderPassMaxDrawCount", r);
             if (init is not null)
             {
                 DefaultsRenderPassMaxDrawCount(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderPassMaxDrawCount>(in raw)), init, "RenderPassMaxDrawCount", r);
@@ -1280,7 +1315,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RenderPipelineDescriptor(), arena);
-            var init = Init(42, Unsafe.SizeOf<WGPURenderPipelineDescriptor>(), "RenderPipelineDescriptor", r);
+            var init = Init(43, Unsafe.SizeOf<WGPURenderPipelineDescriptor>(), "RenderPipelineDescriptor", r);
             if (init is not null)
             {
                 DefaultsRenderPipelineDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURenderPipelineDescriptor>(in raw)), init, "RenderPipelineDescriptor", r);
@@ -1289,7 +1324,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RequestAdapterWebXROptions(), arena);
-            var init = Init(43, Unsafe.SizeOf<WGPURequestAdapterWebXROptions>(), "RequestAdapterWebXROptions", r);
+            var init = Init(44, Unsafe.SizeOf<WGPURequestAdapterWebXROptions>(), "RequestAdapterWebXROptions", r);
             if (init is not null)
             {
                 DefaultsRequestAdapterWebXROptions(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURequestAdapterWebXROptions>(in raw)), init, "RequestAdapterWebXROptions", r);
@@ -1298,7 +1333,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new RequestAdapterOptions(), arena);
-            var init = Init(44, Unsafe.SizeOf<WGPURequestAdapterOptions>(), "RequestAdapterOptions", r);
+            var init = Init(45, Unsafe.SizeOf<WGPURequestAdapterOptions>(), "RequestAdapterOptions", r);
             if (init is not null)
             {
                 DefaultsRequestAdapterOptions(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPURequestAdapterOptions>(in raw)), init, "RequestAdapterOptions", r);
@@ -1307,7 +1342,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SamplerBindingLayout(), arena);
-            var init = Init(45, Unsafe.SizeOf<WGPUSamplerBindingLayout>(), "SamplerBindingLayout", r);
+            var init = Init(46, Unsafe.SizeOf<WGPUSamplerBindingLayout>(), "SamplerBindingLayout", r);
             if (init is not null)
             {
                 DefaultsSamplerBindingLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSamplerBindingLayout>(in raw)), init, "SamplerBindingLayout", r);
@@ -1316,7 +1351,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SamplerDescriptor(), arena);
-            var init = Init(46, Unsafe.SizeOf<WGPUSamplerDescriptor>(), "SamplerDescriptor", r);
+            var init = Init(47, Unsafe.SizeOf<WGPUSamplerDescriptor>(), "SamplerDescriptor", r);
             if (init is not null)
             {
                 DefaultsSamplerDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSamplerDescriptor>(in raw)), init, "SamplerDescriptor", r);
@@ -1325,7 +1360,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ShaderModuleDescriptor(), arena);
-            var init = Init(47, Unsafe.SizeOf<WGPUShaderModuleDescriptor>(), "ShaderModuleDescriptor", r);
+            var init = Init(48, Unsafe.SizeOf<WGPUShaderModuleDescriptor>(), "ShaderModuleDescriptor", r);
             if (init is not null)
             {
                 DefaultsShaderModuleDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUShaderModuleDescriptor>(in raw)), init, "ShaderModuleDescriptor", r);
@@ -1334,7 +1369,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ShaderSourceSPIRV(), arena);
-            var init = Init(48, Unsafe.SizeOf<WGPUShaderSourceSPIRV>(), "ShaderSourceSPIRV", r);
+            var init = Init(49, Unsafe.SizeOf<WGPUShaderSourceSPIRV>(), "ShaderSourceSPIRV", r);
             if (init is not null)
             {
                 DefaultsShaderSourceSPIRV(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUShaderSourceSPIRV>(in raw)), init, "ShaderSourceSPIRV", r);
@@ -1343,7 +1378,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new ShaderSourceWGSL(), arena);
-            var init = Init(49, Unsafe.SizeOf<WGPUShaderSourceWGSL>(), "ShaderSourceWGSL", r);
+            var init = Init(50, Unsafe.SizeOf<WGPUShaderSourceWGSL>(), "ShaderSourceWGSL", r);
             if (init is not null)
             {
                 DefaultsShaderSourceWGSL(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUShaderSourceWGSL>(in raw)), init, "ShaderSourceWGSL", r);
@@ -1352,7 +1387,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new StencilFaceState(), arena);
-            var init = Init(50, Unsafe.SizeOf<WGPUStencilFaceState>(), "StencilFaceState", r);
+            var init = Init(51, Unsafe.SizeOf<WGPUStencilFaceState>(), "StencilFaceState", r);
             if (init is not null)
             {
                 DefaultsStencilFaceState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUStencilFaceState>(in raw)), init, "StencilFaceState", r);
@@ -1361,7 +1396,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new StorageTextureBindingLayout(), arena);
-            var init = Init(51, Unsafe.SizeOf<WGPUStorageTextureBindingLayout>(), "StorageTextureBindingLayout", r);
+            var init = Init(52, Unsafe.SizeOf<WGPUStorageTextureBindingLayout>(), "StorageTextureBindingLayout", r);
             if (init is not null)
             {
                 DefaultsStorageTextureBindingLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUStorageTextureBindingLayout>(in raw)), init, "StorageTextureBindingLayout", r);
@@ -1370,7 +1405,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SubgroupMatrixConfig(), arena);
-            var init = Init(52, Unsafe.SizeOf<WGPUSubgroupMatrixConfig>(), "SubgroupMatrixConfig", r);
+            var init = Init(53, Unsafe.SizeOf<WGPUSubgroupMatrixConfig>(), "SubgroupMatrixConfig", r);
             if (init is not null)
             {
                 DefaultsSubgroupMatrixConfig(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSubgroupMatrixConfig>(in raw)), init, "SubgroupMatrixConfig", r);
@@ -1379,7 +1414,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SurfaceColorManagement(), arena);
-            var init = Init(53, Unsafe.SizeOf<WGPUSurfaceColorManagement>(), "SurfaceColorManagement", r);
+            var init = Init(54, Unsafe.SizeOf<WGPUSurfaceColorManagement>(), "SurfaceColorManagement", r);
             if (init is not null)
             {
                 DefaultsSurfaceColorManagement(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSurfaceColorManagement>(in raw)), init, "SurfaceColorManagement", r);
@@ -1388,7 +1423,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SurfaceConfiguration(), arena);
-            var init = Init(54, Unsafe.SizeOf<WGPUSurfaceConfiguration>(), "SurfaceConfiguration", r);
+            var init = Init(55, Unsafe.SizeOf<WGPUSurfaceConfiguration>(), "SurfaceConfiguration", r);
             if (init is not null)
             {
                 DefaultsSurfaceConfiguration(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSurfaceConfiguration>(in raw)), init, "SurfaceConfiguration", r);
@@ -1397,7 +1432,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SurfaceDescriptor(), arena);
-            var init = Init(55, Unsafe.SizeOf<WGPUSurfaceDescriptor>(), "SurfaceDescriptor", r);
+            var init = Init(56, Unsafe.SizeOf<WGPUSurfaceDescriptor>(), "SurfaceDescriptor", r);
             if (init is not null)
             {
                 DefaultsSurfaceDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSurfaceDescriptor>(in raw)), init, "SurfaceDescriptor", r);
@@ -1406,7 +1441,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new SurfaceTexture(), arena);
-            var init = Init(56, Unsafe.SizeOf<WGPUSurfaceTexture>(), "SurfaceTexture", r);
+            var init = Init(57, Unsafe.SizeOf<WGPUSurfaceTexture>(), "SurfaceTexture", r);
             if (init is not null)
             {
                 DefaultsSurfaceTexture(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUSurfaceTexture>(in raw)), init, "SurfaceTexture", r);
@@ -1415,7 +1450,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TexelCopyBufferInfo(), arena);
-            var init = Init(57, Unsafe.SizeOf<WGPUTexelCopyBufferInfo>(), "TexelCopyBufferInfo", r);
+            var init = Init(58, Unsafe.SizeOf<WGPUTexelCopyBufferInfo>(), "TexelCopyBufferInfo", r);
             if (init is not null)
             {
                 DefaultsTexelCopyBufferInfo(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTexelCopyBufferInfo>(in raw)), init, "TexelCopyBufferInfo", r);
@@ -1424,7 +1459,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TexelCopyBufferLayout(), arena);
-            var init = Init(58, Unsafe.SizeOf<WGPUTexelCopyBufferLayout>(), "TexelCopyBufferLayout", r);
+            var init = Init(59, Unsafe.SizeOf<WGPUTexelCopyBufferLayout>(), "TexelCopyBufferLayout", r);
             if (init is not null)
             {
                 DefaultsTexelCopyBufferLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTexelCopyBufferLayout>(in raw)), init, "TexelCopyBufferLayout", r);
@@ -1433,7 +1468,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TexelCopyTextureInfo(), arena);
-            var init = Init(59, Unsafe.SizeOf<WGPUTexelCopyTextureInfo>(), "TexelCopyTextureInfo", r);
+            var init = Init(60, Unsafe.SizeOf<WGPUTexelCopyTextureInfo>(), "TexelCopyTextureInfo", r);
             if (init is not null)
             {
                 DefaultsTexelCopyTextureInfo(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTexelCopyTextureInfo>(in raw)), init, "TexelCopyTextureInfo", r);
@@ -1442,7 +1477,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureBindingLayout(), arena);
-            var init = Init(60, Unsafe.SizeOf<WGPUTextureBindingLayout>(), "TextureBindingLayout", r);
+            var init = Init(61, Unsafe.SizeOf<WGPUTextureBindingLayout>(), "TextureBindingLayout", r);
             if (init is not null)
             {
                 DefaultsTextureBindingLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureBindingLayout>(in raw)), init, "TextureBindingLayout", r);
@@ -1451,7 +1486,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureBindingViewDimension(), arena);
-            var init = Init(61, Unsafe.SizeOf<WGPUTextureBindingViewDimension>(), "TextureBindingViewDimension", r);
+            var init = Init(62, Unsafe.SizeOf<WGPUTextureBindingViewDimension>(), "TextureBindingViewDimension", r);
             if (init is not null)
             {
                 DefaultsTextureBindingViewDimension(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureBindingViewDimension>(in raw)), init, "TextureBindingViewDimension", r);
@@ -1460,7 +1495,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureComponentSwizzle(), arena);
-            var init = Init(62, Unsafe.SizeOf<WGPUTextureComponentSwizzle>(), "TextureComponentSwizzle", r);
+            var init = Init(63, Unsafe.SizeOf<WGPUTextureComponentSwizzle>(), "TextureComponentSwizzle", r);
             if (init is not null)
             {
                 DefaultsTextureComponentSwizzle(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureComponentSwizzle>(in raw)), init, "TextureComponentSwizzle", r);
@@ -1469,7 +1504,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureComponentSwizzleDescriptor(), arena);
-            var init = Init(63, Unsafe.SizeOf<WGPUTextureComponentSwizzleDescriptor>(), "TextureComponentSwizzleDescriptor", r);
+            var init = Init(64, Unsafe.SizeOf<WGPUTextureComponentSwizzleDescriptor>(), "TextureComponentSwizzleDescriptor", r);
             if (init is not null)
             {
                 DefaultsTextureComponentSwizzleDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureComponentSwizzleDescriptor>(in raw)), init, "TextureComponentSwizzleDescriptor", r);
@@ -1478,7 +1513,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureDescriptor(), arena);
-            var init = Init(64, Unsafe.SizeOf<WGPUTextureDescriptor>(), "TextureDescriptor", r);
+            var init = Init(65, Unsafe.SizeOf<WGPUTextureDescriptor>(), "TextureDescriptor", r);
             if (init is not null)
             {
                 DefaultsTextureDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureDescriptor>(in raw)), init, "TextureDescriptor", r);
@@ -1487,7 +1522,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new TextureViewDescriptor(), arena);
-            var init = Init(65, Unsafe.SizeOf<WGPUTextureViewDescriptor>(), "TextureViewDescriptor", r);
+            var init = Init(66, Unsafe.SizeOf<WGPUTextureViewDescriptor>(), "TextureViewDescriptor", r);
             if (init is not null)
             {
                 DefaultsTextureViewDescriptor(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUTextureViewDescriptor>(in raw)), init, "TextureViewDescriptor", r);
@@ -1496,7 +1531,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new VertexAttribute(), arena);
-            var init = Init(66, Unsafe.SizeOf<WGPUVertexAttribute>(), "VertexAttribute", r);
+            var init = Init(67, Unsafe.SizeOf<WGPUVertexAttribute>(), "VertexAttribute", r);
             if (init is not null)
             {
                 DefaultsVertexAttribute(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUVertexAttribute>(in raw)), init, "VertexAttribute", r);
@@ -1505,7 +1540,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new VertexBufferLayout(), arena);
-            var init = Init(67, Unsafe.SizeOf<WGPUVertexBufferLayout>(), "VertexBufferLayout", r);
+            var init = Init(68, Unsafe.SizeOf<WGPUVertexBufferLayout>(), "VertexBufferLayout", r);
             if (init is not null)
             {
                 DefaultsVertexBufferLayout(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUVertexBufferLayout>(in raw)), init, "VertexBufferLayout", r);
@@ -1514,7 +1549,7 @@ internal static partial class MarshalCheck
         {
             using var arena = Arena.Rent();
             var raw = Marshalling.ToNative(new VertexState(), arena);
-            var init = Init(68, Unsafe.SizeOf<WGPUVertexState>(), "VertexState", r);
+            var init = Init(69, Unsafe.SizeOf<WGPUVertexState>(), "VertexState", r);
             if (init is not null)
             {
                 DefaultsVertexState(MemoryMarshal.AsBytes(new ReadOnlySpan<WGPUVertexState>(in raw)), init, "VertexState", r);
@@ -1835,6 +1870,32 @@ internal static partial class MarshalCheck
         r.Same(path + ".nextInChain", Read<nint>(ours, Off<WGPUCommandEncoderDescriptor>("NextInChain")), Read<nint>(init, Off<WGPUCommandEncoderDescriptor>("NextInChain")));
         r.Same(path + ".label" + ".data", Read<nint>(ours, Off<WGPUCommandEncoderDescriptor>("Label")), Read<nint>(init, Off<WGPUCommandEncoderDescriptor>("Label")));
         r.Same(path + ".label" + ".length", Read<nuint>(ours, Off<WGPUCommandEncoderDescriptor>("Label") + IntPtr.Size), Read<nuint>(init, Off<WGPUCommandEncoderDescriptor>("Label") + IntPtr.Size));
+    }
+
+    private static CompatibilityModeLimits MakeCompatibilityModeLimits(Counter n) => new()
+    {
+        MaxStorageBuffersInVertexStage = (uint)n.Next(),
+        MaxStorageTexturesInVertexStage = (uint)n.Next(),
+        MaxStorageBuffersInFragmentStage = (uint)n.Next(),
+        MaxStorageTexturesInFragmentStage = (uint)n.Next(),
+    };
+
+    private static void VerifyCompatibilityModeLimits(ReadOnlySpan<byte> b, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".chain.sType", Read<uint>(b, Off<WGPUCompatibilityModeLimits>("Chain") + Off<WGPUChainedStruct>("SType")), (uint)SType.CompatibilityModeLimits);
+        r.Equal(path + ".maxStorageBuffersInVertexStage", Read<uint>(b, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInVertexStage")), (uint)n.Next());
+        r.Equal(path + ".maxStorageTexturesInVertexStage", Read<uint>(b, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInVertexStage")), (uint)n.Next());
+        r.Equal(path + ".maxStorageBuffersInFragmentStage", Read<uint>(b, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInFragmentStage")), (uint)n.Next());
+        r.Equal(path + ".maxStorageTexturesInFragmentStage", Read<uint>(b, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInFragmentStage")), (uint)n.Next());
+    }
+
+    private static void DefaultsCompatibilityModeLimits(ReadOnlySpan<byte> ours, ReadOnlySpan<byte> init, string path, Results r)
+    {
+        r.Same(path + ".chain.sType", Read<uint>(ours, Off<WGPUCompatibilityModeLimits>("Chain") + Off<WGPUChainedStruct>("SType")), Read<uint>(init, Off<WGPUCompatibilityModeLimits>("Chain") + Off<WGPUChainedStruct>("SType")));
+        r.Same(path + ".maxStorageBuffersInVertexStage", Read<uint>(ours, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInVertexStage")), Read<uint>(init, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInVertexStage")));
+        r.Same(path + ".maxStorageTexturesInVertexStage", Read<uint>(ours, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInVertexStage")), Read<uint>(init, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInVertexStage")));
+        r.Same(path + ".maxStorageBuffersInFragmentStage", Read<uint>(ours, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInFragmentStage")), Read<uint>(init, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInFragmentStage")));
+        r.Same(path + ".maxStorageTexturesInFragmentStage", Read<uint>(ours, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInFragmentStage")), Read<uint>(init, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInFragmentStage")));
     }
 
     private static ComputePassDescriptor MakeComputePassDescriptor(Counter n) => new()
@@ -3664,6 +3725,27 @@ internal static partial class MarshalCheck
         r.Equal(path + ".SubgroupMaxSize", v.SubgroupMaxSize, (uint)n.Next());
     }
 
+    private static void WriteAdapterPropertiesSubgroupMatrixConfigs(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUAdapterPropertiesSubgroupMatrixConfigs>("ConfigCount"), (nuint)2);
+        var a_configs = new byte[2 * Unsafe.SizeOf<WGPUSubgroupMatrixConfig>()];
+        for (var i = 0; i < 2; i++)
+        {
+            WriteSubgroupMatrixConfig(a_configs.AsSpan(i * Unsafe.SizeOf<WGPUSubgroupMatrixConfig>(), Unsafe.SizeOf<WGPUSubgroupMatrixConfig>()), n, memory);
+        }
+
+        Write(b, Off<WGPUAdapterPropertiesSubgroupMatrixConfigs>("Configs"), memory.Copy(a_configs));
+    }
+
+    private static void ReadAdapterPropertiesSubgroupMatrixConfigs(AdapterPropertiesSubgroupMatrixConfigs v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".Configs" + ".Length", v.Configs.Length, 2);
+        for (var i = 0; i < Math.Min(v.Configs.Length, 2); i++)
+        {
+            ReadSubgroupMatrixConfig(v.Configs[i], n, path + ".Configs" + $"[{i}]", r);
+        }
+    }
+
     private static void WriteBlendComponent(Span<byte> b, Counter n, Allocations memory)
     {
         Write(b, Off<WGPUBlendComponent>("Operation"), (uint)n.Next());
@@ -3704,6 +3786,22 @@ internal static partial class MarshalCheck
         r.Equal(path + ".G", v.G, (double)n.Next());
         r.Equal(path + ".B", v.B, (double)n.Next());
         r.Equal(path + ".A", v.A, (double)n.Next());
+    }
+
+    private static void WriteCompatibilityModeLimits(Span<byte> b, Counter n, Allocations memory)
+    {
+        Write(b, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInVertexStage"), (uint)n.Next());
+        Write(b, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInVertexStage"), (uint)n.Next());
+        Write(b, Off<WGPUCompatibilityModeLimits>("MaxStorageBuffersInFragmentStage"), (uint)n.Next());
+        Write(b, Off<WGPUCompatibilityModeLimits>("MaxStorageTexturesInFragmentStage"), (uint)n.Next());
+    }
+
+    private static void ReadCompatibilityModeLimits(CompatibilityModeLimits v, Counter n, string path, Results r)
+    {
+        r.Equal(path + ".MaxStorageBuffersInVertexStage", v.MaxStorageBuffersInVertexStage, (uint)n.Next());
+        r.Equal(path + ".MaxStorageTexturesInVertexStage", v.MaxStorageTexturesInVertexStage, (uint)n.Next());
+        r.Equal(path + ".MaxStorageBuffersInFragmentStage", v.MaxStorageBuffersInFragmentStage, (uint)n.Next());
+        r.Equal(path + ".MaxStorageTexturesInFragmentStage", v.MaxStorageTexturesInFragmentStage, (uint)n.Next());
     }
 
     private static void WriteCompilationInfo(Span<byte> b, Counter n, Allocations memory)

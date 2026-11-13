@@ -40,6 +40,9 @@ public sealed partial class Api
     private readonly Raw _raw;
     private readonly Dictionary<string, Rep> _reps = new();
     private readonly Dictionary<string, List<Entry>> _chains = new();
+
+    // Out chains: structs the implementation fills when the caller links them into an out struct (CompatibilityModeLimits into Limits)
+    private readonly Dictionary<string, List<Entry>> _outChains = new();
     private readonly HashSet<string> _skipped = [];
     private readonly HashSet<string> _taskCallbacks = [];
     private readonly HashSet<string> _delegateCallbacks = [];
@@ -82,27 +85,24 @@ public sealed partial class Api
         var structs = _raw.Included.Select(E).Where(e => e.Category == "structure" && !NotFriendly.Contains(e.Name)).Distinct().ToList();
         foreach (var s in structs)
         {
-            if (s.Chained == "out")
-            {
-                Skip(s.Name, "out chains are not mapped");
-            }
-            else if (s.Members.Any(m => m.FixedLength is not null))
+            if (s.Members.Any(m => m.FixedLength is not null))
             {
                 Skip(s.Name, "fixed-length array members are not mapped");
             }
         }
 
-        foreach (var s in structs.Where(s => s.Chained == "in" && !_skipped.Contains(s.Name)))
+        foreach (var s in structs.Where(s => s.Chained is not null && !_skipped.Contains(s.Name)))
         {
+            var chains = s.Chained == "in" ? _chains : _outChains;
             foreach (var root in s.ChainRoots.Select(_m.Resolve))
             {
-                (_chains.TryGetValue(root, out var list) ? list : _chains[root] = []).Add(s);
+                (chains.TryGetValue(root, out var list) ? list : chains[root] = []).Add(s);
             }
         }
 
         // Out: filled by the implementation, and everything they contain
         var outs = new HashSet<string>();
-        var queue = new Queue<string>(structs.Where(s => s.Out || s.Extensible == "out").Select(s => s.Name));
+        var queue = new Queue<string>(structs.Where(s => s.Out || s.Extensible == "out" || s.Chained == "out").Select(s => s.Name));
         foreach (var cb in _m.Entries.Values.Where(e => e.Category == "callback function"))
         {
             foreach (var a in cb.Args.Where(a => IsStruct(a.Type)))
@@ -1066,6 +1066,18 @@ public sealed partial class Api
         var optional = args.Where(a => a.Kind == "optional").ToList();
         var function = Names.Function(owner?.Name, methodName);
         EmitOverload(owner, function, methodCs, args, visible, defaults, [], callbackInfo, csReturn, wrap, generic, isVoidWithOut, returns, sb, scope);
+
+        // An out struct with out chains: one more overload per chainable struct, which links an empty one in, as C does, and reads both back
+        if (callbackInfo is null && outs.Count == 1 && !isVoidWithOut
+            && _outChains.GetValueOrDefault(_m.Resolve(outs[0].Field.Type), []).Where(c => Friendly(c.Name)).ToList() is { Count: > 0 } outChains)
+        {
+            foreach (var chain in outChains)
+            {
+                EmitOverload(owner, function, methodCs, args, visible, [], [], callbackInfo, csReturn, wrap, generic, isVoidWithOut, returns, sb, scope,
+                    outChain: (outs[0], chain.Name));
+            }
+        }
+
         if (callbackInfo is not null && returnType == "future")
         {
             // The same request, also handing back webgpu.h's future for Instance.WaitAny. Its parameters are all required,
@@ -1084,11 +1096,13 @@ public sealed partial class Api
 
     private void EmitOverload(Entry? owner, string function, string methodCs, List<Arg> args, List<Arg> visible, HashSet<Arg> defaults, HashSet<Arg> omitted,
         string? callbackInfo, string csReturn, Func<string, string> wrap, bool generic, bool isVoidWithOut, string? returns, StringBuilder sb, string scope,
-        bool withFuture = false)
+        bool withFuture = false, (Arg Out, string Chain)? outChain = null)
     {
+        var chainParam = outChain is { } oc ? Param(oc.Chain) : null;
         var parameters = string.Join(", ", visible.Select(a =>
             (a.Kind == "out" ? "out " : "") + $"{a.Type} {Param(a.Field.Name)}" + (defaults.Contains(a) ? $" = {a.Default}" : ""))
-            .Concat(withFuture ? ["out Future future"] : []));
+            .Concat(withFuture ? ["out Future future"] : [])
+            .Concat(outChain is { } c ? [$"out {Pascal(c.Chain)} {chainParam}"] : []));
         var typeParams = generic ? "<T>" : "";
         var constraint = generic ? " where T : unmanaged" : "";
         var isStatic = owner is null ? "static " : "";
@@ -1116,6 +1130,12 @@ public sealed partial class Api
         foreach (var a in args.Where(a => a.Kind == "out"))
         {
             sb.Append($"        var n_{Names.LowerCamel(a.Field.Name)} = new {Names.RawStruct(_m.Resolve(a.Field.Type))}();\n");
+        }
+
+        if (outChain is { } link)
+        {
+            sb.Append($"        var n_{Names.LowerCamel(link.Chain)} = new {Names.RawStruct(link.Chain)} {{ Chain = new WGPUChainedStruct {{ SType = SType.{Pascal(link.Chain)} }} }};\n");
+            sb.Append($"        n_{Names.LowerCamel(link.Out.Field.Name)}.NextInChain = &n_{Names.LowerCamel(link.Chain)}.Chain;\n");
         }
 
         if (callbackInfo is not null)
@@ -1169,6 +1189,16 @@ public sealed partial class Api
             if (Raw.HasFreeMembers(E(type)))
             {
                 sb.Append($"{indent}{Names.Function(type, "free members")}({local});\n");
+            }
+        }
+
+        if (outChain is { } read)
+        {
+            var local = $"n_{Names.LowerCamel(read.Chain)}";
+            sb.Append($"{indent}{chainParam} = Marshalling.FromNative({local});\n");
+            if (Raw.HasFreeMembers(E(read.Chain)))
+            {
+                sb.Append($"{indent}{Names.Function(read.Chain, "free members")}({local});\n");
             }
         }
 

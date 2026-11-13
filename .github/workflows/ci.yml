@@ -173,7 +173,13 @@ jobs:
             artifacts/native/iossimulator/
           if-no-files-found: error
       - name: Build the iOS test runner (project references)
-        run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION
+        run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION -bl:artifacts/ios-build.binlog
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ios-build-log
+          path: artifacts/ios-build.binlog
+          if-no-files-found: ignore
       - name: Show what the iOS build linked
         run: |
           dotnet msbuild tests/Olve.WebGPU.Tests.iOS -p:Configuration=Release -getItem:NativeReference -getProperty:_OlveWebGPUPlatform -getProperty:_OlveWebGPUIosSlice -getProperty:OlveWebGPUIosLibraries | head -40
@@ -181,6 +187,8 @@ jobs:
           app="$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"
           echo "wgpu symbols in the app's executable: $(nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -c ' _wgpu')"
           nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -E ' _(wgpuCreateInstance|wgpu_layout_values|dawn_layout_values)$' || echo "not exported: _wgpuCreateInstance"
+          echo "wgpuCreateInstance anywhere in the executable (exported or not): $(nm "$app/Olve.WebGPU.Tests.iOS" | grep -c 'wgpuCreateInstance')"
+          echo "dawn symbols anywhere in the executable: $(nm "$app/Olve.WebGPU.Tests.iOS" | grep -ci dawn)"
       - name: Run the checks in an iPhone simulator
         timeout-minutes: 15
         run: scripts/run-ios-tests.sh "$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"

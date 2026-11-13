@@ -1,4 +1,4 @@
-using Olve.Results;
+using Olve.WebGPU;
 using Olve.WebGPU.Tests;
 
 // The same checks as Olve.WebGPU.Tests, in the browser; the exit code becomes the page title (main.js)
@@ -9,19 +9,31 @@ Console.WriteLine($"layout values checked: {count}, mismatches: {mismatches.Coun
 mismatches.ForEach(Console.WriteLine);
 failures += mismatches.Count > 0 || count == 0 ? 1 : 0;
 
-var result = await OffscreenTriangle.RenderAsync(Console.WriteLine);
-if (result.TryPickProblems(out var problems, out var frame))
+try
 {
-    problems.ToList().ForEach(p => Console.WriteLine(p.ToBriefString()));
-    failures++;
-}
-else
-{
+    var frame = await OffscreenTriangle.RenderAsync(Console.WriteLine);
     const uint centre = OffscreenTriangle.Size / 2;
     var corner = frame.Pixel(1, 1);
     var middle = frame.Pixel(centre, centre);
     Console.WriteLine($"readback on {frame.Adapter.Description} ({frame.Adapter.BackendType}): corner {string.Join(",", corner)}, centre {string.Join(",", middle)}");
     failures += corner.SequenceEqual(OffscreenTriangle.Clear) && middle.SequenceEqual(OffscreenTriangle.Fill) ? 0 : 1;
+}
+catch (InvalidOperationException e)
+{
+    Console.WriteLine(e.Message);
+    failures++;
+}
+
+try
+{
+    var map = await AbortedMap.MapThenUnmapAsync(Console.WriteLine);
+    Console.WriteLine($"map then unmap: {map.Status}: {map.Message}");
+    failures += map.Status == MapAsyncStatus.Aborted && map.Message.Length > 0 ? 0 : 1;
+}
+catch (InvalidOperationException e)
+{
+    Console.WriteLine(e.Message);
+    failures++;
 }
 
 Console.WriteLine(failures == 0 ? "PASS" : $"FAIL ({failures})");

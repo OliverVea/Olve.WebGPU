@@ -1,8 +1,9 @@
-using Olve.Results;
-
 namespace Olve.WebGPU.Tests;
 
-/// <summary>Draws a triangle into an offscreen texture and reads it back: the whole path from instance to mapped buffer, without a window.</summary>
+/// <summary>
+/// Draws a triangle into an offscreen texture and reads it back: the whole path from instance to mapped buffer, without a window.
+/// A failed step throws <see cref="InvalidOperationException"/> with the request's status and message.
+/// </summary>
 internal static class OffscreenTriangle
 {
     public const uint Size = 64;
@@ -32,13 +33,10 @@ internal static class OffscreenTriangle
         public byte[] Pixel(uint x, uint y) => Pixels.AsSpan((int)(y * BytesPerRow + x * 4), 4).ToArray();
     }
 
-    public static async Task<Result<Frame>> RenderAsync(Action<string> log)
+    public static async Task<Frame> RenderAsync(Action<string> log)
     {
         var instance = Wgpu.CreateInstance();
-        if ((await RequestAdapterAsync(instance, log)).TryPickProblems(out var problems, out var adapter))
-        {
-            return problems;
-        }
+        var adapter = await RequestAdapterAsync(instance, log);
 
         _ = adapter.GetInfo(out var info);
         var deviceRequest = adapter.RequestDeviceAsync(new DeviceDescriptor
@@ -48,9 +46,10 @@ internal static class OffscreenTriangle
                 Callback = (_, type, message) => log($"WebGPU {type} error: {message}"),
             },
         });
-        if ((await instance.ProcessEventsUntilAsync(deviceRequest)).TryPickProblems(out problems, out var device))
+        var deviceResult = await instance.ProcessEventsUntilAsync(deviceRequest);
+        if (!deviceResult.TryGetValue(out var device))
         {
-            return problems.Prepend("Error while requesting a WebGPU device");
+            throw new InvalidOperationException($"Error while requesting a WebGPU device ({deviceResult.Status}): {deviceResult.Message}");
         }
 
         var queue = device.GetQueue();
@@ -125,9 +124,10 @@ internal static class OffscreenTriangle
         queue.Submit([commands]);
 
         var size = (nuint)(BytesPerRow * Size);
-        if ((await instance.ProcessEventsUntilAsync(readback.MapAsync(MapMode.Read, 0, size))).TryPickProblems(out problems))
+        var mapped = await instance.ProcessEventsUntilAsync(readback.MapAsync(MapMode.Read, 0, size));
+        if (!mapped.IsSuccess)
         {
-            return problems.Prepend("Error while mapping the readback buffer");
+            throw new InvalidOperationException($"Error while mapping the readback buffer ({mapped.Status}): {mapped.Message}");
         }
 
         // webgpu.h's WGPU_WHOLE_MAP_SIZE: the rest of the buffer
@@ -137,7 +137,7 @@ internal static class OffscreenTriangle
         // An unmapped buffer has no mapped range: webgpu.h returns null, which is an empty span
         if (!readback.GetConstMappedRange(0, size).IsEmpty)
         {
-            return new ResultProblem("GetConstMappedRange on an unmapped buffer returned a non-empty span");
+            throw new InvalidOperationException("GetConstMappedRange on an unmapped buffer returned a non-empty span");
         }
 
         queue.Dispose();
@@ -149,15 +149,16 @@ internal static class OffscreenTriangle
     }
 
     /// <summary>The default adapter, or the fallback (software) one where there is no GPU, such as a CI runner.</summary>
-    private static async Task<Result<Adapter>> RequestAdapterAsync(Instance instance, Action<string> log)
+    public static async Task<Adapter> RequestAdapterAsync(Instance instance, Action<string> log)
     {
         foreach (var fallback in new[] { false, true })
         {
             var kind = fallback ? "fallback" : "default";
             var request = instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = fallback });
-            if ((await instance.ProcessEventsUntilAsync(request)).TryPickProblems(out var problems, out var adapter))
+            var result = await instance.ProcessEventsUntilAsync(request);
+            if (!result.TryGetValue(out var adapter))
             {
-                log($"no {kind} adapter: {string.Join("; ", problems.Select(p => p.ToBriefString()))}");
+                log($"no {kind} adapter ({result.Status}): {result.Message}");
                 continue;
             }
 
@@ -174,6 +175,6 @@ internal static class OffscreenTriangle
             return adapter;
         }
 
-        return new ResultProblem("No WebGPU adapter other than the Null backend: is a GPU driver (or the Vulkan loader and lavapipe) installed?");
+        throw new InvalidOperationException("No WebGPU adapter other than the Null backend: is a GPU driver (or the Vulkan loader and lavapipe) installed?");
     }
 }

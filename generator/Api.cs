@@ -24,9 +24,6 @@ public sealed class Api
 {
     private static readonly HashSet<string> NotFriendly = ["string view", "future", "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER"];
 
-    // Callbacks whose message is part of the result rather than the reason for a failure
-    private static readonly HashSet<string> KeepMessage = ["pop error scope callback"];
-
     // A device's last callback: Dawn clears the device's other callbacks before calling it, so it unregisters them
     private static readonly HashSet<string> LastCallbacks = ["device lost callback"];
 
@@ -422,6 +419,7 @@ public sealed class Api
         var callbacks = new StringBuilder();
         foreach (var cb in _taskCallbacks)
         {
+            EmitTaskResult(cb, structs);
             EmitTaskCallback(cb, callbacks);
         }
 
@@ -430,7 +428,7 @@ public sealed class Api
             EmitDelegateCallback(cb, callbacks);
         }
 
-        const string usings = "using System.Runtime.InteropServices;\nusing Olve.Results;\nusing Olve.WebGPU.Native;\nusing static Olve.WebGPU.Native.Interop;\n";
+        const string usings = "using System.Runtime.InteropServices;\nusing Olve.WebGPU.Native;\nusing static Olve.WebGPU.Native.Interop;\n";
         yield return ("Structs.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU;\n\n{structs}");
         yield return ("Objects.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU;\n\n{objects}");
         yield return ("Marshalling.g.cs", $"{Raw.CsBanner}\n\n{usings}\nnamespace Olve.WebGPU.Native;\n\ninternal static unsafe partial class Marshalling\n{{\n{marshal}}}\n");
@@ -691,8 +689,11 @@ public sealed class Api
     private string RawCallbackParams(Entry cb) =>
         string.Join(", ", cb.Args.Select(a => $"{_raw.Type(a)} {Names.Identifier(Names.LowerCamel(a.Name))}").Append("void* userdata1").Append("void* userdata2"));
 
-    /// <summary>The status argument and the result an async request completes with.</summary>
-    private (Field Status, Field? Message, List<CallbackArg> Payload, string Result)? TaskShape(string callback)
+    /// <summary>
+    /// An async request completes with its callback's arguments, as a result struct named after the callback
+    /// (request adapter callback: RequestAdapterResult; create render pipeline async callback: CreateRenderPipelineResult).
+    /// </summary>
+    private (Field Status, List<CallbackArg> Args, string Result)? TaskShape(string callback)
     {
         var cb = E(callback);
         var status = cb.Args.FirstOrDefault(a => a.Name == "status" && E(a.Type).Values.Any(v => v.Name == "success"));
@@ -701,45 +702,63 @@ public sealed class Api
             return null;
         }
 
-        var message = cb.Args.FirstOrDefault(a => a.Name == "message" && a.Type == "string view");
-        var payload = new List<CallbackArg>();
-        foreach (var a in cb.Args.Where(a => a != status && (a != message || KeepMessage.Contains(callback))))
+        var args = new List<CallbackArg>();
+        foreach (var a in cb.Args)
         {
             if (Callback(a) is not { } arg)
             {
                 return null;
             }
 
-            payload.Add(arg);
+            args.Add(arg);
         }
 
-        var result = payload.Count switch
+        var request = callback.EndsWith(" callback") ? callback[..^" callback".Length] : callback;
+        request = request.EndsWith(" async") ? request[..^" async".Length] : request;
+        return (status, args, Pascal(request) + "Result");
+    }
+
+    /// <summary>
+    /// The result struct: the callback's arguments, IsSuccess, and TryGetValue when there's one argument besides the status and message.
+    /// </summary>
+    private void EmitTaskResult(string callback, StringBuilder sb)
+    {
+        var (status, args, result) = TaskShape(callback)!.Value;
+        var statusType = Pascal(status.Type);
+        var parameters = string.Join(", ", args.Select(a => $"{a.Type} {Pascal(a.Field.Name)}"));
+        var values = args.Where(a => a.Field != status && !(a.Field.Name == "message" && a.Type == "string")).ToList();
+        _manifest.Add((callback, $"struct {result}({parameters})"));
+        sb.Append($"/// <summary>The arguments of webgpu.h's {callback}. <see cref=\"Status\"/> says whether the request succeeded.</summary>\n");
+        sb.Append($"public readonly partial record struct {result}({parameters})\n{{\n");
+        sb.Append($"    public bool IsSuccess => Status == {statusType}.Success;\n");
+        if (values.Count == 1)
         {
-            0 => "Result",
-            1 => $"Result<{payload[0].Type}>",
-            _ => $"Result<({string.Join(", ", payload.Select(p => $"{p.Type} {Pascal(p.Field.Name)}"))})>",
-        };
-        return (status, message, payload, result);
+            var value = values[0];
+            var local = Names.Identifier(Names.LowerCamel(value.Field.Name));
+            // Callback() maps arguments to value types, or to a string that ToManaged never leaves null,
+            // so the out value is never null, even when the request failed
+            if (value.Type.EndsWith('?'))
+            {
+                throw new InvalidOperationException($"{callback}: nullable result value {value.Field.Name} needs [MaybeNullWhen(false)]");
+            }
+
+            _manifest.Add((callback, $"method {result}.TryGetValue(out {value.Type}) -> bool"));
+            sb.Append($"\n    /// <summary>The {value.Field.Name}, and whether the request succeeded.</summary>\n");
+            sb.Append($"    public bool TryGetValue(out {value.Type} {local})\n    {{\n        {local} = {Pascal(value.Field.Name)};\n        return IsSuccess;\n    }}\n");
+        }
+
+        sb.Append("}\n\n");
     }
 
     private void EmitTaskCallback(string callback, StringBuilder sb)
     {
         var cb = E(callback);
-        var (status, message, payload, result) = TaskShape(callback)!.Value;
-        var name = Pascal(callback);
-        var value = payload.Count switch
-        {
-            0 => "Result.Success()",
-            1 => payload[0].Convert,
-            _ => $"({string.Join(", ", payload.Select(p => p.Convert))})",
-        };
-        var problem = message is null
-            ? $"new ResultProblem(\"{callback} failed ({{0}})\", status)"
-            : $"new ResultProblem(\"{callback} failed ({{0}}): {{1}}\", status, ToManaged(message))";
-        sb.Append($"    public static nint {name}Task => (nint)(delegate* unmanaged<{RawCallbackSignature(cb)}, void>)&On{name}Task;\n\n");
-        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Task({RawCallbackParams(cb)})\n    {{\n");
-        sb.Append($"        var completion = Take<TaskCompletionSource<{result}>>(userdata1);\n");
-        sb.Append($"        completion.SetResult(status == {Pascal(status.Type)}.Success ? {value} : {problem});\n    }}\n\n");
+        var (_, args, result) = TaskShape(callback)!.Value;
+        EmitEntries(cb, Pascal(callback) + "Task",
+        [
+            $"var completion = Take<TaskCompletionSource<{result}>>(userdata1);",
+            $"completion.SetResult(new {result}({string.Join(", ", args.Select(a => a.Convert))}));",
+        ], sb);
     }
 
     private void EmitDelegateCallback(string callback, StringBuilder sb)
@@ -748,16 +767,41 @@ public sealed class Api
         var args = cb.Args.Select(Callback).ToList();
         var name = Pascal(callback);
         var invoke = $"Find<{name}>(userdata1)?.Invoke({string.Join(", ", args.Select(a => a!.Convert))});";
-        sb.Append($"    public static nint {name}Delegate => (nint)(delegate* unmanaged<{RawCallbackSignature(cb)}, void>)&On{name}Delegate;\n\n");
-        if (LastCallbacks.Contains(callback))
+
+        // A device's last callback: userdata2 is the device's other callback, which can't be called after this one
+        List<string> body = LastCallbacks.Contains(callback) ? [invoke, "Unregister(userdata1);", "Unregister(userdata2);"] : [invoke];
+        EmitEntries(cb, name + "Delegate", body, sb);
+    }
+
+    /// <summary>
+    /// The native entry point of a callback: a function pointer property <paramref name="entry"/> and the body that runs when it's called.
+    /// A struct argument (a message's string view) is a value on desktop, but in the browser wasm's C ABI passes it as a pointer to a copy,
+    /// and the runtime's entry hands that pointer over as the struct's first field. Such callbacks get a second entry for the browser
+    /// that takes the pointer, and the property picks one at run time, since one assembly serves both.
+    /// </summary>
+    private void EmitEntries(Entry cb, string entry, List<string> body, StringBuilder sb)
+    {
+        var byValue = cb.Args.Where(a => a.Annotation == "value" && _m.Entries.TryGetValue(_m.Resolve(a.Type), out var t) && t.Category == "structure").ToList();
+        var signature = RawCallbackSignature(cb);
+        var parameters = RawCallbackParams(cb);
+        var block = string.Concat(body.Select(line => $"        {line}\n"));
+        if (byValue.Count == 0)
         {
-            // userdata2 is the device's other callback, which can't be called after this one
-            sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)})\n    {{\n");
-            sb.Append($"        {invoke}\n        Unregister(userdata1);\n        Unregister(userdata2);\n    }}\n\n");
+            sb.Append($"    public static nint {entry} => (nint)(delegate* unmanaged<{signature}, void>)&On{entry};\n\n");
+            sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}({parameters})\n    {{\n{block}    }}\n\n");
             return;
         }
 
-        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{name}Delegate({RawCallbackParams(cb)}) =>\n        {invoke}\n\n");
+        var browserSignature = string.Join(", ", cb.Args.Select(a => byValue.Contains(a) ? _raw.Type(a) + "*" : _raw.Type(a)).Append("void*").Append("void*"));
+        var browserParameters = string.Join(", ", cb.Args.Select(a => $"{(byValue.Contains(a) ? _raw.Type(a) + "*" : _raw.Type(a))} {Names.Identifier(Names.LowerCamel(a.Name))}").Append("void* userdata1").Append("void* userdata2"));
+        var names = cb.Args.Select(a => Names.Identifier(Names.LowerCamel(a.Name))).Append("userdata1").Append("userdata2").ToList();
+        var browserNames = cb.Args.Select(a => (byValue.Contains(a) ? "*" : "") + Names.Identifier(Names.LowerCamel(a.Name))).Append("userdata1").Append("userdata2");
+        sb.Append($"    public static nint {entry} => OperatingSystem.IsBrowser()\n");
+        sb.Append($"        ? (nint)(delegate* unmanaged<{browserSignature}, void>)&On{entry}Browser\n");
+        sb.Append($"        : (nint)(delegate* unmanaged<{signature}, void>)&On{entry};\n\n");
+        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}({parameters}) => Handle{entry}({string.Join(", ", names)});\n\n");
+        sb.Append($"    [UnmanagedCallersOnly]\n    private static void On{entry}Browser({browserParameters}) => Handle{entry}({string.Join(", ", browserNames)});\n\n");
+        sb.Append($"    private static void Handle{entry}({parameters})\n    {{\n{block}    }}\n\n");
     }
 
     private string CallbackOf(string callbackInfo) => E(callbackInfo).Members.First(m => m.Name == "callback").Type;

@@ -1,5 +1,3 @@
-using Olve.Results;
-
 namespace Olve.WebGPU.Tests;
 
 public class ProcessEventsTests
@@ -10,24 +8,26 @@ public class ProcessEventsTests
         using var instance = Wgpu.CreateInstance();
 
         // The fallback adapter covers machines without a GPU, such as CI runners
-        var result = instance.ProcessEventsUntil(instance.RequestAdapterAsync(), TimeSpan.FromSeconds(30));
-        if (result.TryPickProblems(out _, out var adapter))
+        var completed = instance.TryProcessEventsUntil(instance.RequestAdapterAsync(), TimeSpan.FromSeconds(30), out var result);
+        if (completed && !result.IsSuccess)
         {
-            result = instance.ProcessEventsUntil(instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = true }), TimeSpan.FromSeconds(30));
+            completed = instance.TryProcessEventsUntil(instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = true }), TimeSpan.FromSeconds(30), out result);
         }
 
-        await Assert.That(result.TryPickProblems(out var problems, out adapter)).IsFalse().Because(string.Join("; ", problems?.Select(p => p.ToBriefString()) ?? []));
+        await Assert.That(completed).IsTrue();
+        await Assert.That(result.TryGetValue(out var adapter)).IsTrue().Because($"{result.Status}: {result.Message}");
         adapter.Dispose();
     }
 
     [Test]
-    public async Task SynchronousPumpTimesOutWithAProblem()
+    public async Task SynchronousPumpReturnsFalseOnceTheTimeoutPasses()
     {
         using var instance = Wgpu.CreateInstance();
-        var never = new TaskCompletionSource<Result>();
+        var never = new TaskCompletionSource<QueueWorkDoneResult>();
 
-        var result = instance.ProcessEventsUntil(never.Task, TimeSpan.FromMilliseconds(10));
+        var completed = instance.TryProcessEventsUntil(never.Task, TimeSpan.Zero, out var result);
 
-        await Assert.That(result.TryPickProblems(out _)).IsTrue();
+        await Assert.That(completed).IsFalse();
+        await Assert.That(result).IsEqualTo(default(QueueWorkDoneResult));
     }
 }

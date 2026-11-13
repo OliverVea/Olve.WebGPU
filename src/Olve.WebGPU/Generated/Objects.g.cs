@@ -2,7 +2,6 @@
 #nullable enable
 
 using System.Runtime.InteropServices;
-using Olve.Results;
 using Olve.WebGPU.Native;
 using static Olve.WebGPU.Native.Interop;
 
@@ -112,10 +111,10 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
         return value;
     }
 
-    public Task<Result<Device>> RequestDeviceAsync(in DeviceDescriptor descriptor)
+    public Task<RequestDeviceResult> RequestDeviceAsync(in DeviceDescriptor descriptor)
     {
         using var arena = Arena.Rent();
-        var completion = new TaskCompletionSource<Result<Device>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<RequestDeviceResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestDeviceCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -126,9 +125,9 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
         return completion.Task;
     }
 
-    public Task<Result<Device>> RequestDeviceAsync()
+    public Task<RequestDeviceResult> RequestDeviceAsync()
     {
-        var completion = new TaskCompletionSource<Result<Device>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<RequestDeviceResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestDeviceCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -197,10 +196,10 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         return result;
     }
 
-    public Task<Result<ComputePipeline>> CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor)
+    public Task<CreateComputePipelineResult> CreateComputePipelineAsync(in ComputePipelineDescriptor descriptor)
     {
         using var arena = Arena.Rent();
-        var completion = new TaskCompletionSource<Result<ComputePipeline>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<CreateComputePipelineResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUCreateComputePipelineAsyncCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -225,10 +224,10 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         return result;
     }
 
-    public Task<Result<RenderPipeline>> CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor)
+    public Task<CreateRenderPipelineResult> CreateRenderPipelineAsync(in RenderPipelineDescriptor descriptor)
     {
         using var arena = Arena.Rent();
-        var completion = new TaskCompletionSource<Result<RenderPipeline>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<CreateRenderPipelineResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUCreateRenderPipelineAsyncCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -328,9 +327,9 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
         wgpuDevicePushErrorScope(Handle, filter);
     }
 
-    public Task<Result<(ErrorType Type, string Message)>> PopErrorScopeAsync()
+    public Task<PopErrorScopeResult> PopErrorScopeAsync()
     {
-        var completion = new TaskCompletionSource<Result<(ErrorType Type, string Message)>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<PopErrorScopeResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUPopErrorScopeCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -387,9 +386,9 @@ public readonly unsafe partial record struct Buffer(nint Handle) : IDisposable
         }
     }
 
-    public Task<Result> MapAsync(MapMode mode, nuint offset, nuint size)
+    public Task<BufferMapResult> MapAsync(MapMode mode, nuint offset, nuint size)
     {
-        var completion = new TaskCompletionSource<Result>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<BufferMapResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUBufferMapCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -885,9 +884,9 @@ public readonly unsafe partial record struct ShaderModule(nint Handle) : IDispos
         }
     }
 
-    public Task<Result<CompilationInfo>> GetCompilationInfoAsync()
+    public Task<CompilationInfoResult> GetCompilationInfoAsync()
     {
-        var completion = new TaskCompletionSource<Result<CompilationInfo>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<CompilationInfoResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUCompilationInfoCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -1057,10 +1056,10 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
         wgpuInstanceProcessEvents(Handle);
     }
 
-    public Task<Result<Adapter>> RequestAdapterAsync(in RequestAdapterOptions options)
+    public Task<RequestAdapterResult> RequestAdapterAsync(in RequestAdapterOptions options)
     {
         using var arena = Arena.Rent();
-        var completion = new TaskCompletionSource<Result<Adapter>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<RequestAdapterResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestAdapterCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -1071,9 +1070,9 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
         return completion.Task;
     }
 
-    public Task<Result<Adapter>> RequestAdapterAsync()
+    public Task<RequestAdapterResult> RequestAdapterAsync()
     {
-        var completion = new TaskCompletionSource<Result<Adapter>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<RequestAdapterResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPURequestAdapterCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,
@@ -1124,9 +1123,9 @@ public readonly unsafe partial record struct Queue(nint Handle) : IDisposable
         }
     }
 
-    public Task<Result> OnSubmittedWorkDoneAsync()
+    public Task<QueueWorkDoneResult> OnSubmittedWorkDoneAsync()
     {
-        var completion = new TaskCompletionSource<Result>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var completion = new TaskCompletionSource<QueueWorkDoneResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         var callbackInfo = new WGPUQueueWorkDoneCallbackInfo
         {
             Mode = CallbackMode.AllowProcessEvents,

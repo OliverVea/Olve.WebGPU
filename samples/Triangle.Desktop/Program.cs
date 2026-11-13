@@ -1,4 +1,3 @@
-using Olve.Results;
 using Olve.WebGPU;
 using Silk.NET.GLFW;
 using Silk.NET.Maths;
@@ -49,19 +48,14 @@ window.Load += () =>
 
     // Requests complete inside ProcessEvents, so on desktop the task is done (or nearly) by the time it returns
     var created = TriangleRenderer.CreateAsync(instance, surface, 640, 480, Console.WriteLine).GetAwaiter().GetResult();
-    if (created.TryPickProblems(out var problems, out var value))
+    if (created is null)
     {
-        foreach (var problem in problems)
-        {
-            Console.WriteLine(problem.ToBriefString());
-        }
-
         exitCode = 1;
         window.Close();
         return;
     }
 
-    renderer = value;
+    renderer = created;
     Console.WriteLine("renderer ready");
 };
 

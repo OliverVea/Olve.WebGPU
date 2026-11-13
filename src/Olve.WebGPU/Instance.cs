@@ -1,6 +1,6 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Versioning;
-using Olve.Results;
 
 namespace Olve.WebGPU;
 
@@ -26,18 +26,22 @@ public readonly partial record struct Instance
     }
 
     /// <summary>
-    /// Pumps <see cref="ProcessEvents"/> on this thread until the request completes, or fails once <paramref name="timeout"/> passes.
-    /// A request that times out stays pending and completes in a later <see cref="ProcessEvents"/>.
+    /// Pumps <see cref="ProcessEvents"/> on this thread until <paramref name="request"/> completes, and gives its result;
+    /// false once <paramref name="timeout"/> passes. A request that times out stays pending and completes in a later <see cref="ProcessEvents"/>.
     /// Not in the browser: blocking the thread keeps the JS event loop from resolving the request.
     /// </summary>
     [UnsupportedOSPlatform("browser")]
-    public Result<T> ProcessEventsUntil<T>(Task<Result<T>> request, TimeSpan timeout) =>
-        Pump(request, timeout) ? request.GetAwaiter().GetResult() : TimedOut(timeout);
+    public bool TryProcessEventsUntil<T>(Task<T> request, TimeSpan timeout, [MaybeNullWhen(false)] out T result)
+    {
+        if (!Pump(request, timeout))
+        {
+            result = default;
+            return false;
+        }
 
-    /// <inheritdoc cref="ProcessEventsUntil{T}(Task{Result{T}}, TimeSpan)"/>
-    [UnsupportedOSPlatform("browser")]
-    public Result ProcessEventsUntil(Task<Result> request, TimeSpan timeout) =>
-        Pump(request, timeout) ? request.GetAwaiter().GetResult() : TimedOut(timeout);
+        result = request.GetAwaiter().GetResult();
+        return true;
+    }
 
     private bool Pump(Task request, TimeSpan timeout)
     {
@@ -60,6 +64,4 @@ public readonly partial record struct Instance
 
         return true;
     }
-
-    private static ResultProblem TimedOut(TimeSpan timeout) => new("the request didn't complete within {0}", timeout);
 }

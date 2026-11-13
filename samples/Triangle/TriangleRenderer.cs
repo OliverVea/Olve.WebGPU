@@ -41,7 +41,7 @@ public sealed class TriangleRenderer(Instance instance, Surface surface, Device 
     public static async Task<Result<TriangleRenderer>> CreateAsync(Instance instance, Surface surface, uint width, uint height, Action<string> log)
     {
         var adapterRequest = instance.RequestAdapterAsync(new RequestAdapterOptions { CompatibleSurface = surface });
-        if ((await instance.ProcessEventsUntil(adapterRequest)).TryPickProblems(out var problems, out var adapter))
+        if ((await instance.ProcessEventsUntilAsync(adapterRequest)).TryPickProblems(out var problems, out var adapter))
         {
             return problems.Prepend("Error while requesting a WebGPU adapter");
         }
@@ -65,7 +65,7 @@ public sealed class TriangleRenderer(Instance instance, Surface surface, Device 
                 Callback = (_, type, message) => log($"WebGPU {type} error: {message}"),
             },
         });
-        if ((await instance.ProcessEventsUntil(deviceRequest)).TryPickProblems(out problems, out var device))
+        if ((await instance.ProcessEventsUntilAsync(deviceRequest)).TryPickProblems(out problems, out var device))
         {
             return problems.Prepend("Error while requesting a WebGPU device");
         }

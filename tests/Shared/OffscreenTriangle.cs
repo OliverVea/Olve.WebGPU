@@ -48,7 +48,7 @@ internal static class OffscreenTriangle
                 Callback = (_, type, message) => log($"WebGPU {type} error: {message}"),
             },
         });
-        if ((await instance.ProcessEventsUntil(deviceRequest)).TryPickProblems(out problems, out var device))
+        if ((await instance.ProcessEventsUntilAsync(deviceRequest)).TryPickProblems(out problems, out var device))
         {
             return problems.Prepend("Error while requesting a WebGPU device");
         }
@@ -125,7 +125,7 @@ internal static class OffscreenTriangle
         queue.Submit([commands]);
 
         var size = (nuint)(BytesPerRow * Size);
-        if ((await instance.ProcessEventsUntil(readback.MapAsync(MapMode.Read, 0, size))).TryPickProblems(out problems))
+        if ((await instance.ProcessEventsUntilAsync(readback.MapAsync(MapMode.Read, 0, size))).TryPickProblems(out problems))
         {
             return problems.Prepend("Error while mapping the readback buffer");
         }
@@ -155,7 +155,7 @@ internal static class OffscreenTriangle
         {
             var kind = fallback ? "fallback" : "default";
             var request = instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = fallback });
-            if ((await instance.ProcessEventsUntil(request)).TryPickProblems(out var problems, out var adapter))
+            if ((await instance.ProcessEventsUntilAsync(request)).TryPickProblems(out var problems, out var adapter))
             {
                 log($"no {kind} adapter: {string.Join("; ", problems.Select(p => p.ToBriefString()))}");
                 continue;

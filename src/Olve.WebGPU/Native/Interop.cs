@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -204,5 +205,18 @@ internal static unsafe partial class Callbacks
         var target = (T)handle.Target!;
         handle.Free();
         return target;
+    }
+
+    /// <summary>
+    /// An exception thrown inside a callback can't unwind through the native code that called it, so the process ends with it:
+    /// on desktop the runtime would end it anyway, without the exception, and in the browser the runtime asserts.
+    /// The message goes to stderr first, which is the browser's console.
+    /// </summary>
+    [DoesNotReturn]
+    public static void Escaped(string callback, Exception exception)
+    {
+        var message = $"Olve.WebGPU: an exception was thrown in {callback}. Callbacks are called from native code and must not throw.";
+        Console.Error.WriteLine($"{message}\n{exception}");
+        Environment.FailFast(message, exception);
     }
 }

@@ -49,8 +49,11 @@ case "$RID" in
             -o "$LAYOUT_DIR/libwebgpu_layout_check.so"
         ;;
     ios-arm64 | iossimulator)
-        # iOS apps link static libraries only: Dawn's goes into the package as it comes, and the app's build force-loads it
+        # iOS apps link static libraries only: Dawn's goes into the package, and the app's build force-loads it. Dawn's xcframework
+        # hides webgpu.h's functions (private external), and the binding looks them up by name at run time, so they're made visible
         cp "$DAWN_DIR/lib/libwebgpu_dawn.a" "$NATIVE_DIR/"
+        "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.exp"
+        "$PYTHON" "$ROOT/scripts/unhide-symbols.py" "$NATIVE_DIR/libwebgpu_dawn.a" "$LAYOUT_DIR/webgpu_dawn.exp"
         # The layout checker needs Xcode; only the iOS test runner uses it
         if [[ "$(uname -s)" == Darwin ]]; then
             objects=()

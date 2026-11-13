@@ -149,14 +149,7 @@ jobs:
             echo "DEVELOPER_DIR=$xcode/Contents/Developer" >> "$GITHUB_ENV"
             echo "XcodeLocation=$xcode" >> "$GITHUB_ENV"
           fi
-          # An Xcode other than the image's default may not have run its first-launch setup, which installs its tools
-          sudo xcodebuild -runFirstLaunch
           xcodebuild -version
-          # The iOS build looks these up; print where they are, or that they aren't
-          xcrun -find install_name_tool || true
-          xcrun -sdk macosx -find install_name_tool || true
-          xcodebuild -sdk macosx -find install_name_tool || true
-          ls -l "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool" || true
           # The trial build above left MSBuild nodes running with the default Xcode's environment; later builds would reuse them
           dotnet build-server shutdown
       - name: Dawn's iOS libraries, and the layout checker for the simulator
@@ -173,22 +166,14 @@ jobs:
             artifacts/native/iossimulator/
           if-no-files-found: error
       - name: Build the iOS test runner (project references)
-        run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION -bl:artifacts/ios-build.binlog
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: ios-build-log
-          path: artifacts/ios-build.binlog
-          if-no-files-found: ignore
-      - name: Show what the iOS build linked
+        run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION
+      # The binding finds Dawn's functions by name in the app at run time: the app must export them
+      - name: Check the app exports webgpu.h's functions
         run: |
-          dotnet msbuild tests/Olve.WebGPU.Tests.iOS -p:Configuration=Release -getItem:NativeReference -getProperty:_OlveWebGPUPlatform -getProperty:_OlveWebGPUIosSlice -getProperty:OlveWebGPUIosLibraries | head -40
-          echo "ReferenceNativeSymbol items: $(dotnet msbuild tests/Olve.WebGPU.Tests.iOS -p:Configuration=Release -getItem:ReferenceNativeSymbol | grep -c '"Identity"')"
           app="$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"
-          echo "wgpu symbols in the app's executable: $(nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -c ' _wgpu')"
-          nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -E ' _(wgpuCreateInstance|wgpu_layout_values|dawn_layout_values)$' || echo "not exported: _wgpuCreateInstance"
-          echo "wgpuCreateInstance anywhere in the executable (exported or not): $(nm "$app/Olve.WebGPU.Tests.iOS" | grep -c 'wgpuCreateInstance')"
-          echo "dawn symbols anywhere in the executable: $(nm "$app/Olve.WebGPU.Tests.iOS" | grep -ci dawn)"
+          count="$(nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -cE ' _wgpu[A-Z]')"
+          echo "the app exports $count wgpu functions"
+          nm -gU "$app/Olve.WebGPU.Tests.iOS" | grep -q ' _wgpuCreateInstance$' || { echo "::error::the app doesn't export _wgpuCreateInstance"; exit 1; }
       - name: Run the checks in an iPhone simulator
         timeout-minutes: 15
         run: scripts/run-ios-tests.sh "$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"

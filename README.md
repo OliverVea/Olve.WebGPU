@@ -74,6 +74,25 @@ On Windows, the scripts need Git Bash, Python, and Visual Studio's C++ tools. On
 
 The browser tests and the web sample need `dotnet workload install wasm-tools`. `scripts/verify-web.py` runs them in headless Chromium.
 
+## Performance
+
+The binding adds nothing measurable to a call: it costs what a plain `DllImport` of the same Dawn function costs, and a frame allocates no managed memory (a test checks that). Descriptors are marshalled into native memory that each thread reuses, so a call with a descriptor allocates nothing either.
+
+`benchmarks/Olve.WebGPU.Benchmarks` measures it (BenchmarkDotNet; `dotnet run -c Release --project benchmarks/Olve.WebGPU.Benchmarks -- --filter '*'`). On Windows 11, an AMD Radeon RX 9070 XT (D3D12) and .NET 10.0.15:
+
+| Call | Binding | `DllImport` | Allocated |
+|---|---|---|---|
+| `RenderPassEncoder.Draw` | 29.4 ns | 29.3 ns | 0 |
+| `SetVertexBuffer` | 31.7 ns | 27.1 ns | 0 |
+| `SetBindGroup` with a dynamic offset | 56.9 ns | 55.7 ns | 0 |
+| `CreateCommandEncoder` with a label | 148 ns | | 0 |
+| `CreateBindGroup` | 208 ns | | 0 |
+| A render pass, begun and ended | 1.3 µs | | 0 |
+| A frame: 100 draws, a uniform write, a submit | 23 µs | | 0 |
+| A request round trip (`OnSubmittedWorkDone`) | 546 ns | | 104 B |
+
+The binding and `DllImport` differ by a few nanoseconds either way between runs. In the browser, publish with AOT (above): a `Draw` took about 125 ns interpreted and about 60 ns with AOT.
+
 ## Regenerating and upgrading Dawn
 
 The generator reads `dawn/dawn.json` and writes `src/Olve.WebGPU/Generated/`, `tests/Shared/LayoutCheck.g.cs` and `native/layout_check.g.c`. CI fails if the committed output differs from a fresh run. That output includes `Generated/PublicApi.g.txt`, the whole generated public API with one line per member, so every API change shows up in review.

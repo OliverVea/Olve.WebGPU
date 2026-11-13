@@ -7,6 +7,8 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source o
 - **Nothing on top:** there's no safety layer and no ownership tracking. Handles are `IDisposable` record structs whose `Dispose` is webgpu.h's `Release`.
 - **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions, futures (`WaitAny`) and out-chains aren't mapped yet; see the issues.
 
+Descriptors get webgpu.h's defaults from `new()` and object initialisers, like webgpu.h's `*_INIT` macros. `default(T)` and `new T[n]` skip them, like `= {0}` in C: the elements of `new ColorTargetState[n]` have `WriteMask = None` and draw nothing. Build arrays from `new()` values, for example with collection expressions.
+
 ## Packages
 
 | Package | What it is |

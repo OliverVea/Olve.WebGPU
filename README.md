@@ -45,6 +45,8 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 
 In the browser, emdawnwebgpu aborts on `Surface.Present()`: the browser presents when the frame callback returns.
 
+For a browser app, publish with `<RunAOTCompilation>true</RunAOTCompilation>`. Without it, .NET interprets the binding, and each call into WebGPU costs about twice as much. A `Draw` took about 125 ns interpreted and about 60 ns with AOT, measured in headless Chromium on SwiftShader. AOT makes the build slower, so the package leaves the choice to the app.
+
 The build files set `WasmCachePath` to a writable folder, because the emdawnwebgpu port must build into Emscripten's cache, and the SDK's cache is read-only. On Windows, that folder must be on the same drive as the .NET SDK.
 
 ## Building

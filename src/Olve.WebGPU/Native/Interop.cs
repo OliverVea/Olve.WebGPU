@@ -63,9 +63,21 @@ internal readonly unsafe struct Arena : IDisposable
         return p;
     }
 
-    /// <summary>An empty span is webgpu.h's "no string" (null, WGPU_STRLEN), never an empty string.</summary>
-    public WGPUStringView String(ReadOnlySpan<byte> utf8) =>
-        utf8.IsEmpty ? new WGPUStringView { Data = null, Length = Interop.Strlen } : new WGPUStringView { Data = Copy(utf8), Length = (nuint)utf8.Length };
+    /// <summary>
+    /// An empty span is webgpu.h's "no string" (null, WGPU_STRLEN), never an empty string.
+    /// The copy is also NUL-terminated: emdawnwebgpu reads some strings (the canvas selector) up to the NUL and ignores the length.
+    /// </summary>
+    public WGPUStringView String(ReadOnlySpan<byte> utf8)
+    {
+        if (utf8.IsEmpty)
+        {
+            return new WGPUStringView { Data = null, Length = Interop.Strlen };
+        }
+
+        var p = Alloc<byte>(utf8.Length + 1);
+        utf8.CopyTo(new Span<byte>(p, utf8.Length));
+        return new WGPUStringView { Data = p, Length = (nuint)utf8.Length };
+    }
 
     public void Dispose() => _stack.Return(_mark);
 }

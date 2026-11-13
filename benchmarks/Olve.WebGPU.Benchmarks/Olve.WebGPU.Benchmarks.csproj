@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- BenchmarkDotNet: the binding's per-call cost against a plain DllImport of the same function, descriptor calls, requests and a frame.
+         Runs off-cadence (locally or on a GPU machine); CI runs it once with a dry job so it keeps building and running.
+         Built without unsafe code, like any caller. -->
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" />
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <Compile Include="..\..\tests\Shared\OffscreenTriangle.cs" Link="Shared\OffscreenTriangle.cs" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)build/ProjectNatives.targets" />
+</Project>

@@ -131,6 +131,16 @@ jobs:
         with:
           global-json-file: global.json
       - run: dotnet workload install ios
+      # .NET for iOS needs the Xcode it was built against; the runner's default can be older
+      - name: Select the Xcode the ios workload needs
+        run: |
+          ls -d /Applications/Xcode*.app
+          required="$(dotnet build tests/Olve.WebGPU.Tests.iOS -c Release 2>&1 | sed -nE 's/.*requires Xcode ([0-9.]+)\..*/\1/p' | head -1)"
+          echo "the workload requires Xcode ${required:-(no requirement reported)}"
+          if [[ -n "$required" ]]; then
+            sudo xcode-select -s "/Applications/Xcode_$required.app"
+          fi
+          xcodebuild -version
       - name: Dawn's iOS libraries, and the layout checker for the simulator
         run: |
           for rid in ios-arm64 iossimulator; do

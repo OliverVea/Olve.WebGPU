@@ -4,8 +4,15 @@ using Buffer = Olve.WebGPU.Buffer;
 namespace Triangle;
 
 /// <summary>A coloured triangle, drawn the same way on desktop and in the browser.</summary>
-public sealed class TriangleRenderer(Instance instance, Surface surface, Device device, Queue queue, RenderPipeline pipeline, Buffer vertices)
+public sealed class TriangleRenderer(Instance instance, Surface surface, Device device, Queue queue, RenderPipeline pipeline, Buffer vertices, TextureFormat format)
 {
+    /// <summary>The background the triangle is drawn on.</summary>
+    public Color ClearColor { get; set; } = new() { R = 0.1, G = 0.1, B = 0.15, A = 1 };
+
+    /// <summary>Reconfigures the surface for a new size in pixels, such as after the window or the control hosting it resizes.</summary>
+    public void Resize(uint width, uint height) =>
+        surface.Configure(new SurfaceConfiguration { Device = device, Format = format, Width = Math.Max(width, 1), Height = Math.Max(height, 1) });
+
     private static ReadOnlySpan<byte> Shader => """
         struct VertexOut {
             @builtin(position) position: vec4f,
@@ -119,7 +126,7 @@ public sealed class TriangleRenderer(Instance instance, Surface surface, Device 
         queue.WriteBuffer(vertices, 0, Vertices);
         adapter.Dispose();
 
-        return new TriangleRenderer(instance, surface, device, queue, pipeline, vertices);
+        return new TriangleRenderer(instance, surface, device, queue, pipeline, vertices, format);
     }
 
     public void DrawFrame()
@@ -140,7 +147,7 @@ public sealed class TriangleRenderer(Instance instance, Surface surface, Device 
                            View = view,
                            LoadOp = LoadOp.Clear,
                            StoreOp = StoreOp.Store,
-                           ClearValue = new Color { R = 0.1, G = 0.1, B = 0.15, A = 1 },
+                           ClearValue = ClearColor,
                        },
                    ],
                }))

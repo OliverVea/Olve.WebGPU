@@ -48,7 +48,7 @@ if (instance.TryProcessEventsUntil(adapter.RequestDeviceAsync(), TimeSpan.FromSe
 
 `Wgpu` holds webgpu.h's free functions and constants (`wgpuCreateInstance` is `Wgpu.CreateInstance`). Handles keep webgpu.h's names, so in a file that imports both `System` and `Olve.WebGPU`, `Buffer` is ambiguous with `System.Buffer`. Add `using Buffer = Olve.WebGPU.Buffer;` to resolve it.
 
-The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree/main/samples)) show the whole path to a frame on a Silk.NET window and on a canvas.
+The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree/main/samples)) show the whole path to a frame on a Silk.NET window, on a canvas, and as a viewport inside an Avalonia app (`Triangle.Avalonia`: a `NativeControlHost` whose native child window becomes the surface, next to ordinary Avalonia controls).
 
 ## Platforms and known gaps
 

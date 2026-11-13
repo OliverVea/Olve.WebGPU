@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The triangle as a viewport inside an Avalonia app: a NativeControlHost whose native child window (HWND, NSView, X11 window)
+         becomes a WebGPU surface. Dawn native from artifacts/native/<rid>/, like Triangle.Desktop. -->
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Desktop" />
+        <PackageReference Include="Avalonia.Themes.Fluent" />
+        <ProjectReference Include="..\Triangle\Triangle.csproj" />
+        <Compile Include="..\Triangle.Desktop\MetalLayer.cs" Link="MetalLayer.cs" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)build/ProjectNatives.targets" />
+</Project>

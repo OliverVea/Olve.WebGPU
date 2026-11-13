@@ -10,16 +10,20 @@ internal static class MetalLayer
 {
     private const string ObjC = "/usr/lib/libobjc.A.dylib";
 
-    public static nint For(nint nsWindow)
-    {
-        var contentView = Send(nsWindow, Selector("contentView"));
-        var layer = Send(objc_getClass("CAMetalLayer"), Selector("layer"));
+    /// <summary>A layer for a window's content view, at the window's backing scale.</summary>
+    public static nint For(nint nsWindow) =>
+        ForView(Send(nsWindow, Selector("contentView")), SendDouble(nsWindow, Selector("backingScaleFactor")));
 
-        // Match the screen's pixels on Retina displays: the layer's drawable is the surface Dawn configures
-        var scale = SendDouble(nsWindow, Selector("backingScaleFactor"));
+    /// <summary>
+    /// A layer for an NSView, such as the one Avalonia's NativeControlHost makes. <paramref name="scale"/> matches the screen's pixels
+    /// on Retina displays: the layer's drawable is the surface Dawn configures.
+    /// </summary>
+    public static nint ForView(nint nsView, double scale)
+    {
+        var layer = Send(objc_getClass("CAMetalLayer"), Selector("layer"));
         SendDouble(layer, Selector("setContentsScale:"), scale);
-        SendBool(contentView, Selector("setWantsLayer:"), 1);
-        Send(contentView, Selector("setLayer:"), layer);
+        SendBool(nsView, Selector("setWantsLayer:"), 1);
+        Send(nsView, Selector("setLayer:"), layer);
         return layer;
     }
 

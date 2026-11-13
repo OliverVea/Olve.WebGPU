@@ -818,6 +818,24 @@ internal unsafe struct WGPUTextureComponentSwizzleDescriptor
     public WGPUTextureComponentSwizzle Swizzle;
 }
 
+internal unsafe struct WGPUSubgroupMatrixConfig
+{
+    public SubgroupMatrixComponentType ComponentType;
+    public SubgroupMatrixComponentType ResultComponentType;
+    public uint M;
+    public uint N;
+    public uint K;
+    public uint MinSubgroupSize;
+    public uint MaxSubgroupSize;
+}
+
+internal unsafe struct WGPUAdapterPropertiesSubgroupMatrixConfigs
+{
+    public WGPUChainedStruct Chain;
+    public nuint ConfigCount;
+    public WGPUSubgroupMatrixConfig* Configs;
+}
+
 internal unsafe struct WGPUChainedStruct
 {
     public WGPUChainedStruct* Next;
@@ -881,6 +899,7 @@ internal static unsafe partial class Wgpu
     [LibraryImport(Library)] public static partial void wgpuComputePassEncoderDispatchWorkgroupsIndirect(nint computePassEncoder, nint indirectBuffer, ulong indirectOffset);
     [LibraryImport(Library)] public static partial void wgpuComputePassEncoderEnd(nint computePassEncoder);
     [LibraryImport(Library)] public static partial void wgpuComputePassEncoderSetLabel(nint computePassEncoder, WGPUStringView label);
+    [LibraryImport(Library)] public static partial void wgpuComputePassEncoderSetImmediates(nint computePassEncoder, uint offset, void* data, nuint size);
     [LibraryImport(Library)] public static partial void wgpuComputePassEncoderAddRef(nint computePassEncoder);
     [LibraryImport(Library)] public static partial void wgpuComputePassEncoderRelease(nint computePassEncoder);
     [LibraryImport(Library)] public static partial nint wgpuComputePipelineGetBindGroupLayout(nint computePipeline, uint groupIndex);
@@ -956,6 +975,7 @@ internal static unsafe partial class Wgpu
     [LibraryImport(Library)] public static partial void wgpuRenderBundleEncoderSetIndexBuffer(nint renderBundleEncoder, nint buffer, IndexFormat format, ulong offset, ulong size);
     [LibraryImport(Library)] public static partial nint wgpuRenderBundleEncoderFinish(nint renderBundleEncoder, WGPURenderBundleDescriptor* descriptor);
     [LibraryImport(Library)] public static partial void wgpuRenderBundleEncoderSetLabel(nint renderBundleEncoder, WGPUStringView label);
+    [LibraryImport(Library)] public static partial void wgpuRenderBundleEncoderSetImmediates(nint renderBundleEncoder, uint offset, void* data, nuint size);
     [LibraryImport(Library)] public static partial void wgpuRenderBundleEncoderAddRef(nint renderBundleEncoder);
     [LibraryImport(Library)] public static partial void wgpuRenderBundleEncoderRelease(nint renderBundleEncoder);
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderSetPipeline(nint renderPassEncoder, nint pipeline);
@@ -981,6 +1001,7 @@ internal static unsafe partial class Wgpu
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderWriteTimestamp(nint renderPassEncoder, nint querySet, uint queryIndex);
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderEnd(nint renderPassEncoder);
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderSetLabel(nint renderPassEncoder, WGPUStringView label);
+    [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderSetImmediates(nint renderPassEncoder, uint offset, void* data, nuint size);
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderAddRef(nint renderPassEncoder);
     [LibraryImport(Library)] public static partial void wgpuRenderPassEncoderRelease(nint renderPassEncoder);
     [LibraryImport(Library)] public static partial nint wgpuRenderPipelineGetBindGroupLayout(nint renderPipeline, uint groupIndex);

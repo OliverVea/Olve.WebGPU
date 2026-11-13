@@ -514,6 +514,18 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = sizeof(WGPUTextureComponentSwizzleDescriptor); i++;
     if (out) out[i] = offsetof(WGPUTextureComponentSwizzleDescriptor, chain); i++;
     if (out) out[i] = offsetof(WGPUTextureComponentSwizzleDescriptor, swizzle); i++;
+    if (out) out[i] = sizeof(WGPUSubgroupMatrixConfig); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, componentType); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, resultComponentType); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, M); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, N); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, K); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, minSubgroupSize); i++;
+    if (out) out[i] = offsetof(WGPUSubgroupMatrixConfig, maxSubgroupSize); i++;
+    if (out) out[i] = sizeof(WGPUAdapterPropertiesSubgroupMatrixConfigs); i++;
+    if (out) out[i] = offsetof(WGPUAdapterPropertiesSubgroupMatrixConfigs, chain); i++;
+    if (out) out[i] = offsetof(WGPUAdapterPropertiesSubgroupMatrixConfigs, configCount); i++;
+    if (out) out[i] = offsetof(WGPUAdapterPropertiesSubgroupMatrixConfigs, configs); i++;
     if (out) out[i] = sizeof(WGPUChainedStruct); i++;
     if (out) out[i] = offsetof(WGPUChainedStruct, next); i++;
     if (out) out[i] = offsetof(WGPUChainedStruct, sType); i++;
@@ -565,8 +577,12 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUFeatureName_TextureFormatsTier2; i++;
     if (out) out[i] = (int64_t)WGPUFeatureName_PrimitiveIndex; i++;
     if (out) out[i] = (int64_t)WGPUFeatureName_TextureComponentSwizzle; i++;
+    if (out) out[i] = (int64_t)WGPUFeatureName_SubgroupSizeControl; i++;
+    if (out) out[i] = (int64_t)WGPUFeatureName_TextureCompressionUnaligned; i++;
+    if (out) out[i] = (int64_t)WGPUFeatureName_AtomicVec2uMinMax; i++;
     if (out) out[i] = (int64_t)WGPUFeatureName_Unorm16TextureFormats; i++;
     if (out) out[i] = (int64_t)WGPUFeatureName_MultiDrawIndirect; i++;
+    if (out) out[i] = (int64_t)WGPUFeatureName_ChromiumExperimentalSubgroupMatrix; i++;
     if (out) out[i] = (int64_t)WGPUDeviceLostReason_Unknown; i++;
     if (out) out[i] = (int64_t)WGPUDeviceLostReason_Destroyed; i++;
     if (out) out[i] = (int64_t)WGPUDeviceLostReason_CallbackCancelled; i++;
@@ -821,6 +837,10 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_SubgroupUniformity; i++;
     if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_TextureFormatsTier1; i++;
     if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_LinearIndexing; i++;
+    if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_ImmediateAddressSpace; i++;
+    if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_BufferView; i++;
+    if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_SwizzleAssignment; i++;
+    if (out) out[i] = (int64_t)WGPUWGSLLanguageFeatureName_FragmentDepth; i++;
     if (out) out[i] = (int64_t)WGPUErrorFilter_Validation; i++;
     if (out) out[i] = (int64_t)WGPUErrorFilter_OutOfMemory; i++;
     if (out) out[i] = (int64_t)WGPUErrorFilter_Internal; i++;
@@ -883,6 +903,7 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUVertexFormat_Sint32x4; i++;
     if (out) out[i] = (int64_t)WGPUVertexFormat_Unorm10_10_10_2; i++;
     if (out) out[i] = (int64_t)WGPUVertexFormat_Unorm8x4BGRA; i++;
+    if (out) out[i] = (int64_t)WGPUVertexFormat_Snorm10_10_10_2; i++;
     if (out) out[i] = (int64_t)WGPUVertexStepMode_Undefined; i++;
     if (out) out[i] = (int64_t)WGPUVertexStepMode_Vertex; i++;
     if (out) out[i] = (int64_t)WGPUVertexStepMode_Instance; i++;
@@ -948,6 +969,7 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUSType_CompatibilityModeLimits; i++;
     if (out) out[i] = (int64_t)WGPUSType_TextureBindingViewDimension; i++;
     if (out) out[i] = (int64_t)WGPUSType_EmscriptenSurfaceSourceCanvasHTMLSelector; i++;
+    if (out) out[i] = (int64_t)WGPUSType_AdapterPropertiesSubgroupMatrixConfigs; i++;
     if (out) out[i] = (int64_t)WGPUSType_DawnCompilationMessageUtf16; i++;
     if (out) out[i] = (int64_t)WGPUTextureDimension_Undefined; i++;
     if (out) out[i] = (int64_t)WGPUTextureDimension_1D; i++;
@@ -960,5 +982,11 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUComponentSwizzle_G; i++;
     if (out) out[i] = (int64_t)WGPUComponentSwizzle_B; i++;
     if (out) out[i] = (int64_t)WGPUComponentSwizzle_A; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_F32; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_F16; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_U32; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_I32; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_U8; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_I8; i++;
     return i;
 }

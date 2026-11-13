@@ -67,7 +67,7 @@ To move to a new Dawn release:
 2. Fetch `src/dawn/dawn.json` at that commit into `dawn/`, and regenerate.
 3. Diff the API manifests before and after the upgrade.
 4. Replace `src/Olve.WebGPU.Browser/port/emdawnwebgpu.remoteport.py` with the release's `emdawnwebgpu-<tag>.remoteport.py`. CI checks it against `DAWN_TAG`.
-5. Run the tests on each platform. The layout check compares 955 sizes, offsets and enum values with the C compiler's.
+5. Run the tests on each platform. The layout check compares 983 sizes, offsets and enum values with the C compiler's.
 
 ## License
 

@@ -65,18 +65,18 @@ The browser tests and the web sample need `dotnet workload install wasm-tools`. 
 
 ## Regenerating and upgrading Dawn
 
-The generator reads `dawn/dawn.json` and writes `src/Olve.WebGPU/Generated/`, `tests/Shared/LayoutCheck.g.cs` and `native/layout_check.g.c`. CI fails if the committed output differs from a fresh run.
+The generator reads `dawn/dawn.json` and writes `src/Olve.WebGPU/Generated/`, `tests/Shared/LayoutCheck.g.cs` and `native/layout_check.g.c`. CI fails if the committed output differs from a fresh run. That output includes `Generated/PublicApi.g.txt`, the whole generated public API with one line per member, so every API change shows up in review.
 
 ```bash
 dotnet run --project generator                           # regenerate
-dotnet run --project generator -- --manifest api.txt     # also write the public API, one line per member
+dotnet run --project generator -- --manifest api.txt     # also write the 80/20 subset of the public API
 ```
 
 To move to a new Dawn release:
 
 1. Update `DAWN_TAG` and `DAWN_COMMIT` in `dawn/version.env`.
 2. Fetch `src/dawn/dawn.json` at that commit into `dawn/`, and regenerate.
-3. Diff the API manifests before and after the upgrade.
+3. Review the diff of `src/Olve.WebGPU/Generated/PublicApi.g.txt`.
 4. Replace `src/Olve.WebGPU.Browser/port/emdawnwebgpu.remoteport.py` with the release's `emdawnwebgpu-<tag>.remoteport.py`. CI checks it against `DAWN_TAG`.
 5. Run the tests on each platform. The layout check compares 983 sizes, offsets and enum values with the C compiler's.
 

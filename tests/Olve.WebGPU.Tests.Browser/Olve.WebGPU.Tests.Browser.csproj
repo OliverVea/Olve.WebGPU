@@ -9,6 +9,8 @@
     <Import Project="$(RepoRoot)src/Olve.WebGPU.Browser/buildTransitive/Olve.WebGPU.Browser.props" Condition="'$(NativeSource)' != 'package'" />
     <ItemGroup>
         <Compile Include="..\Shared\**\*.cs" />
+        <!-- Dawn native only: the browser has no Dawn C++, so no dawn_layout_values to link -->
+        <Compile Remove="..\Shared\DawnNative\**" />
         <NativeFileReference Include="$(RepoRoot)native/webgpu_layout_check.c" />
     </ItemGroup>
     <ItemGroup Condition="'$(NativeSource)' != 'package'">

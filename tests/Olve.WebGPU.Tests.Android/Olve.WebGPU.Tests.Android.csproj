@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The same checks as Olve.WebGPU.Tests, on Android (tests/Shared/Checks.cs); the result goes to logcat (tag OlveWebGPU) as PASS or FAIL.
+         Needs the android workload, and the natives that scripts/build-natives.sh links for RID=android-arm64 and RID=android-x64. -->
+    <PropertyGroup>
+        <TargetFramework>net11.0-android</TargetFramework>
+        <SupportedOSPlatformVersion>26</SupportedOSPlatformVersion>
+        <OutputType>Exe</OutputType>
+        <ApplicationId>dev.olve.webgpu.tests</ApplicationId>
+        <ApplicationVersion>1</ApplicationVersion>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="..\Shared\**\*.cs" />
+        <!-- Test-only: the layout checker, from the native build -->
+        <AndroidNativeLibrary Include="$(RepoRoot)artifacts/layout-check/android-arm64/libwebgpu_layout_check.so" Abi="arm64-v8a" />
+        <AndroidNativeLibrary Include="$(RepoRoot)artifacts/layout-check/android-x64/libwebgpu_layout_check.so" Abi="x86_64" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' != 'package'">
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <AndroidNativeLibrary Include="$(RepoRoot)artifacts/native/android-arm64/libwebgpu_dawn.so" Abi="arm64-v8a" />
+        <AndroidNativeLibrary Include="$(RepoRoot)artifacts/native/android-x64/libwebgpu_dawn.so" Abi="x86_64" />
+    </ItemGroup>
+    <!-- -p:NativeSource=package: webgpu_dawn from Olve.WebGPU.Native's runtimes/android-*/native/, as an app gets it -->
+    <ItemGroup Condition="'$(NativeSource)' == 'package'">
+        <PackageReference Include="Olve.WebGPU.Native" />
+    </ItemGroup>
+</Project>

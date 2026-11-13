@@ -33,6 +33,21 @@ case "$RID" in
         clang++ -c -O1 -std=c++20 -Wno-invalid-offsetof -I"$DAWN_DIR/include" "$dawn_check_src" -o "$LAYOUT_DIR/dawn_layout_check.o"
         clang++ -dynamiclib "$LAYOUT_DIR/webgpu_layout_check.o" "$LAYOUT_DIR/dawn_layout_check.o" -o "$LAYOUT_DIR/libwebgpu_layout_check.dylib"
         ;;
+    android-*)
+        # The NDK Dawn's Android build uses (r27d); ANDROID_NDK_HOME points at it
+        ndk_bin="${ANDROID_NDK_HOME:?set ANDROID_NDK_HOME to Android NDK r27d}/toolchains/llvm/prebuilt/$(uname -s | tr '[:upper:]' '[:lower:]')-x86_64/bin"
+        cc="$ndk_bin/$ANDROID_TRIPLE$ANDROID_API-clang"
+        "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.map"
+        # 16 KB pages: Google Play requires them for apps targeting Android 15
+        "$cc++" -shared -o "$NATIVE_DIR/libwebgpu_dawn.so" -Wl,--version-script="$LAYOUT_DIR/webgpu_dawn.map" \
+            -Wl,--gc-sections -Wl,--no-undefined -Wl,-soname,libwebgpu_dawn.so -Wl,-z,max-page-size=16384 \
+            -Wl,--whole-archive "$DAWN_DIR/lib/libwebgpu_dawn.a" -Wl,--no-whole-archive -static-libstdc++ -llog -landroid -lm -ldl
+        "$ndk_bin/llvm-strip" --strip-unneeded "$NATIVE_DIR/libwebgpu_dawn.so"
+        "$cc" -c -fPIC -O1 -I"$DAWN_DIR/include" "$check_src" -o "$LAYOUT_DIR/webgpu_layout_check.o"
+        "$cc++" -c -fPIC -O1 -std=c++20 -Wno-invalid-offsetof -I"$DAWN_DIR/include" "$dawn_check_src" -o "$LAYOUT_DIR/dawn_layout_check.o"
+        "$cc++" -shared -static-libstdc++ -Wl,-z,max-page-size=16384 "$LAYOUT_DIR/webgpu_layout_check.o" "$LAYOUT_DIR/dawn_layout_check.o" \
+            -o "$LAYOUT_DIR/libwebgpu_layout_check.so"
+        ;;
     win-x64)
         "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.def"
         cmd //c "$(cygpath -w "$ROOT/scripts/build-natives-windows.cmd")" "$(cygpath -w "$DAWN_DIR")" "$(cygpath -w "$NATIVE_DIR")" "$(cygpath -w "$LAYOUT_DIR")"

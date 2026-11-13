@@ -1,0 +1,7 @@
+<Project>
+    <!-- The wasm P/Invoke table only binds module names it gets from a NativeFileReference: this gives Olve.WebGPU's
+         "webgpu_dawn" imports their module, and the linker resolves the wgpu* symbols from emdawnwebgpu. -->
+    <ItemGroup>
+        <NativeFileReference Include="$(MSBuildThisFileDirectory)../native/webgpu_dawn.c" />
+    </ItemGroup>
+</Project>

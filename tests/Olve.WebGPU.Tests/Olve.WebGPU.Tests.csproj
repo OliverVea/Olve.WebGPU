@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- Runs against the natives scripts/build-natives.sh links into artifacts/; no unsafe code, like any caller of the binding.
+         -p:NativeSource=package tests the packed Olve.WebGPU.Native from artifacts/packages instead (CI's package check). -->
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="TUnit" />
+        <Compile Include="..\Shared\**\*.cs" />
+        <None Include="$(RepoRoot)artifacts/layout-check/$(NativeRid)/*webgpu_layout_check.dll;$(RepoRoot)artifacts/layout-check/$(NativeRid)/*webgpu_layout_check.so;$(RepoRoot)artifacts/layout-check/$(NativeRid)/*webgpu_layout_check.dylib"
+              CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' != 'package'">
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <None Include="$(NativeDir)*" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' == 'package'">
+        <PackageReference Include="Olve.WebGPU.Native" />
+    </ItemGroup>
+</Project>

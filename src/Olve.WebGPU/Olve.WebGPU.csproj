@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- A faithful C# mapping of WebGPU (Dawn's webgpu.h) whose public surface needs no unsafe code.
+         The same assembly runs on desktop (webgpu_dawn shared library) and in the browser (emdawnwebgpu linked into dotnet.native.wasm). -->
+    <PropertyGroup>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <IsPackable>true</IsPackable>
+        <IsTrimmable>true</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
+        <Description>A faithful C# mapping of WebGPU, generated from Dawn's webgpu.h. Callers need no unsafe code. Reference Olve.WebGPU.Native (desktop) or Olve.WebGPU.Browser (WebAssembly) for the implementation.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Olve.Results" />
+        <InternalsVisibleTo Include="Olve.WebGPU.Tests" />
+        <InternalsVisibleTo Include="Olve.WebGPU.Tests.Browser" />
+        <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

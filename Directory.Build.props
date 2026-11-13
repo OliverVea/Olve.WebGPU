@@ -1,0 +1,35 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <Version Condition="'$(Version)' == ''">0.1.0</Version>
+        <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+        <!-- Natives linked by scripts/link-dawn.* land in artifacts/native/<rid>/ -->
+        <NativeRid Condition="'$(NativeRid)' == ''">$(NETCoreSdkRuntimeIdentifier)</NativeRid>
+        <NativeDir>$(RepoRoot)artifacts/native/$(NativeRid)/</NativeDir>
+        <DawnVersionFile>$(RepoRoot)dawn/version.env</DawnVersionFile>
+        <DawnTag>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText($(DawnVersionFile))), 'DAWN_TAG=(\S+)').Groups[1].Value)</DawnTag>
+        <DawnCommit>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText($(DawnVersionFile))), 'DAWN_COMMIT=(\S+)').Groups[1].Value)</DawnCommit>
+    </PropertyGroup>
+
+    <!-- -p:NativeSource=package: projects that support it consume the packed packages from artifacts/packages -->
+    <PropertyGroup Condition="'$(NativeSource)' == 'package'">
+        <RestoreAdditionalProjectSources>$(RepoRoot)artifacts/packages</RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Authors>Oliver Vea</Authors>
+        <Copyright>Oliver Vea</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/OliverVea/Olve.WebGPU</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/OliverVea/Olve.WebGPU</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>webgpu;dawn;graphics;gpu;wasm</PackageTags>
+        <PackageReleaseNotes>Wraps Dawn $(DawnTag) (google/dawn@$(DawnCommit)).</PackageReleaseNotes>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+</Project>

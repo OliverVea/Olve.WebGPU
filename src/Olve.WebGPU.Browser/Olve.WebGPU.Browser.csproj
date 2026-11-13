@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- No code: build files that link emdawnwebgpu into a browser-wasm app, so it only needs this PackageReference. -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+        <Description>Olve.WebGPU in the browser: links Emscripten's emdawnwebgpu port into a .NET WebAssembly app (needs the wasm-tools workload of .NET 11 or later).</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <None Include="buildTransitive/*" Pack="true" PackagePath="buildTransitive/" />
+        <None Include="native/*" Pack="true" PackagePath="native/" />
+        <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

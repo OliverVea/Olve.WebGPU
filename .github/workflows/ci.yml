@@ -1,0 +1,177 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_call:
+    inputs:
+      version:
+        description: Package version
+        type: string
+        required: true
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ inputs.version }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  VERSION: ${{ inputs.version || format('0.1.0-ci.{0}', github.run_number) }}
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  TESTINGPLATFORM_TELEMETRY_OPTOUT: true
+
+jobs:
+  native:
+    name: Native (${{ matrix.rid }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: win-x64, os: windows-latest }
+          - { rid: linux-x64, os: ubuntu-24.04 }
+          - { rid: osx-arm64, os: macos-latest }
+          - { rid: osx-x64, os: macos-15-intel }
+    defaults:
+      run:
+        shell: bash
+    env:
+      RID: ${{ matrix.rid }}
+      PYTHON: ${{ runner.os == 'Windows' && 'python' || 'python3' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.x
+          global-json-file: global.json
+      - name: Install lavapipe (Vulkan on the CPU)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends mesa-vulkan-drivers libvulkan1
+      - name: Download Dawn
+        run: scripts/download-dawn.sh
+      - name: Link webgpu_dawn and the layout checker
+        run: scripts/build-natives.sh
+      - name: Check the generated code is up to date
+        if: runner.os == 'Linux'
+        run: |
+          dotnet run --project generator -c Release
+          git status --porcelain
+          git diff --exit-code
+      - name: Build
+        run: dotnet build tests/Olve.WebGPU.Tests -c Release -p:Version=$VERSION
+      - name: Test (layout check, offscreen readback)
+        run: dotnet run --project tests/Olve.WebGPU.Tests -c Release --no-build -- --output Detailed
+      - name: Build the desktop sample
+        run: dotnet build samples/Triangle.Desktop -c Release -p:Version=$VERSION
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-${{ matrix.rid }}
+          path: |
+            artifacts/native/${{ matrix.rid }}/
+            artifacts/layout-check/${{ matrix.rid }}/
+          if-no-files-found: error
+
+  browser:
+    name: Browser (wasm, headless Chromium)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.x
+          global-json-file: global.json
+      - run: dotnet workload install wasm-tools
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - run: |
+          pip install playwright pillow
+          playwright install --with-deps chromium
+      - name: Publish the browser tests (project references)
+        run: dotnet publish tests/Olve.WebGPU.Tests.Browser -c Release -o artifacts/web/tests -p:Version=$VERSION
+      - name: Run the browser tests (layout check against emdawnwebgpu, offscreen readback)
+        run: python scripts/verify-web.py artifacts/web/tests/wwwroot tests
+      - name: Pack Olve.WebGPU and Olve.WebGPU.Browser
+        run: |
+          dotnet pack src/Olve.WebGPU -c Release -o artifacts/packages -p:Version=$VERSION
+          dotnet pack src/Olve.WebGPU.Browser -c Release -o artifacts/packages -p:Version=$VERSION
+      - name: Publish the web sample (from the packages)
+        run: dotnet publish samples/Triangle.Web -c Release -o artifacts/web/triangle -p:Version=$VERSION -p:NativeSource=package
+      - name: Run the web sample (canvas pixels)
+        run: python scripts/verify-web.py artifacts/web/triangle/wwwroot triangle --screenshot artifacts/web/triangle.png
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: web-triangle-screenshot
+          path: artifacts/web/triangle.png
+          if-no-files-found: ignore
+
+  pack:
+    name: Pack
+    needs: native
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: native-*
+          path: artifacts
+          merge-multiple: true
+      - run: find artifacts -type f | sort
+      - name: Pack
+        run: |
+          for project in src/Olve.WebGPU src/Olve.WebGPU.Native src/Olve.WebGPU.Browser; do
+            dotnet pack $project -c Release -o artifacts/packages -p:Version=$VERSION
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: artifacts/packages/*.nupkg
+          if-no-files-found: error
+
+  package-check:
+    name: Package check (${{ matrix.rid }})
+    needs: pack
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: win-x64, os: windows-latest }
+          - { rid: linux-x64, os: ubuntu-24.04 }
+          - { rid: osx-arm64, os: macos-latest }
+          - { rid: osx-x64, os: macos-15-intel }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.x
+          global-json-file: global.json
+      - name: Install lavapipe (Vulkan on the CPU)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends mesa-vulkan-drivers libvulkan1
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: artifacts/packages
+      - uses: actions/download-artifact@v8
+        with:
+          name: native-${{ matrix.rid }}
+          path: artifacts
+      # Only the layout checker comes from the build: webgpu_dawn and Olve.WebGPU come from the packages
+      - run: rm -rf artifacts/native
+      - name: Test against the packages
+        run: |
+          dotnet build tests/Olve.WebGPU.Tests -c Release -p:Version=$VERSION -p:NativeSource=package -o artifacts/package-test
+          dotnet artifacts/package-test/Olve.WebGPU.Tests.dll --output Detailed

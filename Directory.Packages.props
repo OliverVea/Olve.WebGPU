@@ -1,0 +1,10 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Olve.Results" Version="0.61.0" />
+    <PackageVersion Include="Silk.NET.Windowing" Version="2.23.0" />
+    <PackageVersion Include="TUnit" Version="1.84.0" />
+    <!-- This repo's own packages, for the package checks (-p:NativeSource=package, restored from artifacts/packages) -->
+    <PackageVersion Include="Olve.WebGPU.Native" Version="$(Version)" />
+    <PackageVersion Include="Olve.WebGPU.Browser" Version="$(Version)" />
+  </ItemGroup>
+</Project>

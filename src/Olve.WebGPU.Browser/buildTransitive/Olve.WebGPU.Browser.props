@@ -1,0 +1,11 @@
+<Project>
+    <!-- Links emdawnwebgpu (Emscripten's WebGPU port, from the wasm-tools workload) into dotnet.native.wasm.
+         Set in .props so the project can still override them. -->
+    <PropertyGroup>
+        <WasmBuildNative>true</WasmBuildNative>
+        <EmccFlags>$(EmccFlags) --use-port=emdawnwebgpu:cpp_bindings=false</EmccFlags>
+        <EmccExtraLDFlags>$(EmccExtraLDFlags) --use-port=emdawnwebgpu:cpp_bindings=false -sDEFAULT_TO_CXX</EmccExtraLDFlags>
+        <!-- The SDK's Emscripten cache is read-only; the port builds into a writable one (on Windows, on the SDK's drive) -->
+        <WasmCachePath Condition="'$(WasmCachePath)' == ''">$([System.Environment]::GetFolderPath(SpecialFolder.LocalApplicationData))/olve-webgpu/emscripten-cache/$(NETCoreSdkVersion)</WasmCachePath>
+    </PropertyGroup>
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+    <!-- The triangle on a canvas, through emdawnwebgpu. Needs the wasm-tools workload (dotnet workload install wasm-tools).
+         -p:NativeSource=package builds against the packed Olve.WebGPU.Browser from artifacts/packages instead (CI's package check). -->
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <!-- Only for the JSExport generator's output; Program.cs has no unsafe code -->
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Browser/buildTransitive/Olve.WebGPU.Browser.props" Condition="'$(NativeSource)' != 'package'" />
+    <ItemGroup>
+        <Compile Include="..\Triangle\*.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' != 'package'">
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' == 'package'">
+        <PackageReference Include="Olve.WebGPU.Browser" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Browser/buildTransitive/Olve.WebGPU.Browser.targets" Condition="'$(NativeSource)' != 'package'" />
+</Project>

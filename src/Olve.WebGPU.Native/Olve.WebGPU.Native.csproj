@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- No code: Dawn linked into a shared library per platform (scripts/build-natives.sh), under runtimes/<rid>/native/.
+         Packs every RID from artifacts/native/<rid>/; -p:AllowMissingNatives=true packs whatever is there (local tries). -->
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+        <Description>Olve.WebGPU on desktop: Dawn's webgpu_dawn shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <NativeRids>win-x64;linux-x64;osx-arm64;osx-x64</NativeRids>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Olve.WebGPU\Olve.WebGPU.csproj" />
+        <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />
+        <None Include="$(RepoRoot)THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="\" />
+        <None Include="$(RepoRoot)licenses/**/*" Pack="true" PackagePath="licenses/" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="$(RepoRoot)artifacts/native/win-x64/*" Pack="true" PackagePath="runtimes/win-x64/native/" />
+        <None Include="$(RepoRoot)artifacts/native/linux-x64/*" Pack="true" PackagePath="runtimes/linux-x64/native/" />
+        <None Include="$(RepoRoot)artifacts/native/osx-arm64/*" Pack="true" PackagePath="runtimes/osx-arm64/native/" />
+        <None Include="$(RepoRoot)artifacts/native/osx-x64/*" Pack="true" PackagePath="runtimes/osx-x64/native/" />
+        <_NativeRid Include="$(NativeRids)" />
+    </ItemGroup>
+
+    <Target Name="CheckNatives" BeforeTargets="GenerateNuspec" Condition="'$(AllowMissingNatives)' != 'true'">
+        <Error Condition="!Exists('$(RepoRoot)artifacts/native/%(_NativeRid.Identity)')" Text="No natives for %(_NativeRid.Identity) in artifacts/native/: run scripts/build-natives.sh on that platform, or pack with -p:AllowMissingNatives=true" />
+    </Target>
+</Project>

@@ -1,0 +1,74 @@
+# Olve.WebGPU
+
+A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source of `webgpu.h`). The same assembly runs on desktop, through Dawn, and in the browser, through Emscripten's emdawnwebgpu.
+
+- **Faithful:** the objects, methods, descriptors and enums of `webgpu.h`, with C# names. Descriptors are structs with webgpu.h's defaults, arrays and strings are spans, and requests (`RequestAdapter`, `MapAsync`, ...) return `Task<Result<T>>` ([Olve.Results](https://www.nuget.org/packages/Olve.Results)).
+- **No `unsafe` for callers:** the marshalling is generated, callers pass spans and structs.
+- **Nothing on top:** there's no safety layer and no ownership tracking. Handles are `IDisposable` record structs whose `Dispose` is webgpu.h's `Release`.
+- **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions, futures (`WaitAny`) and out-chains aren't mapped yet; see the issues.
+
+## Packages
+
+| Package | What it is |
+|---|---|
+| `Olve.WebGPU` | The binding (net10.0). |
+| `Olve.WebGPU.Native` | Desktop: Dawn's `webgpu_dawn` shared library for win-x64 (with DirectXShaderCompiler), linux-x64, osx-arm64 and osx-x64. |
+| `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
+
+Reference `Olve.WebGPU.Native` from a desktop app, or `Olve.WebGPU.Browser` from a `browser-wasm` app. Both bring in `Olve.WebGPU`. All three always ship at the same version. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](dawn/version.env).
+
+```csharp
+var instance = WebGPU.CreateInstance();
+// Requests complete inside ProcessEvents, as promises do in the browser's event loop
+var result = await instance.ProcessEventsUntil(instance.RequestAdapterAsync());
+if (result.TryPickProblems(out var problems, out var adapter)) { /* no adapter */ }
+```
+
+The triangle samples ([`samples/`](samples/)) show the whole path to a frame on a Silk.NET window and on a canvas.
+
+## Platforms and known gaps
+
+| Platform | Status |
+|---|---|
+| Windows x64 | D3D12, using the DirectXShaderCompiler next to `webgpu_dawn.dll`. Needs the VC++ runtime. Dawn doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32, so there's no Vulkan backend. |
+| Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
+| macOS (arm64, x64) | Metal. The binding maps `SurfaceSourceMetalLayer`, but there's no sample host; you create the `CAMetalLayer`. |
+| Browser | emdawnwebgpu, from the `wasm-tools` workload. In the browser, the workload picks the Dawn release, not `dawn/version.env`. The browser tests check every struct layout and enum value against it. |
+
+In the browser, emdawnwebgpu aborts on `Surface.Present()`: the browser presents when the frame callback returns.
+
+The build files set `WasmCachePath` to a writable folder, because the emdawnwebgpu port must build into Emscripten's cache, and the SDK's cache is read-only. On Windows, that folder must be on the same drive as the .NET SDK.
+
+## Building
+
+```bash
+scripts/download-dawn.sh              # Dawn (and DXC on Windows) for this platform into artifacts/
+scripts/build-natives.sh              # links artifacts/native/<rid>/webgpu_dawn and the test-only layout checker
+dotnet run --project tests/Olve.WebGPU.Tests             # layout check + offscreen triangle readback
+dotnet run --project samples/Triangle.Desktop            # the triangle in a window
+```
+
+On Windows, the scripts need Git Bash, Python, and Visual Studio's C++ tools. On Linux, they need g++. On macOS, they need the Xcode command line tools.
+
+The browser tests and the web sample need `dotnet workload install wasm-tools`. `scripts/verify-web.py` runs them in headless Chromium.
+
+## Regenerating and upgrading Dawn
+
+The generator reads `dawn/dawn.json` and writes `src/Olve.WebGPU/Generated/`, `tests/Shared/LayoutCheck.g.cs` and `native/layout_check.g.c`. CI fails if the committed output differs from a fresh run.
+
+```bash
+dotnet run --project generator                           # regenerate
+dotnet run --project generator -- --manifest api.txt     # also write the public API, one line per member
+```
+
+To move to a new Dawn release:
+
+1. Update `DAWN_TAG` and `DAWN_COMMIT` in `dawn/version.env`.
+2. Fetch `src/dawn/dawn.json` at that commit into `dawn/`, and regenerate.
+3. Diff the API manifests before and after the upgrade.
+4. Check that the `wasm-tools` workload's emdawnwebgpu port matches the new release.
+5. Run the tests on each platform. The layout check compares 955 sizes, offsets and enum values with the C compiler's.
+
+## License
+
+MIT. `Olve.WebGPU.Native` also ships Dawn (BSD-3-Clause) and DirectXShaderCompiler; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

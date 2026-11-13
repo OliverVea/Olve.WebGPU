@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+    <!-- The tests in the browser: the layout check against emdawnwebgpu's webgpu.h, and the offscreen readback.
+         scripts/verify-web.py loads the published page; the title says PASS or FAIL. Needs the wasm-tools workload. -->
+    <PropertyGroup>
+        <TargetFramework>net11.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Browser/buildTransitive/Olve.WebGPU.Browser.props" Condition="'$(NativeSource)' != 'package'" />
+    <ItemGroup>
+        <Compile Include="..\Shared\**\*.cs" />
+        <NativeFileReference Include="$(RepoRoot)native/webgpu_layout_check.c" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' != 'package'">
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' == 'package'">
+        <PackageReference Include="Olve.WebGPU.Browser" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Browser/buildTransitive/Olve.WebGPU.Browser.targets" Condition="'$(NativeSource)' != 'package'" />
+</Project>

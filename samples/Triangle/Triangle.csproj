@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The triangle, shared by the desktop and web samples. No unsafe code: callers of the binding need none. -->
+    <PropertyGroup>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+    </ItemGroup>
+</Project>

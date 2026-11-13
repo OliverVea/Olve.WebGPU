@@ -1,0 +1,44 @@
+name: Publish
+
+# Builds, tests and packs everything (ci.yml), then pushes the packages to nuget.org.
+# Only on a published GitHub release (tag v<version>) or a manual run; needs the NUGET_API_KEY secret.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Package version, e.g. 0.1.0
+        required: true
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - id: version
+        env:
+          VERSION: ${{ inputs.version || github.event.release.tag_name }}
+        run: echo "version=${VERSION#v}" >> "$GITHUB_OUTPUT"
+
+  ci:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+    with:
+      version: ${{ needs.version.outputs.version }}
+
+  publish:
+    needs: ci
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: packages
+          path: packages
+      - name: Push to nuget.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then echo "::error::NUGET_API_KEY is not set"; exit 1; fi
+          dotnet nuget push "packages/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

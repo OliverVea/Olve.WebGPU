@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- Generates Olve.WebGPU (raw interop and the C# layer) from Dawn's dawn.json; Program.cs has the usage. -->
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Olve.WebGPU.Generator</RootNamespace>
+    </PropertyGroup>
+</Project>

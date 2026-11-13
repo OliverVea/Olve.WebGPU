@@ -122,6 +122,34 @@ jobs:
             artifacts/layout-check/android-*/
           if-no-files-found: error
 
+  ios:
+    name: iOS (simulator)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet workload install ios
+      - name: Dawn's iOS libraries, and the layout checker for the simulator
+        run: |
+          for rid in ios-arm64 iossimulator; do
+            RID=$rid scripts/download-dawn.sh
+            RID=$rid scripts/build-natives.sh
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native-ios
+          path: |
+            artifacts/native/ios-arm64/
+            artifacts/native/iossimulator/
+          if-no-files-found: error
+      - name: Build the iOS test runner (project references)
+        run: dotnet build tests/Olve.WebGPU.Tests.iOS -c Release -p:Version=$VERSION
+      - name: Run the checks in an iPhone simulator
+        timeout-minutes: 15
+        run: scripts/run-ios-tests.sh "$(find tests/Olve.WebGPU.Tests.iOS/bin/Release -name '*.app' -maxdepth 3 | head -1)"
+
   browser:
     name: Browser (wasm, headless Chromium)
     runs-on: ubuntu-24.04
@@ -160,7 +188,7 @@ jobs:
 
   pack:
     name: Pack
-    needs: [native, android]
+    needs: [native, android, ios]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6

@@ -48,6 +48,22 @@ case "$RID" in
         "$cc++" -shared -static-libstdc++ -Wl,-z,max-page-size=16384 "$LAYOUT_DIR/webgpu_layout_check.o" "$LAYOUT_DIR/dawn_layout_check.o" \
             -o "$LAYOUT_DIR/libwebgpu_layout_check.so"
         ;;
+    ios-arm64 | iossimulator)
+        # iOS apps link static libraries only: Dawn's goes into the package as it comes, and the app's build force-loads it
+        cp "$DAWN_DIR/lib/libwebgpu_dawn.a" "$NATIVE_DIR/"
+        # The layout checker needs Xcode; only the iOS test runner uses it
+        if [[ "$(uname -s)" == Darwin ]]; then
+            objects=()
+            for target in $APPLE_TARGET; do
+                arch="${target%%-*}"
+                xcrun -sdk "$APPLE_SDK" clang -target "$target" -c -O1 -I"$DAWN_DIR/include" "$check_src" -o "$LAYOUT_DIR/webgpu_layout_check-$arch.o"
+                xcrun -sdk "$APPLE_SDK" clang++ -target "$target" -c -O1 -std=c++20 -Wno-invalid-offsetof -I"$DAWN_DIR/include" "$dawn_check_src" -o "$LAYOUT_DIR/dawn_layout_check-$arch.o"
+                xcrun libtool -static -o "$LAYOUT_DIR/libwebgpu_layout_check-$arch.a" "$LAYOUT_DIR/webgpu_layout_check-$arch.o" "$LAYOUT_DIR/dawn_layout_check-$arch.o"
+                objects+=("$LAYOUT_DIR/libwebgpu_layout_check-$arch.a")
+            done
+            xcrun lipo -create "${objects[@]}" -output "$LAYOUT_DIR/libwebgpu_layout_check.a"
+        fi
+        ;;
     win-x64)
         "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.def"
         cmd //c "$(cygpath -w "$ROOT/scripts/build-natives-windows.cmd")" "$(cygpath -w "$DAWN_DIR")" "$(cygpath -w "$NATIVE_DIR")" "$(cygpath -w "$LAYOUT_DIR")"

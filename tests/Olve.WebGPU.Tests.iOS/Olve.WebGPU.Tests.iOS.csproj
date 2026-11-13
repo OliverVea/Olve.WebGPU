@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <!-- The same checks as Olve.WebGPU.Tests, on iOS (tests/Shared/Checks.cs), printed to stdout as PASS or FAIL; scripts/run-ios-tests.sh
+         runs it in a simulator. Needs a Mac with Xcode, the ios workload, and the libraries scripts/build-natives.sh puts in artifacts/
+         for RID=ios-arm64 and RID=iossimulator. Not in the solution: it can't build on Linux or Windows. -->
+    <PropertyGroup>
+        <TargetFramework>net11.0-ios</TargetFramework>
+        <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
+        <OutputType>Exe</OutputType>
+        <ApplicationId>dev.olve.webgpu.tests</ApplicationId>
+        <ApplicationTitle>Olve.WebGPU tests</ApplicationTitle>
+        <ApplicationVersion>1</ApplicationVersion>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">iossimulator-arm64</RuntimeIdentifier>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <!-- Dawn's libraries from artifacts/native/ rather than from a package -->
+        <OlveWebGPUIosLibraries Condition="'$(NativeSource)' != 'package'">$(RepoRoot)artifacts/native/</OlveWebGPUIosLibraries>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="..\Shared\**\*.cs" />
+        <!-- Test-only: the layout checker, built for the simulator by scripts/build-natives.sh on a Mac -->
+        <NativeReference Include="$(RepoRoot)artifacts/layout-check/iossimulator/libwebgpu_layout_check.a" Kind="Static" ForceLoad="true" IsCxx="true"
+                         Condition="$(RuntimeIdentifier.StartsWith('iossimulator-'))" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' != 'package'">
+        <ProjectReference Include="..\..\src\Olve.WebGPU\Olve.WebGPU.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(NativeSource)' == 'package'">
+        <PackageReference Include="Olve.WebGPU.Native" />
+    </ItemGroup>
+    <Import Project="$(RepoRoot)src/Olve.WebGPU.Native/buildTransitive/Olve.WebGPU.Native.targets" Condition="'$(NativeSource)' != 'package'" />
+</Project>

@@ -26,4 +26,17 @@
         <Error Condition="!Exists('$(_OlveWebGPUDxcBin)dxcompiler.dll')"
                Text="Olve.WebGPU.Native: Microsoft.Direct3D.DXC $(OlveWebGPUDxcVersion) not found in $(NuGetPackageRoot). It is a dependency of Olve.WebGPU.Native: restore, and don't override its version. Set OlveWebGPUCopyDxc=false to skip DXC (D3D12 then can't compile shaders)." />
     </Target>
+
+    <!-- iOS: Dawn's static library linked into the app. Force-loaded, because nothing in the app references Dawn's symbols at link
+         time: the binding resolves its P/Invokes in the app's own executable at run time. OlveWebGPUIosLibraries overrides the folder
+         holding ios-arm64/ and iossimulator/ (this repo's tests use artifacts/native/). -->
+    <PropertyGroup Condition="'$(TargetPlatformIdentifier)' == 'ios'">
+        <OlveWebGPUIosLibraries Condition="'$(OlveWebGPUIosLibraries)' == ''">$(MSBuildThisFileDirectory)../ios/</OlveWebGPUIosLibraries>
+        <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('iossimulator-'))">iossimulator</_OlveWebGPUIosSlice>
+        <_OlveWebGPUIosSlice Condition="$(RuntimeIdentifier.StartsWith('ios-'))">ios-arm64</_OlveWebGPUIosSlice>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'ios' and '$(_OlveWebGPUIosSlice)' != ''">
+        <NativeReference Include="$(OlveWebGPUIosLibraries)$(_OlveWebGPUIosSlice)/libwebgpu_dawn.a" Kind="Static" ForceLoad="true" IsCxx="true"
+                         Frameworks="Metal QuartzCore IOSurface Foundation CoreFoundation UIKit" />
+    </ItemGroup>
 </Project>

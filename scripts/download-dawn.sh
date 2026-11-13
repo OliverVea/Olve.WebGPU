@@ -11,6 +11,14 @@ elif [[ "$DAWN_ASSET" == android ]]; then
     (cd "$DAWN_DIR" && tar -xzf headers.tar.gz --strip-components=1 dawn-headers/include && rm headers.tar.gz)
     (cd "$DAWN_DIR" && tar -xzf android.tar.gz --strip-components=2 -C lib "dawn-android-$DAWN_COMMIT/$ANDROID_ABI/libwebgpu_dawn.a" && rm android.tar.gz)
     touch "$DAWN_DIR/.complete"
+elif [[ "$DAWN_ASSET" == apple ]]; then
+    mkdir -p "$DAWN_DIR/lib"
+    echo "downloading dawn-headers and dawn-apple ($DAWN_TAG, $APPLE_SLICE)"
+    curl -sSfL "https://github.com/google/dawn/releases/download/$DAWN_TAG/dawn-headers-$DAWN_COMMIT.tar.gz" -o "$DAWN_DIR/headers.tar.gz"
+    curl -sSfL "https://github.com/google/dawn/releases/download/$DAWN_TAG/dawn-apple-$DAWN_COMMIT.xcframework.tar.gz" -o "$DAWN_DIR/apple.tar.gz"
+    (cd "$DAWN_DIR" && tar -xzf headers.tar.gz --strip-components=1 dawn-headers/include && rm headers.tar.gz)
+    (cd "$DAWN_DIR" && tar -xzf apple.tar.gz --strip-components=2 -C lib "dawn-apple-$DAWN_COMMIT.xcframework/$APPLE_SLICE/libwebgpu_dawn.a" && rm apple.tar.gz)
+    touch "$DAWN_DIR/.complete"
 else
     name="Dawn-$DAWN_COMMIT-$DAWN_ASSET-Release"
     mkdir -p "$DAWN_DIR"

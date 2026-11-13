@@ -21,6 +21,9 @@ case "$RID" in
     # Android: one archive with a static library per ABI, and the headers from the release's headers archive
     android-arm64) DAWN_ASSET=android; ANDROID_ABI=arm64-v8a; ANDROID_TRIPLE=aarch64-linux-android ;;
     android-x64) DAWN_ASSET=android; ANDROID_ABI=x86_64; ANDROID_TRIPLE=x86_64-linux-android ;;
+    # iOS: static libraries from the release's Apple xcframework. iossimulator is one library for both simulator architectures.
+    ios-arm64) DAWN_ASSET=apple; APPLE_SLICE=ios-arm64; APPLE_SDK=iphoneos; APPLE_TARGET=arm64-apple-ios14.0 ;;
+    iossimulator) DAWN_ASSET=apple; APPLE_SLICE=ios-arm64_x86_64-simulator; APPLE_SDK=iphonesimulator; APPLE_TARGET="arm64-apple-ios14.0-simulator x86_64-apple-ios14.0-simulator" ;;
     *) echo "unsupported RID $RID" >&2; exit 1 ;;
 esac
 # Dawn's own Android build targets API 26 (google/dawn .github/workflows/ci.yml, NDK r27d)

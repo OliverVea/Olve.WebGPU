@@ -21,8 +21,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleRequestDeviceCallbackTask(RequestDeviceStatus status, nint device, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<RequestDeviceResult>>(userdata1);
-        completion.SetResult(new RequestDeviceResult(status, new Device(device), ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<RequestDeviceResult>>(userdata1);
+            completion.SetResult(new RequestDeviceResult(status, new Device(device), ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("RequestDeviceCallback", exception);
+        }
     }
 
     public static nint CreateComputePipelineAsyncCallbackTask => OperatingSystem.IsBrowser()
@@ -37,8 +44,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleCreateComputePipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<CreateComputePipelineResult>>(userdata1);
-        completion.SetResult(new CreateComputePipelineResult(status, new ComputePipeline(pipeline), ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<CreateComputePipelineResult>>(userdata1);
+            completion.SetResult(new CreateComputePipelineResult(status, new ComputePipeline(pipeline), ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("CreateComputePipelineAsyncCallback", exception);
+        }
     }
 
     public static nint CreateRenderPipelineAsyncCallbackTask => OperatingSystem.IsBrowser()
@@ -53,8 +67,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleCreateRenderPipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<CreateRenderPipelineResult>>(userdata1);
-        completion.SetResult(new CreateRenderPipelineResult(status, new RenderPipeline(pipeline), ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<CreateRenderPipelineResult>>(userdata1);
+            completion.SetResult(new CreateRenderPipelineResult(status, new RenderPipeline(pipeline), ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("CreateRenderPipelineAsyncCallback", exception);
+        }
     }
 
     public static nint PopErrorScopeCallbackTask => OperatingSystem.IsBrowser()
@@ -69,8 +90,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandlePopErrorScopeCallbackTask(PopErrorScopeStatus status, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<PopErrorScopeResult>>(userdata1);
-        completion.SetResult(new PopErrorScopeResult(status, type, ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<PopErrorScopeResult>>(userdata1);
+            completion.SetResult(new PopErrorScopeResult(status, type, ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("PopErrorScopeCallback", exception);
+        }
     }
 
     public static nint BufferMapCallbackTask => OperatingSystem.IsBrowser()
@@ -85,8 +113,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleBufferMapCallbackTask(MapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<BufferMapResult>>(userdata1);
-        completion.SetResult(new BufferMapResult(status, ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<BufferMapResult>>(userdata1);
+            completion.SetResult(new BufferMapResult(status, ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("BufferMapCallback", exception);
+        }
     }
 
     public static nint CompilationInfoCallbackTask => (nint)(delegate* unmanaged<CompilationInfoRequestStatus, WGPUCompilationInfo*, void*, void*, void>)&OnCompilationInfoCallbackTask;
@@ -94,8 +129,15 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnCompilationInfoCallbackTask(CompilationInfoRequestStatus status, WGPUCompilationInfo* compilationInfo, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<CompilationInfoResult>>(userdata1);
-        completion.SetResult(new CompilationInfoResult(status, compilationInfo == null ? default : Marshalling.FromNative(*compilationInfo)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<CompilationInfoResult>>(userdata1);
+            completion.SetResult(new CompilationInfoResult(status, compilationInfo == null ? default : Marshalling.FromNative(*compilationInfo)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("CompilationInfoCallback", exception);
+        }
     }
 
     public static nint RequestAdapterCallbackTask => OperatingSystem.IsBrowser()
@@ -110,8 +152,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleRequestAdapterCallbackTask(RequestAdapterStatus status, nint adapter, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<RequestAdapterResult>>(userdata1);
-        completion.SetResult(new RequestAdapterResult(status, new Adapter(adapter), ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<RequestAdapterResult>>(userdata1);
+            completion.SetResult(new RequestAdapterResult(status, new Adapter(adapter), ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("RequestAdapterCallback", exception);
+        }
     }
 
     public static nint QueueWorkDoneCallbackTask => OperatingSystem.IsBrowser()
@@ -126,8 +175,15 @@ internal static unsafe partial class Callbacks
 
     private static void HandleQueueWorkDoneCallbackTask(QueueWorkDoneStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<QueueWorkDoneResult>>(userdata1);
-        completion.SetResult(new QueueWorkDoneResult(status, ToManaged(message)));
+        try
+        {
+            var completion = Take<TaskCompletionSource<QueueWorkDoneResult>>(userdata1);
+            completion.SetResult(new QueueWorkDoneResult(status, ToManaged(message)));
+        }
+        catch (Exception exception)
+        {
+            Escaped("QueueWorkDoneCallback", exception);
+        }
     }
 
     public static nint DeviceLostCallbackDelegate => OperatingSystem.IsBrowser()
@@ -142,9 +198,16 @@ internal static unsafe partial class Callbacks
 
     private static void HandleDeviceLostCallbackDelegate(nint* device, DeviceLostReason reason, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        Find<DeviceLostCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), reason, ToManaged(message));
-        Unregister(userdata1);
-        Unregister(userdata2);
+        try
+        {
+            Find<DeviceLostCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), reason, ToManaged(message));
+            Unregister(userdata1);
+            Unregister(userdata2);
+        }
+        catch (Exception exception)
+        {
+            Escaped("DeviceLostCallback", exception);
+        }
     }
 
     public static nint UncapturedErrorCallbackDelegate => OperatingSystem.IsBrowser()
@@ -159,7 +222,14 @@ internal static unsafe partial class Callbacks
 
     private static void HandleUncapturedErrorCallbackDelegate(nint* device, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        Find<UncapturedErrorCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), type, ToManaged(message));
+        try
+        {
+            Find<UncapturedErrorCallback>(userdata1)?.Invoke(device == null ? default : new Device(*device), type, ToManaged(message));
+        }
+        catch (Exception exception)
+        {
+            Escaped("UncapturedErrorCallback", exception);
+        }
     }
 
 }

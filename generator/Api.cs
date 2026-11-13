@@ -778,13 +778,17 @@ public sealed class Api
     /// A struct argument (a message's string view) is a value on desktop, but in the browser wasm's C ABI passes it as a pointer to a copy,
     /// and the runtime's entry hands that pointer over as the struct's first field. Such callbacks get a second entry for the browser
     /// that takes the pointer, and the property picks one at run time, since one assembly serves both.
+    /// An exception can't unwind into the native caller, so the body ends the process with it instead (Callbacks.Escaped).
     /// </summary>
     private void EmitEntries(Entry cb, string entry, List<string> body, StringBuilder sb)
     {
         var byValue = cb.Args.Where(a => a.Annotation == "value" && _m.Entries.TryGetValue(_m.Resolve(a.Type), out var t) && t.Category == "structure").ToList();
         var signature = RawCallbackSignature(cb);
         var parameters = RawCallbackParams(cb);
-        var block = string.Concat(body.Select(line => $"        {line}\n"));
+        var block = "        try\n        {\n"
+                    + string.Concat(body.Select(line => $"            {line}\n"))
+                    + "        }\n        catch (Exception exception)\n        {\n"
+                    + $"            Escaped(\"{Pascal(cb.Name)}\", exception);\n        }}\n";
         if (byValue.Count == 0)
         {
             sb.Append($"    public static nint {entry} => (nint)(delegate* unmanaged<{signature}, void>)&On{entry};\n\n");

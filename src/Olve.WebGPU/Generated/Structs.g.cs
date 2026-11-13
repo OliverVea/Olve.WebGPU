@@ -2,7 +2,6 @@
 #nullable enable
 
 using System.Runtime.InteropServices;
-using Olve.Results;
 using Olve.WebGPU.Native;
 using static Olve.WebGPU.Native.Interop;
 
@@ -656,5 +655,95 @@ public delegate void UncapturedErrorCallback(Device device, ErrorType type, stri
 public record struct UncapturedErrorCallbackInfo()
 {
     public UncapturedErrorCallback? Callback { get; init; }
+}
+
+/// <summary>The arguments of webgpu.h's request device callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct RequestDeviceResult(RequestDeviceStatus Status, Device Device, string Message)
+{
+    public bool IsSuccess => Status == RequestDeviceStatus.Success;
+
+    /// <summary>The device, and whether the request succeeded.</summary>
+    public bool TryGetValue(out Device device)
+    {
+        device = Device;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's create compute pipeline async callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct CreateComputePipelineResult(CreatePipelineAsyncStatus Status, ComputePipeline Pipeline, string Message)
+{
+    public bool IsSuccess => Status == CreatePipelineAsyncStatus.Success;
+
+    /// <summary>The pipeline, and whether the request succeeded.</summary>
+    public bool TryGetValue(out ComputePipeline pipeline)
+    {
+        pipeline = Pipeline;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's create render pipeline async callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct CreateRenderPipelineResult(CreatePipelineAsyncStatus Status, RenderPipeline Pipeline, string Message)
+{
+    public bool IsSuccess => Status == CreatePipelineAsyncStatus.Success;
+
+    /// <summary>The pipeline, and whether the request succeeded.</summary>
+    public bool TryGetValue(out RenderPipeline pipeline)
+    {
+        pipeline = Pipeline;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's pop error scope callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct PopErrorScopeResult(PopErrorScopeStatus Status, ErrorType Type, string Message)
+{
+    public bool IsSuccess => Status == PopErrorScopeStatus.Success;
+
+    /// <summary>The type, and whether the request succeeded.</summary>
+    public bool TryGetValue(out ErrorType type)
+    {
+        type = Type;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's buffer map callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct BufferMapResult(MapAsyncStatus Status, string Message)
+{
+    public bool IsSuccess => Status == MapAsyncStatus.Success;
+}
+
+/// <summary>The arguments of webgpu.h's compilation info callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct CompilationInfoResult(CompilationInfoRequestStatus Status, CompilationInfo CompilationInfo)
+{
+    public bool IsSuccess => Status == CompilationInfoRequestStatus.Success;
+
+    /// <summary>The compilation info, and whether the request succeeded.</summary>
+    public bool TryGetValue(out CompilationInfo compilationInfo)
+    {
+        compilationInfo = CompilationInfo;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's request adapter callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct RequestAdapterResult(RequestAdapterStatus Status, Adapter Adapter, string Message)
+{
+    public bool IsSuccess => Status == RequestAdapterStatus.Success;
+
+    /// <summary>The adapter, and whether the request succeeded.</summary>
+    public bool TryGetValue(out Adapter adapter)
+    {
+        adapter = Adapter;
+        return IsSuccess;
+    }
+}
+
+/// <summary>The arguments of webgpu.h's queue work done callback. <see cref="Status"/> says whether the request succeeded.</summary>
+public readonly partial record struct QueueWorkDoneResult(QueueWorkDoneStatus Status, string Message)
+{
+    public bool IsSuccess => Status == QueueWorkDoneStatus.Success;
 }
 

@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Olve.Results;
 
 namespace Olve.WebGPU.Tests;
 
@@ -9,16 +8,10 @@ public class CallbackLifetimeTests
     public async Task DeviceLostReleasesTheUncapturedErrorCallback()
     {
         using var instance = Wgpu.CreateInstance();
-        var adapterResult = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = true }));
-        if (adapterResult.TryPickProblems(out _, out var adapter))
-        {
-            adapterResult = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync());
-        }
-
-        await Assert.That(adapterResult.TryPickProblems(out _, out adapter)).IsFalse();
+        using var adapter = await OffscreenTriangle.RequestAdapterAsync(instance, Console.WriteLine);
         var (request, callback) = RequestDevice(adapter);
         var deviceResult = await instance.ProcessEventsUntilAsync(request);
-        await Assert.That(deviceResult.TryPickProblems(out _, out var device)).IsFalse();
+        await Assert.That(deviceResult.TryGetValue(out var device)).IsTrue().Because(deviceResult.Message);
 
         device.Destroy();
         device.Dispose();
@@ -28,12 +21,11 @@ public class CallbackLifetimeTests
         GC.Collect();
 
         await Assert.That(callback.IsAlive).IsFalse();
-        adapter.Dispose();
     }
 
     // Not inlined, so no local of the test keeps the callback alive
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static (Task<Result<Device>> Request, WeakReference Callback) RequestDevice(Adapter adapter)
+    private static (Task<RequestDeviceResult> Request, WeakReference Callback) RequestDevice(Adapter adapter)
     {
         var errors = new List<string>();
         UncapturedErrorCallback callback = (_, _, message) => errors.Add(message);

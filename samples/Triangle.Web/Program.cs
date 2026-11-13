@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
-using Olve.Results;
 using Olve.WebGPU;
 using Triangle;
 
@@ -17,18 +16,12 @@ public static partial class Entry
         {
             EmscriptenSurfaceSourceCanvasHTMLSelector = new EmscriptenSurfaceSourceCanvasHTMLSelector { Selector = "#canvas"u8 },
         });
-        var created = await TriangleRenderer.CreateAsync(instance, surface, 640, 480, Console.WriteLine);
-        if (created.TryPickProblems(out var problems, out var renderer))
+        _renderer = await TriangleRenderer.CreateAsync(instance, surface, 640, 480, Console.WriteLine);
+        if (_renderer is null)
         {
-            foreach (var problem in problems)
-            {
-                Console.WriteLine(problem.ToBriefString());
-            }
-
             return;
         }
 
-        _renderer = renderer;
         Console.WriteLine("renderer ready");
     }
 

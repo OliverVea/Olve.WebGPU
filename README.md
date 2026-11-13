@@ -2,7 +2,7 @@
 
 A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json` (the source of `webgpu.h`). The same assembly runs on desktop, through Dawn, and in the browser, through Emscripten's emdawnwebgpu.
 
-- **Faithful:** the objects, methods, descriptors and enums of `webgpu.h`, with C# names. Descriptors are structs with webgpu.h's defaults, arrays and strings are spans, and requests (`RequestAdapter`, `MapAsync`, ...) return `Task<Result<T>>` ([Olve.Results](https://www.nuget.org/packages/Olve.Results)).
+- **Faithful:** the objects, methods, descriptors and enums of `webgpu.h`, with C# names. Descriptors are structs with webgpu.h's defaults, arrays and strings are spans, and requests (`RequestAdapter`, `MapAsync`, ...) return a task of their callback's arguments: `RequestAdapterResult` has the `Status`, the `Adapter` and the `Message`, with `IsSuccess` and `TryGetValue(out adapter)`.
 - **No `unsafe` for callers:** the marshalling is generated, callers pass spans and structs.
 - **Nothing on top:** there's no safety layer and no ownership tracking. Handles are `IDisposable` record structs whose `Dispose` is webgpu.h's `Release`.
 - **80/20 coverage:** what the browser has, plus the native surface sources. Dawn-only extensions, futures (`WaitAny`) and out-chains aren't mapped yet; see the issues.
@@ -23,10 +23,11 @@ Descriptors get webgpu.h's defaults from `new()` and object initialisers, like w
 var instance = Wgpu.CreateInstance();
 // Requests complete inside ProcessEvents, as promises do in the browser's event loop
 var result = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync());
-if (result.TryPickProblems(out var problems, out var adapter)) { /* no adapter */ }
+if (!result.TryGetValue(out var adapter)) { /* result.Status is Unavailable or Error; result.Message says why */ }
 
-// Desktop only: pump on this thread, without async
-var device = instance.ProcessEventsUntil(adapter.RequestDeviceAsync(), TimeSpan.FromSeconds(5));
+// Desktop only: pump on this thread, without async; false if the request hasn't completed within the timeout
+if (instance.TryProcessEventsUntil(adapter.RequestDeviceAsync(), TimeSpan.FromSeconds(5), out var deviceResult)
+    && deviceResult.TryGetValue(out var device)) { /* ... */ }
 ```
 
 `Wgpu` holds webgpu.h's free functions and constants (`wgpuCreateInstance` is `Wgpu.CreateInstance`). Handles keep webgpu.h's names, so in a file that imports both `System` and `Olve.WebGPU`, `Buffer` is ambiguous with `System.Buffer`. Add `using Buffer = Olve.WebGPU.Buffer;` to resolve it.

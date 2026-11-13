@@ -2,7 +2,6 @@
 #nullable enable
 
 using System.Runtime.InteropServices;
-using Olve.Results;
 using Olve.WebGPU.Native;
 using static Olve.WebGPU.Native.Interop;
 
@@ -15,8 +14,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnRequestDeviceCallbackTask(RequestDeviceStatus status, nint device, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<Device>>>(userdata1);
-        completion.SetResult(status == RequestDeviceStatus.Success ? new Device(device) : new ResultProblem("request device callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<RequestDeviceResult>>(userdata1);
+        completion.SetResult(new RequestDeviceResult(status, new Device(device), ToManaged(message)));
     }
 
     public static nint CreateComputePipelineAsyncCallbackTask => (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateComputePipelineAsyncCallbackTask;
@@ -24,8 +23,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnCreateComputePipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<ComputePipeline>>>(userdata1);
-        completion.SetResult(status == CreatePipelineAsyncStatus.Success ? new ComputePipeline(pipeline) : new ResultProblem("create compute pipeline async callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<CreateComputePipelineResult>>(userdata1);
+        completion.SetResult(new CreateComputePipelineResult(status, new ComputePipeline(pipeline), ToManaged(message)));
     }
 
     public static nint CreateRenderPipelineAsyncCallbackTask => (nint)(delegate* unmanaged<CreatePipelineAsyncStatus, nint, WGPUStringView, void*, void*, void>)&OnCreateRenderPipelineAsyncCallbackTask;
@@ -33,8 +32,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnCreateRenderPipelineAsyncCallbackTask(CreatePipelineAsyncStatus status, nint pipeline, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<RenderPipeline>>>(userdata1);
-        completion.SetResult(status == CreatePipelineAsyncStatus.Success ? new RenderPipeline(pipeline) : new ResultProblem("create render pipeline async callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<CreateRenderPipelineResult>>(userdata1);
+        completion.SetResult(new CreateRenderPipelineResult(status, new RenderPipeline(pipeline), ToManaged(message)));
     }
 
     public static nint PopErrorScopeCallbackTask => (nint)(delegate* unmanaged<PopErrorScopeStatus, ErrorType, WGPUStringView, void*, void*, void>)&OnPopErrorScopeCallbackTask;
@@ -42,8 +41,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnPopErrorScopeCallbackTask(PopErrorScopeStatus status, ErrorType type, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<(ErrorType Type, string Message)>>>(userdata1);
-        completion.SetResult(status == PopErrorScopeStatus.Success ? (type, ToManaged(message)) : new ResultProblem("pop error scope callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<PopErrorScopeResult>>(userdata1);
+        completion.SetResult(new PopErrorScopeResult(status, type, ToManaged(message)));
     }
 
     public static nint BufferMapCallbackTask => (nint)(delegate* unmanaged<MapAsyncStatus, WGPUStringView, void*, void*, void>)&OnBufferMapCallbackTask;
@@ -51,8 +50,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnBufferMapCallbackTask(MapAsyncStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result>>(userdata1);
-        completion.SetResult(status == MapAsyncStatus.Success ? Result.Success() : new ResultProblem("buffer map callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<BufferMapResult>>(userdata1);
+        completion.SetResult(new BufferMapResult(status, ToManaged(message)));
     }
 
     public static nint CompilationInfoCallbackTask => (nint)(delegate* unmanaged<CompilationInfoRequestStatus, WGPUCompilationInfo*, void*, void*, void>)&OnCompilationInfoCallbackTask;
@@ -60,8 +59,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnCompilationInfoCallbackTask(CompilationInfoRequestStatus status, WGPUCompilationInfo* compilationInfo, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<CompilationInfo>>>(userdata1);
-        completion.SetResult(status == CompilationInfoRequestStatus.Success ? compilationInfo == null ? default : Marshalling.FromNative(*compilationInfo) : new ResultProblem("compilation info callback failed ({0})", status));
+        var completion = Take<TaskCompletionSource<CompilationInfoResult>>(userdata1);
+        completion.SetResult(new CompilationInfoResult(status, compilationInfo == null ? default : Marshalling.FromNative(*compilationInfo)));
     }
 
     public static nint RequestAdapterCallbackTask => (nint)(delegate* unmanaged<RequestAdapterStatus, nint, WGPUStringView, void*, void*, void>)&OnRequestAdapterCallbackTask;
@@ -69,8 +68,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnRequestAdapterCallbackTask(RequestAdapterStatus status, nint adapter, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result<Adapter>>>(userdata1);
-        completion.SetResult(status == RequestAdapterStatus.Success ? new Adapter(adapter) : new ResultProblem("request adapter callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<RequestAdapterResult>>(userdata1);
+        completion.SetResult(new RequestAdapterResult(status, new Adapter(adapter), ToManaged(message)));
     }
 
     public static nint QueueWorkDoneCallbackTask => (nint)(delegate* unmanaged<QueueWorkDoneStatus, WGPUStringView, void*, void*, void>)&OnQueueWorkDoneCallbackTask;
@@ -78,8 +77,8 @@ internal static unsafe partial class Callbacks
     [UnmanagedCallersOnly]
     private static void OnQueueWorkDoneCallbackTask(QueueWorkDoneStatus status, WGPUStringView message, void* userdata1, void* userdata2)
     {
-        var completion = Take<TaskCompletionSource<Result>>(userdata1);
-        completion.SetResult(status == QueueWorkDoneStatus.Success ? Result.Success() : new ResultProblem("queue work done callback failed ({0}): {1}", status, ToManaged(message)));
+        var completion = Take<TaskCompletionSource<QueueWorkDoneResult>>(userdata1);
+        completion.SetResult(new QueueWorkDoneResult(status, ToManaged(message)));
     }
 
     public static nint DeviceLostCallbackDelegate => (nint)(delegate* unmanaged<nint*, DeviceLostReason, WGPUStringView, void*, void*, void>)&OnDeviceLostCallbackDelegate;

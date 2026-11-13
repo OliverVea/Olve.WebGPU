@@ -8,13 +8,7 @@ public class ArenaTests
     public async Task LabelsLargerThanAChunkAndNestedCallsCopyCorrectly()
     {
         using var instance = Wgpu.CreateInstance();
-        var adapterResult = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync(new RequestAdapterOptions { ForceFallbackAdapter = true }));
-        if (adapterResult.TryPickProblems(out _, out var adapter))
-        {
-            adapterResult = await instance.ProcessEventsUntilAsync(instance.RequestAdapterAsync());
-        }
-
-        await Assert.That(adapterResult.TryPickProblems(out _, out adapter)).IsFalse();
+        using var adapter = await OffscreenTriangle.RequestAdapterAsync(instance, Console.WriteLine);
 
         // Dawn puts the descriptor's label in the validation message, so the messages show what the arena copied
         var outer = "outer-" + new string('o', 6000);
@@ -36,7 +30,7 @@ public class ArenaTests
                 },
             },
         }));
-        await Assert.That(deviceResult.TryPickProblems(out _, out device)).IsFalse();
+        await Assert.That(deviceResult.TryGetValue(out device)).IsTrue().Because(deviceResult.Message);
 
         device.CreateBuffer(InvalidBuffer(outer)).Dispose();
         for (var i = 0; i < 10 && messages.Count < 2; i++)
@@ -60,7 +54,6 @@ public class ArenaTests
         await Assert.That(GC.GetAllocatedBytesForCurrentThread() - before).IsEqualTo(0);
         device.Destroy();
         device.Dispose();
-        adapter.Dispose();
     }
 
     // MapRead and MapWrite together are invalid

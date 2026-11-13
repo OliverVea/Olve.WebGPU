@@ -10,7 +10,6 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Olve.Results" />
         <InternalsVisibleTo Include="Olve.WebGPU.Tests" />
         <InternalsVisibleTo Include="Olve.WebGPU.Tests.Browser" />
         <None Include="$(RepoRoot)README.md" Pack="true" PackagePath="\" />

@@ -139,8 +139,10 @@ jobs:
           echo "the workload requires Xcode ${required:-(no requirement reported)}"
           if [[ -n "$required" ]]; then
             sudo xcode-select -s "/Applications/Xcode_$required.app"
-            # The iOS SDK and xcrun follow DEVELOPER_DIR before xcode-select
+            # xcrun follows DEVELOPER_DIR; the iOS SDK follows XcodeLocation (an MSBuild property, also read from the environment)
+            # before the runner image's Settings.plist, which names its default Xcode
             echo "DEVELOPER_DIR=/Applications/Xcode_$required.app/Contents/Developer" >> "$GITHUB_ENV"
+            echo "XcodeLocation=/Applications/Xcode_$required.app" >> "$GITHUB_ENV"
           fi
           xcodebuild -version
       - name: Dawn's iOS libraries, and the layout checker for the simulator

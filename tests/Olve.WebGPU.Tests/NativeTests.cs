@@ -12,6 +12,17 @@ public class NativeTests
     }
 
     [Test]
+    public async Task DisposingADefaultHandleDoesNothing()
+    {
+        // wgpu*Release(NULL) crashes Dawn, so the test host only survives this if Dispose skips the call
+        default(Instance).Dispose();
+        default(Device).Dispose();
+        default(Buffer).Dispose();
+
+        await Assert.That(default(Buffer) == new Buffer(0)).IsTrue();
+    }
+
+    [Test]
     public async Task TriangleRendersOffscreenAndReadsBack()
     {
         var result = await OffscreenTriangle.RenderAsync(Console.WriteLine);

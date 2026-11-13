@@ -784,7 +784,8 @@ public sealed class Api
         sb.Append($"public readonly unsafe partial record struct {name}(nint Handle) : IDisposable\n{{\n");
         sb.Append($"    public void AddRef() => {Names.Function(o.Name, "add ref")}(Handle);\n\n");
         sb.Append($"    public void Release() => {Names.Function(o.Name, "release")}(Handle);\n\n");
-        sb.Append("    /// <summary>Releases the reference this value holds; copies share it.</summary>\n    public void Dispose() => Release();\n\n");
+        sb.Append("    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>\n");
+        sb.Append("    public void Dispose()\n    {\n        if (Handle != 0)\n        {\n            Release();\n        }\n    }\n\n");
         foreach (var m in MethodsOf(o))
         {
             EmitMethod(o, m.Name, m.Args, m.Returns, sb, $"{o.Name}.{m.Name}");

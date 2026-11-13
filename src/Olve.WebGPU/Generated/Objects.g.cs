@@ -14,8 +14,14 @@ public readonly unsafe partial record struct Surface(nint Handle) : IDisposable
 
     public void Release() => wgpuSurfaceRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void Configure(in SurfaceConfiguration config)
     {
@@ -65,8 +71,14 @@ public readonly unsafe partial record struct Adapter(nint Handle) : IDisposable
 
     public void Release() => wgpuAdapterRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public Status GetLimits(out Limits limits)
     {
@@ -135,8 +147,14 @@ public readonly unsafe partial record struct Device(nint Handle) : IDisposable
 
     public void Release() => wgpuDeviceRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public BindGroup CreateBindGroup(in BindGroupDescriptor descriptor)
     {
@@ -337,8 +355,14 @@ public readonly unsafe partial record struct BindGroup(nint Handle) : IDisposabl
 
     public void Release() => wgpuBindGroupRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -354,8 +378,14 @@ public readonly unsafe partial record struct Buffer(nint Handle) : IDisposable
 
     public void Release() => wgpuBufferRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public Task<Result> MapAsync(MapMode mode, nuint offset, nuint size)
     {
@@ -444,8 +474,14 @@ public readonly unsafe partial record struct Sampler(nint Handle) : IDisposable
 
     public void Release() => wgpuSamplerRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -461,8 +497,14 @@ public readonly unsafe partial record struct TextureView(nint Handle) : IDisposa
 
     public void Release() => wgpuTextureViewRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -478,8 +520,14 @@ public readonly unsafe partial record struct BindGroupLayout(nint Handle) : IDis
 
     public void Release() => wgpuBindGroupLayoutRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -495,8 +543,14 @@ public readonly unsafe partial record struct ExternalTexture(nint Handle) : IDis
 
     public void Release() => wgpuExternalTextureRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -512,8 +566,14 @@ public readonly unsafe partial record struct CommandBuffer(nint Handle) : IDispo
 
     public void Release() => wgpuCommandBufferRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -529,8 +589,14 @@ public readonly unsafe partial record struct CommandEncoder(nint Handle) : IDisp
 
     public void Release() => wgpuCommandEncoderRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public CommandBuffer Finish(in CommandBufferDescriptor descriptor)
     {
@@ -634,8 +700,14 @@ public readonly unsafe partial record struct QuerySet(nint Handle) : IDisposable
 
     public void Release() => wgpuQuerySetRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -668,8 +740,14 @@ public readonly unsafe partial record struct ComputePassEncoder(nint Handle) : I
 
     public void Release() => wgpuComputePassEncoderRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void InsertDebugMarker(ReadOnlySpan<byte> markerLabel)
     {
@@ -735,8 +813,14 @@ public readonly unsafe partial record struct ComputePipeline(nint Handle) : IDis
 
     public void Release() => wgpuComputePipelineRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public BindGroupLayout GetBindGroupLayout(uint groupIndex)
     {
@@ -758,8 +842,14 @@ public readonly unsafe partial record struct PipelineLayout(nint Handle) : IDisp
 
     public void Release() => wgpuPipelineLayoutRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -775,8 +865,14 @@ public readonly unsafe partial record struct ShaderModule(nint Handle) : IDispos
 
     public void Release() => wgpuShaderModuleRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public Task<Result<CompilationInfo>> GetCompilationInfoAsync()
     {
@@ -805,8 +901,14 @@ public readonly unsafe partial record struct RenderPipeline(nint Handle) : IDisp
 
     public void Release() => wgpuRenderPipelineRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public BindGroupLayout GetBindGroupLayout(uint groupIndex)
     {
@@ -828,8 +930,14 @@ public readonly unsafe partial record struct Texture(nint Handle) : IDisposable
 
     public void Release() => wgpuTextureRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public TextureView CreateView(in TextureViewDescriptor descriptor)
     {
@@ -917,8 +1025,14 @@ public readonly unsafe partial record struct Instance(nint Handle) : IDisposable
 
     public void Release() => wgpuInstanceRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public Surface CreateSurface(in SurfaceDescriptor descriptor)
     {
@@ -982,8 +1096,14 @@ public readonly unsafe partial record struct Queue(nint Handle) : IDisposable
 
     public void Release() => wgpuQueueRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void Submit(ReadOnlySpan<CommandBuffer> commands)
     {
@@ -1039,8 +1159,14 @@ public readonly unsafe partial record struct RenderBundle(nint Handle) : IDispos
 
     public void Release() => wgpuRenderBundleRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetLabel(ReadOnlySpan<byte> label)
     {
@@ -1056,8 +1182,14 @@ public readonly unsafe partial record struct RenderBundleEncoder(nint Handle) : 
 
     public void Release() => wgpuRenderBundleEncoderRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetPipeline(RenderPipeline pipeline)
     {
@@ -1146,8 +1278,14 @@ public readonly unsafe partial record struct RenderPassEncoder(nint Handle) : ID
 
     public void Release() => wgpuRenderPassEncoderRelease(Handle);
 
-    /// <summary>Releases the reference this value holds; copies share it.</summary>
-    public void Dispose() => Release();
+    /// <summary>Releases the reference this value holds; copies share it. Does nothing on a default handle.</summary>
+    public void Dispose()
+    {
+        if (Handle != 0)
+        {
+            Release();
+        }
+    }
 
     public void SetPipeline(RenderPipeline pipeline)
     {

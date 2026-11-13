@@ -130,8 +130,15 @@ internal static class OffscreenTriangle
             return problems.Prepend("Error while mapping the readback buffer");
         }
 
-        var pixels = readback.GetConstMappedRange(0, size).ToArray();
+        // webgpu.h's WGPU_WHOLE_MAP_SIZE: the rest of the buffer
+        var pixels = readback.GetConstMappedRange(0, nuint.MaxValue).ToArray();
         readback.Unmap();
+
+        // An unmapped buffer has no mapped range: webgpu.h returns null, which is an empty span
+        if (!readback.GetConstMappedRange(0, size).IsEmpty)
+        {
+            return new ResultProblem("GetConstMappedRange on an unmapped buffer returned a non-empty span");
+        }
 
         queue.Dispose();
         device.Destroy();

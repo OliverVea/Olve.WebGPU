@@ -30,6 +30,10 @@ scripts/run-ios-tests.sh <app>                             # tests/Olve.WebGPU.T
 
 `-p:NativeSource=package` builds the tests and the web sample against `artifacts/packages` (pack with `-p:Version=<v>` and pass the same version), instead of the projects and `artifacts/native`.
 
+## Publishing
+
+- Agents land their own changes without review: push to `main` once the checks under Commands pass. CI runs on the push.
+
 ## Rules
 
 - The binding stays faithful to `webgpu.h`: no safety layer, ownership tracking or helper abstractions. Change what the generator emits, not the generated files.

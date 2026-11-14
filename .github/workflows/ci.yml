@@ -5,6 +5,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # dawn-bump.yml runs it on a bump that changes the public API
+  workflow_dispatch:
   workflow_call:
     inputs:
       version:
@@ -23,15 +25,23 @@ env:
   TESTINGPLATFORM_TELEMETRY_OPTOUT: true
 
 jobs:
+  # Dawn built from source for the RIDs its releases don't cover (linux-arm64); a quick check when the pin's build is published
+  dawn:
+    uses: ./.github/workflows/dawn.yml
+    permissions:
+      contents: write
+
   native:
     name: Native (${{ matrix.rid }})
+    needs: dawn
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - { rid: win-x64, os: windows-latest }
-          - { rid: linux-x64, os: ubuntu-24.04 }
+          - { rid: linux-x64, os: ubuntu-24.04, manylinux: x86_64 }
+          - { rid: linux-arm64, os: ubuntu-24.04-arm, manylinux: aarch64 }
           - { rid: osx-arm64, os: macos-latest }
           - { rid: osx-x64, os: macos-15-intel }
     defaults:
@@ -53,9 +63,24 @@ jobs:
       - name: Download Dawn
         run: scripts/download-dawn.sh
       - name: Link webgpu_dawn and the layout checker
+        if: runner.os != 'Linux'
         run: scripts/build-natives.sh
-      - name: Check dawn.json, the emdawnwebgpu port and the generated code match the pin
+      # In the image Dawn's Linux build uses (glibc 2.28), with libstdc++ linked in, so the library runs on older distributions
+      - name: Link webgpu_dawn and the layout checker (in manylinux_2_28)
         if: runner.os == 'Linux'
+        run: |
+          source scripts/common.sh
+          docker run --rm -v "$PWD:/w" -w /w -e RID -u "$(id -u):$(id -g)" "quay.io/pypa/manylinux_2_28_${{ matrix.manylinux }}:$MANYLINUX_TAG" scripts/build-natives.sh
+      - name: Check the library needs glibc 2.28 at most, and not the system's libstdc++
+        if: runner.os == 'Linux'
+        run: |
+          lib=artifacts/native/$RID/libwebgpu_dawn.so
+          newest="$(objdump -T "$lib" | grep -oE 'GLIBC_[0-9.]+' | sort -uV | tail -1)"
+          echo "newest glibc symbol version: $newest"
+          [[ "$(printf '%s\n' GLIBC_2.28 "$newest" | sort -V | tail -1)" == GLIBC_2.28 ]] || { echo "::error::$lib needs $newest"; exit 1; }
+          if readelf -d "$lib" | grep -E 'NEEDED.*(libstdc\+\+|libgcc_s)'; then echo "::error::$lib needs the system's libstdc++ or libgcc"; exit 1; fi
+      - name: Check dawn.json, the emdawnwebgpu port and the generated code match the pin
+        if: matrix.rid == 'linux-x64'
         run: |
           source scripts/common.sh
           curl -sSfL "https://raw.githubusercontent.com/google/dawn/$DAWN_COMMIT/src/dawn/dawn.json" -o artifacts/dawn.json
@@ -85,8 +110,27 @@ jobs:
           else
             dotnet run --project samples/Triangle.Avalonia -c Release --no-build -- --frames 60
           fi
-      - name: Run the benchmarks once (a dry job, so they keep building and running; real runs are off-cadence)
+      # Under cage (a wlroots compositor) with its headless backend; the sample uses GLFW's Wayland platform. GLFW is the
+      # 3.4 Silk.NET ships: Silk.NET tries a system libglfw.so.3.3 first, which (3.3) has no platform choice
+      - name: Run the desktop sample on Wayland (cage, headless)
         if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y --no-install-recommends cage
+          export XDG_RUNTIME_DIR="$(mktemp -d)" WLR_BACKENDS=headless WLR_LIBINPUT_NO_DEVICES=1 WLR_RENDERER=pixman
+          bin="$PWD/samples/Triangle.Desktop/bin/Release/net10.0"
+          cat > "$RUNNER_TEMP/wayland.sh" <<EOF
+          unset DISPLAY
+          LD_LIBRARY_PATH="$bin/runtimes/$RID/native" dotnet "$bin/Triangle.Desktop.dll" --glfw-platform wayland --frames 60 > "$RUNNER_TEMP/wayland.log" 2>&1
+          echo \$? > "$RUNNER_TEMP/wayland.exit"
+          EOF
+          cage -- sh "$RUNNER_TEMP/wayland.sh"
+          cat "$RUNNER_TEMP/wayland.log"
+          [[ "$(cat "$RUNNER_TEMP/wayland.exit")" == 0 ]] || { echo "::error::the sample exited with $(cat "$RUNNER_TEMP/wayland.exit")"; exit 1; }
+          grep -qx 'surface: Wayland' "$RUNNER_TEMP/wayland.log" || { echo "::error::the sample didn't use a Wayland surface"; exit 1; }
+          grep -qx 'renderer ready' "$RUNNER_TEMP/wayland.log" || { echo "::error::the renderer didn't start"; exit 1; }
+          if grep -E 'WebGPU .*(error|lost)' "$RUNNER_TEMP/wayland.log"; then echo "::error::WebGPU errors while rendering on Wayland"; exit 1; fi
+      - name: Run the benchmarks once (a dry job, so they keep building and running; real runs are off-cadence)
+        if: matrix.rid == 'linux-x64'
         run: dotnet run --project benchmarks/Olve.WebGPU.Benchmarks -c Release -p:Version=$VERSION -- --filter '*' --job Dry --inProcess
       - uses: actions/upload-artifact@v7
         with:
@@ -253,6 +297,7 @@ jobs:
         include:
           - { rid: win-x64, os: windows-latest }
           - { rid: linux-x64, os: ubuntu-24.04 }
+          - { rid: linux-arm64, os: ubuntu-24.04-arm }
           - { rid: osx-arm64, os: macos-latest }
           - { rid: osx-x64, os: macos-15-intel }
     defaults:

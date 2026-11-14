@@ -11,10 +11,12 @@ check_src="$ROOT/native/webgpu_layout_check.c"
 dawn_check_src="$ROOT/native/dawn_layout_check.cpp"
 
 case "$RID" in
-    linux-x64)
+    linux-*)
+        # Link where Dawn was built (a manylinux_2_28 container, glibc 2.28: see ci.yml), with libstdc++ and libgcc inside,
+        # so the library runs wherever glibc is 2.28 or newer, whatever libstdc++ the system has
         "$PYTHON" "$ROOT/scripts/mkdef.py" "$header" "$LAYOUT_DIR/webgpu_dawn.map"
         g++ -shared -o "$NATIVE_DIR/libwebgpu_dawn.so" -Wl,--version-script="$LAYOUT_DIR/webgpu_dawn.map" \
-            -Wl,--gc-sections -Wl,--no-undefined -Wl,-soname,libwebgpu_dawn.so \
+            -Wl,--gc-sections -Wl,--no-undefined -Wl,-soname,libwebgpu_dawn.so -static-libstdc++ -static-libgcc \
             -Wl,--whole-archive "$DAWN_DIR/lib64/libwebgpu_dawn.a" -Wl,--no-whole-archive -ldl -lrt -lpthread -lm
         strip --strip-unneeded "$NATIVE_DIR/libwebgpu_dawn.so"
         gcc -c -fPIC -O1 -I"$DAWN_DIR/include" "$check_src" -o "$LAYOUT_DIR/webgpu_layout_check.o"

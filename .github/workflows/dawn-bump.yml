@@ -1,0 +1,111 @@
+name: Dawn bump
+
+# Daily: when Dawn has a newer release, moves the pin (dawn/version.env, dawn.json, the emdawnwebgpu port, the generator
+# output) to it on a branch dawn/<tag>.
+#   Public API unchanged: a patch. Runs publish.yml on the branch, which builds and tests everything and, only if all of it
+#   passes, fast-forwards main to the bump, tags v<next patch> and pushes the packages to nuget.org.
+#   Public API changed (Generated/PublicApi.g.txt): not a patch. Runs ci.yml on the branch and opens an issue for a person.
+# Pushes and releases made with GITHUB_TOKEN start no workflows, so this starts them itself (workflow_dispatch).
+on:
+  schedule:
+    # Dawn publishes its releases at about 08:00 UTC
+    - cron: '30 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+concurrency:
+  group: dawn-bump
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Find Dawn's latest release, with every archive the build downloads
+        id: latest
+        run: |
+          source scripts/common.sh
+          tag="$(gh release view -R google/dawn --json tagName --jq .tagName)"
+          assets="$(gh release view -R google/dawn "$tag" --json assets --jq '.assets[].name')"
+          # The commit is in the asset names (dawn-headers-<commit>.tar.gz)
+          commit="$(sed -nE 's/^dawn-headers-([0-9a-f]{40})\.tar\.gz$/\1/p' <<< "$assets")"
+          echo "Dawn's latest release: $tag ($commit); the pin: $DAWN_TAG"
+          # Tags are v<yyyymmdd>.<hhmmss>, so they sort as strings
+          if [[ ! "$tag" > "$DAWN_TAG" ]]; then echo "the pin is current"; exit 0; fi
+          if [[ -z "$commit" ]]; then echo "::notice::$tag has no headers archive yet"; exit 0; fi
+          for asset in "Dawn-$commit-windows-latest-Release.tar.gz" "Dawn-$commit-ubuntu-latest-Release.tar.gz" \
+                       "Dawn-$commit-macos-latest-Release.tar.gz" "Dawn-$commit-macos-15-intel-Release.tar.gz" \
+                       "dawn-android-$commit.tar.gz" "dawn-apple-$commit.xcframework.tar.gz" "emdawnwebgpu-$tag.remoteport.py"; do
+            grep -qxF "$asset" <<< "$assets" || { echo "::notice::$tag has no $asset yet"; exit 0; }
+          done
+          if git ls-remote --exit-code --heads origin "dawn/$tag" > /dev/null; then
+            echo "::notice::the branch dawn/$tag exists: a bump to $tag is running, or failed and waits for a person"; exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-dotnet@v5
+        if: steps.latest.outputs.tag
+        with:
+          global-json-file: global.json
+      - name: Move the pin and regenerate
+        if: steps.latest.outputs.tag
+        env:
+          TAG: ${{ steps.latest.outputs.tag }}
+          COMMIT: ${{ steps.latest.outputs.commit }}
+        run: |
+          sed -i -E "s/^DAWN_TAG=.*/DAWN_TAG=$TAG/; s/^DAWN_COMMIT=.*/DAWN_COMMIT=$COMMIT/" dawn/version.env
+          curl -sSfL "https://raw.githubusercontent.com/google/dawn/$COMMIT/src/dawn/dawn.json" -o dawn/dawn.json
+          curl -sSfL "https://github.com/google/dawn/releases/download/$TAG/emdawnwebgpu-$TAG.remoteport.py" -o src/Olve.WebGPU.Browser/port/emdawnwebgpu.remoteport.py
+          dotnet run --project generator -c Release
+          git status --short
+      - name: Commit it on dawn/<tag>
+        id: commit
+        if: steps.latest.outputs.tag
+        env:
+          TAG: ${{ steps.latest.outputs.tag }}
+        run: |
+          old="$(git show HEAD:dawn/version.env | sed -nE 's/^DAWN_TAG=(.*)$/\1/p')"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "dawn/$TAG"
+          git add -A
+          git commit -q -m "chore(dawn): bump Dawn to $TAG (was $old)"
+          git push -q origin "dawn/$TAG"
+          if git diff --quiet HEAD~1 HEAD -- src/Olve.WebGPU/Generated/PublicApi.g.txt; then echo "api=same" >> "$GITHUB_OUTPUT"; else echo "api=changed" >> "$GITHUB_OUTPUT"; fi
+          # The next patch after the newest v<major>.<minor>.<patch> tag
+          latest="$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -1)"
+          IFS=. read -r major minor patch <<< "${latest#v}"
+          echo "version=$major.$minor.$((patch + 1))" >> "$GITHUB_OUTPUT"
+      - name: Release the patch (publish.yml on the branch)
+        if: steps.commit.outputs.api == 'same'
+        env:
+          TAG: ${{ steps.latest.outputs.tag }}
+          VERSION: ${{ steps.commit.outputs.version }}
+        run: |
+          gh workflow run publish.yml --ref "dawn/$TAG" -f version="$VERSION"
+          echo "::notice::publish.yml runs v$VERSION on dawn/$TAG"
+      - name: Run CI on the branch and ask a person (the public API changed)
+        if: steps.commit.outputs.api == 'changed'
+        env:
+          TAG: ${{ steps.latest.outputs.tag }}
+        run: |
+          gh workflow run ci.yml --ref "dawn/$TAG"
+          git diff HEAD~1 HEAD -- src/Olve.WebGPU/Generated/PublicApi.g.txt > "$RUNNER_TEMP/api.diff"
+          {
+            echo "Dawn $TAG changes the public API, so it isn't released as a patch. The bump is on the branch \`dawn/$TAG\`; CI runs there."
+            echo
+            echo "To release it: review the change, push it to main, and publish a release v<next minor>.0."
+            echo
+            echo '```diff'
+            head -c 50000 "$RUNNER_TEMP/api.diff"
+            echo '```'
+          } > "$RUNNER_TEMP/issue.md"
+          gh issue create --title "Dawn $TAG changes the public API" --body-file "$RUNNER_TEMP/issue.md"

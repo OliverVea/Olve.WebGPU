@@ -14,6 +14,8 @@ on:
 
 jobs:
   version:
+    # Not the dawn-<commit> prereleases dawn.yml publishes Dawn's source builds on
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -26,11 +28,45 @@ jobs:
   ci:
     needs: version
     uses: ./.github/workflows/ci.yml
+    # ci.yml's first job publishes Dawn's source builds (dawn.yml)
+    permissions:
+      contents: write
     with:
       version: ${{ needs.version.outputs.version }}
 
+  # A Dawn bump (dawn-bump.yml) runs here on its branch dawn/<tag>. With everything green, the bump goes onto main
+  # (fast-forward only: if main moved meanwhile, this fails and the branch waits for a person) and gets its release.
+  promote:
+    needs: [version, ci]
+    if: startsWith(github.ref, 'refs/heads/dawn/')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Fast-forward main to the bump
+        run: |
+          git fetch -q origin main
+          git merge-base --is-ancestor origin/main HEAD || { echo "::error::main moved since the bump: rebase $GITHUB_REF_NAME onto main and release it by hand"; exit 1; }
+          git push origin HEAD:main
+      # Made with GITHUB_TOKEN, so it doesn't start this workflow again
+      - name: Tag and release v${{ needs.version.outputs.version }}
+        run: |
+          tag="$(sed -nE 's/^DAWN_TAG=(.*)$/\1/p' dawn/version.env)"
+          old="$(git show HEAD~1:dawn/version.env | sed -nE 's/^DAWN_TAG=(.*)$/\1/p')"
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --title "v$VERSION" \
+            --notes "Wraps Dawn **$tag** (was $old). The public API is unchanged. Released by dawn-bump.yml after the full CI run."
+          git push origin --delete "$GITHUB_REF_NAME"
+
   publish:
-    needs: ci
+    needs: [ci, promote]
+    # After the promotion when there is one (a Dawn bump); otherwise straight after CI
+    if: ${{ !cancelled() && needs.ci.result == 'success' && needs.promote.result != 'failure' }}
     runs-on: ubuntu-24.04
     permissions:
       id-token: write

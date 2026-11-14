@@ -30,7 +30,7 @@ An optional struct member is `T?`, except when `T` is itself a `ref struct`, whi
 | Package | What it is |
 |---|---|
 | `Olve.WebGPU` | The binding (net10.0). No implementation: a library can reference it alone, but an app can't. |
-| `Olve.WebGPU.Native` | Desktop, Android and iOS: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, osx-arm64, osx-x64, android-arm64 and android-x64, and its static library for iOS devices and the simulator, which an iOS app's build links in. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
+| `Olve.WebGPU.Native` | Desktop, Android and iOS: Dawn's `webgpu_dawn` shared library for win-x64, linux-x64, linux-arm64, osx-arm64, osx-x64, android-arm64 and android-x64, and its static library for iOS devices and the simulator, which an iOS app's build links in. On Windows, it depends on Microsoft's `Microsoft.Direct3D.DXC` and copies `dxcompiler.dll` and `dxil.dll` next to `webgpu_dawn.dll` in the build and publish output. |
 | `Olve.WebGPU.Browser` | WebAssembly: build files that link emdawnwebgpu, from the same Dawn release, into `dotnet.native.wasm`. Needs .NET 11's `wasm-tools` workload. |
 
 **An app must reference `Olve.WebGPU.Native` (desktop, Android, iOS) or `Olve.WebGPU.Browser` (`browser-wasm`).** Both bring in `Olve.WebGPU`. An app that references only `Olve.WebGPU` builds, but its first WebGPU call throws `DllNotFoundException` for `webgpu_dawn`. Reference the same version of all three packages; they always ship together. The release notes name the Dawn release they wrap, which is pinned in [`dawn/version.env`](https://github.com/OliverVea/Olve.WebGPU/blob/main/dawn/version.env).
@@ -55,7 +55,7 @@ The triangle samples ([`samples/`](https://github.com/OliverVea/Olve.WebGPU/tree
 | Platform | Status |
 |---|---|
 | Windows x64 | D3D12, compiling shaders with DXC from `Microsoft.Direct3D.DXC`. Needs the VC++ runtime. Dawn's own search doesn't find `vulkan-1.dll` or `d3dcompiler_47.dll` in System32; for the Vulkan backend, pass System32 in `DawnInstanceDescriptor.AdditionalRuntimeSearchPaths` (below). |
-| Linux x64 | Vulkan on X11. Dawn's prebuilt library has no Wayland surfaces. Built on Ubuntu 24.04, so it needs glibc 2.39 or newer. |
+| Linux (x64, arm64) | Vulkan on X11 and Wayland. Needs glibc 2.28 or newer (built and linked in manylinux_2_28, like Dawn's own Linux build, with libstdc++ linked in). Dawn's releases have no arm64 Linux build, so this repo builds that one from source (`scripts/build-dawn.sh`). CI runs the desktop sample on Wayland under cage, headless, on both. |
 | macOS (arm64, x64) | Metal. A window needs a `CAMetalLayer` for `SurfaceSourceMetalLayer`; the desktop sample makes one through the Objective-C runtime (`samples/Triangle.Desktop/MetalLayer.cs`), and CI runs it in a window on both macOS runners. |
 | Android (arm64, x64) | Vulkan, from Android 8 (API 26), Dawn's minimum. 16 KB pages, as Google Play requires. The surface comes from `SurfaceSourceAndroidNativeWindow` (an `ANativeWindow`). CI runs the checks on an Android 14 emulator. |
 | iOS (devices, simulator) | Metal, from iOS 14. Dawn's static library is linked into the app (force-loaded) and the binding finds its functions in the app's executable. Dawn's xcframework compiles webgpu.h's functions with hidden visibility, so the package ships its libraries with exactly those 279 functions made visible (`scripts/unhide-symbols.py`). CI runs the checks in an iPhone simulator; devices are linked but not run. |
@@ -86,7 +86,9 @@ dotnet run --project tests/Olve.WebGPU.Tests             # layout check + offscr
 dotnet run --project samples/Triangle.Desktop            # the triangle in a window
 ```
 
-On Windows, the scripts need Git Bash, Python, and Visual Studio's C++ tools. On Linux, they need g++. On macOS, they need the Xcode command line tools.
+On Windows, the scripts need Git Bash, Python, and Visual Studio's C++ tools. On Linux, they need g++; CI links in a manylinux_2_28 container instead (`MANYLINUX_TAG` in `dawn/version.env`), so the library needs only glibc 2.28. On macOS, they need the Xcode command line tools.
+
+For linux-arm64, `download-dawn.sh` takes Dawn from this repo's prerelease `dawn-<commit>`: Dawn's releases have no arm64 Linux build, so `.github/workflows/dawn.yml` builds it with `scripts/build-dawn.sh` (about an hour) when the pin changes, and publishes it there.
 
 The browser tests and the web sample need `dotnet workload install wasm-tools`. `scripts/verify-web.py` runs them in headless Chromium.
 
@@ -134,7 +136,7 @@ dotnet run --project generator                           # regenerate
 dotnet run --project generator -- --manifest api.txt     # also write the 80/20 subset of the public API
 ```
 
-To move to a new Dawn release:
+`.github/workflows/dawn-bump.yml` moves to each new Dawn release by itself (daily). When the public API is unchanged, it releases the next patch through `publish.yml`, after the whole CI run passes, and fast-forwards main to the bump. When the API changes, it opens an issue instead, since that's not a patch. By hand:
 
 1. Update `DAWN_TAG` and `DAWN_COMMIT` in `dawn/version.env`.
 2. Fetch `src/dawn/dawn.json` at that commit into `dawn/`, and regenerate.

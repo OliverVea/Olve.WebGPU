@@ -1,0 +1,59 @@
+name: Dawn
+
+# Builds Dawn from source at the pin (dawn/version.env) for the RIDs Dawn's releases don't cover, and publishes the archives
+# on this repo's prerelease dawn-<commit>, where scripts/download-dawn.sh fetches them. ci.yml calls it first; a RID whose
+# archive is already published is skipped, so this takes seconds unless the pin changed.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Dawn (${{ matrix.rid }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: linux-arm64, os: ubuntu-24.04-arm, manylinux: aarch64 }
+    env:
+      RID: ${{ matrix.rid }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Look for the published archive
+        id: published
+        run: |
+          source scripts/common.sh
+          archive="Dawn-$DAWN_COMMIT-$RID-Release.tar.gz"
+          echo "release=dawn-$DAWN_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+          if gh release view "dawn-$DAWN_COMMIT" --json assets --jq '.assets[].name' 2>/dev/null | grep -qxF "$archive"; then
+            echo "$archive is published"
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          fi
+      # About an hour: the library alone, without Dawn's tests, samples or Tint's tools
+      - name: Build Dawn in manylinux_2_28 (glibc 2.28, like Dawn's own Linux build)
+        if: steps.published.outputs.exists != 'true'
+        timeout-minutes: 300
+        run: |
+          source scripts/common.sh
+          docker run --rm -v "$PWD:/w" -w /w -e RID "quay.io/pypa/manylinux_2_28_${{ matrix.manylinux }}:$MANYLINUX_TAG" scripts/build-dawn.sh
+      - name: Publish it on the prerelease dawn-<commit>
+        if: steps.published.outputs.exists != 'true'
+        env:
+          RELEASE: ${{ steps.published.outputs.release }}
+          ARCHIVE: ${{ steps.published.outputs.archive }}
+          # The commit that pins it (on a PR, its head rather than the merge commit)
+          TARGET: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          source scripts/common.sh
+          # A prerelease, never the latest release; publish.yml only publishes packages for v* releases
+          gh release view "$RELEASE" > /dev/null 2>&1 || gh release create "$RELEASE" --prerelease --latest=false --target "$TARGET" \
+            --title "Dawn $DAWN_TAG built from source" \
+            --notes "Dawn $DAWN_TAG ($DAWN_COMMIT) built by scripts/build-dawn.sh for the RIDs Dawn's releases don't cover. Not a package release: scripts/download-dawn.sh reads these archives." \
+            || gh release view "$RELEASE" > /dev/null
+          gh release upload "$RELEASE" "artifacts/dawn-build/$ARCHIVE" --clobber

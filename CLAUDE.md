@@ -9,7 +9,8 @@ A faithful C# mapping of WebGPU, generated from Dawn's `dawn.json`. The README d
 - `src/Olve.WebGPU.Native/`, `src/Olve.WebGPU.Browser/`: packaging only. The Native package packs `artifacts/native/<rid>/`. The Browser package ships `buildTransitive` files, the empty `webgpu_dawn.c` module, and the pinned release's emdawnwebgpu remote port (`port/`).
 - `native/`: the layout checker: struct layouts and enum values (`layout_check.g.c`), webgpu.h's `*_INIT` defaults (`init_check.g.c`), and the C++ layout of `DawnInstanceDescriptor` (`dawn_layout_check.cpp`, desktop only). `tests/Shared/`: code shared by the desktop tests and the browser tests, including the generated `MarshalCheck.g.cs` (generator/Check.cs), which checks every field ToNative writes and FromNative reads.
 - `benchmarks/`: BenchmarkDotNet, run off-cadence (locally or on a GPU machine).
-- `dawn/version.env`: the Dawn pin and the exact `Microsoft.Direct3D.DXC` version. Scripts, CI and package metadata read it.
+- `dawn/version.env`: the Dawn pin, the exact `Microsoft.Direct3D.DXC` version, and the manylinux_2_28 image Linux natives are linked in. Scripts, CI and package metadata read it.
+- Dawn's releases have no linux-arm64 build: `.github/workflows/dawn.yml` (ci.yml's first job) builds it from source with `scripts/build-dawn.sh` when the pin changes and publishes it on this repo's prerelease `dawn-<commit>`. `dawn-bump.yml` moves the pin to each new Dawn release daily and, if the public API is unchanged, releases the next patch through `publish.yml` on the branch `dawn/<tag>`.
 - `src/Olve.WebGPU.Native/buildTransitive/`: copies DXC next to `webgpu_dawn.dll` for package consumers. `build/ProjectNatives.targets` does the same for this repo's tests and samples, and also copies `artifacts/native`.
 
 ## Commands
@@ -21,6 +22,7 @@ dotnet run --project tests/Olve.WebGPU.Tests               # layout, marshalling
 dotnet publish tests/Olve.WebGPU.Tests.Browser -c Release -o artifacts/web/tests      # needs the wasm-tools workload
 python scripts/verify-web.py artifacts/web/tests/wwwroot tests                        # (Windows: add --channel chrome)
 dotnet run -c Release --project benchmarks/Olve.WebGPU.Benchmarks -- --filter '*'   # benchmarks
+docker run --rm -v "$PWD:/w" -w /w -e RID=linux-arm64 quay.io/pypa/manylinux_2_28_aarch64:<MANYLINUX_TAG> scripts/build-dawn.sh   # Dawn from source (CI: dawn.yml)
 RID=android-x64 scripts/build-natives.sh                    # Android natives (ANDROID_NDK_HOME: NDK r27d); also android-arm64
 scripts/run-android-tests.sh <apk>                         # tests/Olve.WebGPU.Tests.Android on a device or emulator; PASS/FAIL from logcat
 scripts/run-ios-tests.sh <app>                             # tests/Olve.WebGPU.Tests.iOS in an iPhone simulator (Mac only; RID=ios-arm64/iossimulator natives)
@@ -34,4 +36,4 @@ scripts/run-ios-tests.sh <app>                             # tests/Olve.WebGPU.T
 - Callers need no `unsafe`. Tests and samples build with `AllowUnsafeBlocks=false`; only the web sample enables it, for the JSExport generator's output.
 - Generated files use LF. CI regenerates on Linux and fails on any diff.
 - A change to the C side of the layout checker must build on all three platforms: Windows exports its functions explicitly (`scripts/build-natives-windows.cmd`).
-- `publish.yml` pushes to nuget.org. It only runs on a published GitHub release or a manual dispatch, so don't create releases or tags to test it.
+- `publish.yml` pushes to nuget.org. It only runs on a published GitHub release or a manual dispatch, so don't create releases or tags to test it. It skips releases whose tag doesn't start with `v` (the `dawn-<commit>` prereleases).

@@ -7,14 +7,15 @@ using Triangle.Desktop;
 
 // The triangle in a Silk.NET window, through Dawn native.
 //   --frames N                    closes the window after N frames
-//   --glfw-platform wayland|x11   picks GLFW's platform on Linux (GLFW 3.4 prefers Wayland, which the prebuilt Dawn lacks)
+//   --glfw-platform wayland|x11   picks GLFW's platform on Linux (needs Silk.NET's GLFW 3.4: a system libglfw.so.3.3, which Silk.NET
+//                                 loads first, has no platform choice)
 var frameLimit = GetOption("--frames") is { } n ? int.Parse(n) : int.MaxValue;
 var exitCode = 0;
 
 if (GetOption("--glfw-platform") is { } platform)
 {
     // GLFW_PLATFORM = GLFW_PLATFORM_WAYLAND or GLFW_PLATFORM_X11
-    Glfw.GetApi().InitHint((InitHint)0x00050003, platform == "wayland" ? 0x00060003 : 0x00060004);
+    GlfwProvider.UninitializedGLFW.Value.InitHint((InitHint)0x00050003, platform == "wayland" ? 0x00060003 : 0x00060004);
 }
 
 var options = WindowOptions.Default with
@@ -30,7 +31,7 @@ var frame = 0;
 window.Load += () =>
 {
     var instance = Wgpu.CreateInstance();
-    var surface = instance.CreateSurface(window.Native! switch
+    var source = window.Native! switch
     {
         { Win32: { } win32 } => new SurfaceDescriptor
         {
@@ -49,7 +50,10 @@ window.Load += () =>
             SurfaceSourceMetalLayer = new SurfaceSourceMetalLayer { Layer = MetalLayer.For(nsWindow) },
         },
         var native => throw new PlatformNotSupportedException($"No surface source for {native.Kind} windows"),
-    });
+    };
+    Console.WriteLine("surface: " + (source.SurfaceSourceWindowsHWND is not null ? "HWND" : source.SurfaceSourceWaylandSurface is not null ? "Wayland"
+        : source.SurfaceSourceXlibWindow is not null ? "Xlib" : "CAMetalLayer"));
+    var surface = instance.CreateSurface(source);
 
     // Requests complete inside ProcessEvents, so on desktop the task is done (or nearly) by the time it returns
     var created = TriangleRenderer.CreateAsync(instance, surface, 640, 480, Console.WriteLine).GetAwaiter().GetResult();

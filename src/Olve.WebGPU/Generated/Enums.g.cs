@@ -704,5 +704,8 @@ public enum SubgroupMatrixComponentType : uint
     I32 = 0x00000004,
     U8 = 0x00000005,
     I8 = 0x00000006,
+    Bf16 = 0x00000007,
+    F8_e4m3 = 0x00000008,
+    F8_e5m2 = 0x00000009,
 }
 

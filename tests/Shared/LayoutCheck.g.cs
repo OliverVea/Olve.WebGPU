@@ -995,5 +995,8 @@ internal static class LayoutCheck
         ("SubgroupMatrixComponentType.I32", (long)SubgroupMatrixComponentType.I32),
         ("SubgroupMatrixComponentType.U8", (long)SubgroupMatrixComponentType.U8),
         ("SubgroupMatrixComponentType.I8", (long)SubgroupMatrixComponentType.I8),
+        ("SubgroupMatrixComponentType.Bf16", (long)SubgroupMatrixComponentType.Bf16),
+        ("SubgroupMatrixComponentType.F8_e4m3", (long)SubgroupMatrixComponentType.F8_e4m3),
+        ("SubgroupMatrixComponentType.F8_e5m2", (long)SubgroupMatrixComponentType.F8_e5m2),
     ];
 }

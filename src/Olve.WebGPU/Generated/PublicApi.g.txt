@@ -311,8 +311,11 @@ enum StoreOp.Discard = 0x2
 enum StoreOp.Store = 0x1
 enum StoreOp.Undefined = 0x0
 enum SubgroupMatrixComponentType
+enum SubgroupMatrixComponentType.Bf16 = 0x7
 enum SubgroupMatrixComponentType.F16 = 0x2
 enum SubgroupMatrixComponentType.F32 = 0x1
+enum SubgroupMatrixComponentType.F8_e4m3 = 0x8
+enum SubgroupMatrixComponentType.F8_e5m2 = 0x9
 enum SubgroupMatrixComponentType.I32 = 0x4
 enum SubgroupMatrixComponentType.I8 = 0x6
 enum SubgroupMatrixComponentType.U32 = 0x3

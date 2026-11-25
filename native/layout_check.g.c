@@ -988,5 +988,8 @@ int wgpu_layout_values(int64_t* out) {
     if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_I32; i++;
     if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_U8; i++;
     if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_I8; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_Bf16; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_F8_e4m3; i++;
+    if (out) out[i] = (int64_t)WGPUSubgroupMatrixComponentType_F8_e5m2; i++;
     return i;
 }
